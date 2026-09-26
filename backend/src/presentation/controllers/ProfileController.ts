@@ -28,12 +28,22 @@ export class ProfileController {
     }
   };
 
+  private normalizeBirthDate(birthDate: string | null | undefined): Date | null | undefined {
+    if (birthDate) {
+      return new Date(`${birthDate}T00:00:00`);
+    }
+    if (birthDate === null || birthDate === '') {
+      return null;
+    }
+    return undefined;
+  }
+
   updateMyProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const dto = updateProfileSchema.parse(req.body);
       const updateDto = {
         ...dto,
-        birthDate: dto.birthDate ? new Date(`${dto.birthDate}T00:00:00`) : (dto.birthDate === null || dto.birthDate === '' ? null : undefined),
+        birthDate: this.normalizeBirthDate(dto.birthDate),
       };
       const result = await this.updateProfile.execute(req.user!.id, updateDto);
       sendSuccess(res, result, 'Perfil actualizado exitosamente');
@@ -47,7 +57,7 @@ export class ProfileController {
       if (!this.uploadDocument) {
         throw new Error('Subida de documento no disponible');
       }
-      const file = req.file as Express.Multer.File | undefined;
+      const file = req.file;
       if (!file) {
         throw new Error('No se recibió ningún archivo');
       }

@@ -15,7 +15,7 @@ export function useRegister() {
     try {
       const response = await authService.register(data) as AuthDirectResponse;
       login(response.user, response.token);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err as AuthError);
     } finally {
       setIsLoading(false);

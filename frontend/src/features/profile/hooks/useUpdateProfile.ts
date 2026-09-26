@@ -20,7 +20,7 @@ export function useUpdateProfile(onSuccessCallback?: (user: PublicUser) => void)
       if (onSuccessCallback) {
         onSuccessCallback(updatedUser);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err as AuthError);
     } finally {
       setIsLoading(false);

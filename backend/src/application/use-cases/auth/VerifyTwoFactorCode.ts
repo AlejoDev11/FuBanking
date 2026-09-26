@@ -27,7 +27,7 @@ export class VerifyTwoFactorCode {
   async execute(dto: VerifyTwoFactorDto): Promise<VerifyTwoFactorResponseDto> {
     let payload: { userId: string; email: string };
     try {
-      payload = this.tokenService.verify(dto.temporaryToken) as { userId: string; email: string };
+      payload = this.tokenService.verify(dto.temporaryToken);
     } catch {
       throw new AuthError('Token temporal inválido o expirado', 'TOKEN_INVALID');
     }

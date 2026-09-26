@@ -10,7 +10,7 @@ interface TransferReceiptModalProps {
   onClose: () => void;
 }
 
-export function TransferReceiptModal({ receipt, isOpen, onClose }: TransferReceiptModalProps) {
+export function TransferReceiptModal({ receipt, isOpen, onClose }: Readonly<TransferReceiptModalProps>) {
   if (!isOpen || !receipt) return null;
 
   const formattedAmount = new Intl.NumberFormat('es-CO', {
@@ -84,7 +84,7 @@ export function TransferReceiptModal({ receipt, isOpen, onClose }: TransferRecei
         {/* Actions */}
         <div className="flex gap-3">
           <button
-            onClick={() => window.print()}
+            onClick={() => globalThis.print()}
             className="w-full py-3 px-4 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-all flex items-center justify-center gap-2"
           >
             <Download size={16} />

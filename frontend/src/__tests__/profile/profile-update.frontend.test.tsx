@@ -1,3 +1,9 @@
+/**
+ * IIFE para aislar las declaraciones de este archivo.
+ * Evita colisiones globales con otras suites (cada suite declara sus
+ * propios dobles de prueba con los mismos nombres).
+ */
+(() => {
 interface PublicUser {
   id: string;
   email: string;
@@ -303,3 +309,4 @@ describe('onSubmit de ProfileEditForm', () => {
     expect(cancelCaptor.called).toBe(false);
   });
 });
+})();

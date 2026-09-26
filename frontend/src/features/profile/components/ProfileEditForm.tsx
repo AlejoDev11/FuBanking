@@ -17,7 +17,7 @@ interface ProfileEditFormProps {
   onSuccess: (updatedUser: PublicUser) => void;
 }
 
-export function ProfileEditForm({ user, onCancel, onSuccess }: ProfileEditFormProps) {
+export function ProfileEditForm({ user, onCancel, onSuccess }: Readonly<ProfileEditFormProps>) {
   const { handleUpdate, isLoading, error } = useUpdateProfile(onSuccess);
 
   const {

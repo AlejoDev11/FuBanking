@@ -1,5 +1,4 @@
-import crypto from 'crypto';
-import { randomUUID } from 'crypto';
+import crypto, { randomUUID } from 'node:crypto';
 import { IVerificationCodeRepository } from '../../../domain/repositories/IVerificationCodeRepository';
 import { IEmailService } from '../../interfaces/IEmailService';
 import { ITokenService } from '../../interfaces/ITokenService';

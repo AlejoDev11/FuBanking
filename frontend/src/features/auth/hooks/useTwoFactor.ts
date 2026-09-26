@@ -30,7 +30,7 @@ export function useTwoFactor() {
       sessionStorage.removeItem('2fa_temp_token');
       sessionStorage.removeItem('2fa_masked_email');
       login(response.user, response.token);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err as AuthError);
     } finally {
       setIsLoading(false);
@@ -57,7 +57,7 @@ export function useTwoFactor() {
       sessionStorage.setItem('2fa_masked_email', response.maskedEmail);
       setResendSuccess(true);
       setTimeout(() => setResendSuccess(false), 4000);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err as AuthError);
     } finally {
       setIsResending(false);

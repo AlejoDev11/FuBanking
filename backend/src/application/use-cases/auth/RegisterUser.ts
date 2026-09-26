@@ -7,7 +7,7 @@ import { Email } from '../../../domain/value-objects/Email';
 import { Document } from '../../../domain/value-objects/Document';
 import { AuthError } from '../../../shared/errors/AuthError';
 import { AppError } from '../../../shared/errors/AppError';
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 
 /**
  * Caso de Uso: Registro de usuario.

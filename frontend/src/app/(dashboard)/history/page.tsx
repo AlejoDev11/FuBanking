@@ -48,11 +48,11 @@ export default function HistoryPage() {
   }, [transactions, filterType, filterDateFrom, filterDateTo]);
 
   useEffect(() => {
-    const timeoutId = window.setTimeout(() => {
+    const timeoutId = globalThis.setTimeout(() => {
       void fetchHistory();
     }, 0);
 
-    return () => window.clearTimeout(timeoutId);
+    return () => globalThis.clearTimeout(timeoutId);
   }, [fetchHistory]);
 
   useEffect(() => {
@@ -113,8 +113,9 @@ export default function HistoryPage() {
       {showFilters && (
         <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 flex flex-col sm:flex-row gap-4 animate-in fade-in slide-in-from-top-2">
           <div className="flex-1 space-y-1.5">
-            <label className="text-xs font-semibold text-muted-foreground">Tipo de Movimiento</label>
+            <label htmlFor="history-filter-type" className="text-xs font-semibold text-muted-foreground">Tipo de Movimiento</label>
             <select
+              id="history-filter-type"
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
               className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
@@ -126,8 +127,9 @@ export default function HistoryPage() {
             </select>
           </div>
           <div className="flex-1 space-y-1.5">
-            <label className="text-xs font-semibold text-muted-foreground">Desde</label>
+            <label htmlFor="history-filter-from" className="text-xs font-semibold text-muted-foreground">Desde</label>
             <input
+              id="history-filter-from"
               type="date"
               value={filterDateFrom}
               onChange={(e) => setFilterDateFrom(e.target.value)}
@@ -135,8 +137,9 @@ export default function HistoryPage() {
             />
           </div>
           <div className="flex-1 space-y-1.5">
-            <label className="text-xs font-semibold text-muted-foreground">Hasta</label>
+            <label htmlFor="history-filter-to" className="text-xs font-semibold text-muted-foreground">Hasta</label>
             <input
+              id="history-filter-to"
               type="date"
               value={filterDateTo}
               onChange={(e) => setFilterDateTo(e.target.value)}
@@ -169,7 +172,7 @@ export default function HistoryPage() {
       <div className="rounded-2xl border border-border bg-card/70 p-4 sm:p-5">
         <div className="mb-5 flex items-center justify-between gap-3">
           <h2 className="text-sm font-semibold text-foreground">
-            {filteredTransactions.length} movimiento{filteredTransactions.length !== 1 ? 's' : ''}
+            {filteredTransactions.length} movimiento{filteredTransactions.length === 1 ? '' : 's'}
           </h2>
           <span className="text-xs text-muted-foreground">Ordenado por fecha mas reciente</span>
         </div>

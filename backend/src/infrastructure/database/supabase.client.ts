@@ -8,7 +8,7 @@ import { env } from '../../shared/config/env';
  * y bypass de las políticas RLS (Row Level Security).
  *
  * IMPORTANTE: Nunca exponer esta key al frontend.
- * Todo acceso a Supabase desde el backend usa esta instancia.
+ * Cualquier acceso a Supabase desde el backend usa esta instancia.
  */
 const supabaseClient: SupabaseClient = createClient(
   env.SUPABASE_URL,

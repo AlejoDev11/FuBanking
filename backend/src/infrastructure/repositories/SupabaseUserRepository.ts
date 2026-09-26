@@ -36,7 +36,7 @@ interface UserRow {
  * Implementa IUserRepository de la capa de dominio.
  * Es la única clase que conoce la estructura de la tabla `users`.
  *
- * Responsabilidad única: todo acceso a la BD de usuarios pasa por aquí.
+ * Responsabilidad única: cualquier acceso a la BD de usuarios pasa por aquí.
  */
 export class SupabaseUserRepository implements IUserRepository {
   private readonly TABLE = 'users';
@@ -68,7 +68,7 @@ export class SupabaseUserRepository implements IUserRepository {
       birthDate: new Date(`${row.birth_date}T00:00:00`),
       phone: row.phone,
       avatarUrl: row.avatar_url,
-      monthlyIncome: row.monthly_income !== null ? Number(row.monthly_income) : null,
+      monthlyIncome: row.monthly_income === null ? null : Number(row.monthly_income),
       documentVerified: row.document_verified ?? false,
       documentVerifiedAt: row.document_verified_at ? new Date(row.document_verified_at) : null,
       passwordHash: row.password,

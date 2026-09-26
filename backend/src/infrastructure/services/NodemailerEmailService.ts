@@ -14,6 +14,7 @@ export class NodemailerEmailService implements IEmailService {
   constructor() {
     this.transporter = nodemailer.createTransport({
       service: 'gmail',
+      secure: true,
       auth: {
         user: env.GMAIL_USSER, // usser with two 's' as specified in .env
         pass: env.GMAIL_PASS,

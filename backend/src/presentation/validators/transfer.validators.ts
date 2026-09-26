@@ -5,17 +5,14 @@ import { z } from 'zod';
  */
 
 export const createTransferSchema = z.object({
-  senderAccountId: z
-    .string({ message: 'La cuenta de origen es requerida' })
-    .uuid('El ID de la cuenta de origen no es valido'),
+  senderAccountId: z.uuid({ error: 'El ID de la cuenta de origen no es valido' }),
   receiverAccountNumber: z
     .string({ message: 'El numero de cuenta del destinatario es requerido' })
     .min(1, 'El numero de cuenta del destinatario es requerido')
     .trim(),
   amount: z
-    .number({ message: 'El monto debe ser un numero valido' })
-    .positive('El monto debe ser mayor a cero')
-    .finite('El monto debe ser un numero valido'),
+    .number({ error: 'El monto debe ser un numero valido' })
+    .positive('El monto debe ser mayor a cero'),
   description: z
     .string()
     .max(255, 'La descripcion no puede superar los 255 caracteres')
@@ -28,7 +25,7 @@ export const searchByAccountNumberSchema = z.object({
 });
 
 export const searchByEmailSchema = z.object({
-  email: z.string().email('Correo electronico invalido').toLowerCase().trim(),
+  email: z.email({ error: 'Correo electronico invalido' }).toLowerCase().trim(),
 });
 
 export type CreateTransferInput = z.infer<typeof createTransferSchema>;

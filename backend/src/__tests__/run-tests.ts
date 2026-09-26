@@ -1,4 +1,4 @@
-import assert from 'assert';
+import assert from 'node:assert';
 import { CreateServicePayment } from '../application/use-cases/payment/CreateServicePayment';
 import { MockPaymentGateway } from '../infrastructure/services/MockPaymentGateway';
 import { IServicePaymentRepository } from '../domain/repositories/IServicePaymentRepository';
@@ -12,11 +12,11 @@ import { GetAccountPockets } from '../application/use-cases/pocket/GetAccountPoc
 import { UpdatePocket } from '../application/use-cases/pocket/UpdatePocket';
 import { DeletePocket } from '../application/use-cases/pocket/DeletePocket';
 import { TransferPocketBalance } from '../application/use-cases/pocket/TransferPocketBalance';
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 import { runLoanTests } from './loan-tests';
 
 class InMemoryPaymentRepo implements IServicePaymentRepository {
-  private store = new Map<string, ServicePayment>();
+  private readonly store = new Map<string, ServicePayment>();
   async save(payment: ServicePayment) {
     this.store.set(payment.id, payment);
     return payment;
@@ -27,7 +27,7 @@ class InMemoryPaymentRepo implements IServicePaymentRepository {
 }
 
 class InMemoryAccountRepo implements IAccountRepository {
-  private store = new Map<string, Account>();
+  private readonly store = new Map<string, Account>();
   async findById(id: string) { return this.store.get(id) ?? null; }
   async findByAccountNumber(number: string) { return null; }
   async findByUserId(userId: string) { return Array.from(this.store.values()).filter(a => a.userId === userId); }
@@ -49,10 +49,16 @@ class InMemoryAccountRepo implements IAccountRepository {
     this.store.set(accountId, updatedAcc);
     return updatedAcc;
   }
+
+  async updateStatus(accountId: string, status: any) {
+    const acc = this.store.get(accountId); if (!acc) throw new Error('Account not found');
+    (acc as any).status = status;
+    return acc;
+  }
 }
 
 class InMemoryPocketRepo implements IPocketRepository {
-  private store = new Map<string, Pocket>();
+  private readonly store = new Map<string, Pocket>();
 
   async findById(id: string) {
     return this.store.get(id) ?? null;

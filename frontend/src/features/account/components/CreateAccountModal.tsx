@@ -2,9 +2,8 @@
 
 import React, { useState } from 'react';
 import { X, PiggyBank, CreditCard, Briefcase, ChevronRight } from 'lucide-react';
-import { AccountType, ACCOUNT_TYPE_LABELS } from '../types/account.types';
+import { AccountType, ACCOUNT_TYPE_LABELS, type Account } from '../types/account.types';
 import { useCreateAccount } from '../hooks/useCreateAccount';
-import { Account } from '../types/account.types';
 import { useToast } from '@/shared/components/feedback/ToastProvider';
 
 interface CreateAccountModalProps {
@@ -21,7 +20,7 @@ type Step = 'select-type' | 'fill-details';
  * Paso 1: El usuario selecciona el tipo de cuenta.
  * Paso 2: El usuario rellena los detalles opcionales del tipo elegido.
  */
-export function CreateAccountModal({ isOpen, onClose, onSuccess }: CreateAccountModalProps) {
+export function CreateAccountModal({ isOpen, onClose, onSuccess }: Readonly<CreateAccountModalProps>) {
   const toast = useToast();
   const [step, setStep] = useState<Step>('select-type');
   const [selectedType, setSelectedType] = useState<AccountType | null>(null);
@@ -68,7 +67,7 @@ export function CreateAccountModal({ isOpen, onClose, onSuccess }: CreateAccount
     setStep('fill-details');
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     if (!selectedType) return;
 
@@ -89,12 +88,16 @@ export function CreateAccountModal({ isOpen, onClose, onSuccess }: CreateAccount
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={handleClose}>
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <button
+        type="button"
+        aria-label="Cerrar creación de cuenta"
+        onClick={handleClose}
+        className="absolute inset-0 bg-black/70 backdrop-blur-sm cursor-default"
+      />
 
       <div
         className="relative z-10 w-full max-w-md bg-[#1a1a2e] border border-white/10 rounded-2xl p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200"
-        onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -180,7 +183,6 @@ export function CreateAccountModal({ isOpen, onClose, onSuccess }: CreateAccount
 
             {/* Campos para Corriente */}
             {selectedType === AccountType.CORRIENTE && (
-              <>
                 <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10">
                   <input
                     id="checkbook"
@@ -193,7 +195,6 @@ export function CreateAccountModal({ isOpen, onClose, onSuccess }: CreateAccount
                     Incluir chequera
                   </label>
                 </div>
-              </>
             )}
 
             {/* Campos para Nómina */}
@@ -260,7 +261,7 @@ function Field({
 }
 
 
-function ConditionRow({ label, value }: { label: string; value: string }) {
+function ConditionRow({ label, value }: { readonly label: string; readonly value: string }) {
   return (
     <li className="flex justify-between items-center text-sm">
       <span className="text-white/60">{label}</span>

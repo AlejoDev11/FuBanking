@@ -4,6 +4,7 @@ import { LoansClient } from '@/features/loans/components/LoansClient';
 import { loanService } from '@/features/loans/services/loan.service';
 import { profileService } from '@/features/profile/services/profile.service';
 import { formatCurrency } from '@/shared/utils/format';
+import type { AnchorHTMLAttributes, ReactNode } from 'react';
 
 vi.mock('@/features/loans/services/loan.service', () => ({
   loanService: { simulate: vi.fn(), create: vi.fn(), getMyLoans: vi.fn() },
@@ -14,7 +15,7 @@ vi.mock('@/features/profile/services/profile.service', () => ({
 }));
 
 vi.mock('next/link', () => ({
-  default: ({ href, children, ...props }: any) => (
+  default: ({ href, children, ...props }: { href: string; children: ReactNode } & AnchorHTMLAttributes<HTMLAnchorElement>) => (
     <a href={href} {...props}>
       {children}
     </a>

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { profileService } from '../services/profile.service';
-import { PublicUser } from '@/features/auth/types/auth.types';
-import { AuthError } from '@/features/auth/types/auth.types';
+import { PublicUser, AuthError } from '@/features/auth/types/auth.types';
 
 export function useProfile() {
   const [profile, setProfile] = useState<PublicUser | null>(null);
@@ -14,7 +13,7 @@ export function useProfile() {
     try {
       const data = await profileService.getProfile();
       setProfile(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err as AuthError);
     } finally {
       setIsLoading(false);
@@ -22,7 +21,10 @@ export function useProfile() {
   };
 
   useEffect(() => {
-    fetchProfile();
+    const timeoutId = globalThis.setTimeout(() => {
+      void fetchProfile();
+    }, 0);
+    return () => globalThis.clearTimeout(timeoutId);
   }, []);
 
   return {

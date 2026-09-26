@@ -18,6 +18,7 @@
 
 import { handleCreate } from '../../features/pockets/handlers/pocket.handlers';
 import { pocketService } from '../../features/pockets/services/pocket.service';
+import type { PocketItem } from '../../features/pockets/services/pocket.service';
 import {
   Escenario,
   UUID_INEXISTENTE,
@@ -32,7 +33,7 @@ const FUNCIONALIDAD = 'Crear bolsillo';
 const HANDLER = 'handleCreate';
 
 /** Arma las dependencias del handler con el servicio REAL y registradores. */
-function contexto(listaInicial: any[] = []) {
+function contexto(listaInicial: PocketItem[] = []) {
   const toast = registradorToast();
   const pockets = registradorLista(listaInicial);
   const loading = registradorValor<boolean>();
@@ -169,7 +170,7 @@ export async function ejecutarCaminosCrear(e: Escenario): Promise<void> {
         'El nodo 5 antepone el bolsillo creado a la lista y limpia los campos del formulario, el nodo 7 muestra el toast "Bolsillo creado" y el finally (nodo 9) apaga el indicador de carga.',
     },
     async () => {
-      const previo: any = {
+      const previo: PocketItem = {
         id: 'previo',
         accountId: e.accountId,
         name: 'Previo',

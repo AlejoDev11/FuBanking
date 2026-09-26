@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { RegisterForm } from '@/features/auth/components/RegisterForm';
+import type { AnchorHTMLAttributes, ReactNode } from 'react';
 
 const { mockHandleRegister, registerState } = vi.hoisted(() => ({
   mockHandleRegister: vi.fn(),
@@ -16,7 +17,7 @@ vi.mock('@/features/auth/hooks/useRegister', () => ({
 }));
 
 vi.mock('next/link', () => ({
-  default: ({ href, children, ...props }: any) => (
+  default: ({ href, children, ...props }: { href: string; children: ReactNode } & AnchorHTMLAttributes<HTMLAnchorElement>) => (
     <a href={href} {...props}>
       {children}
     </a>

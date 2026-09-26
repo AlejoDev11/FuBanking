@@ -14,7 +14,7 @@ interface DepositWithdrawModalProps {
   onSuccess: () => void;
 }
 
-export function DepositWithdrawModal({ account, type, isOpen, onClose, onSuccess }: DepositWithdrawModalProps) {
+export function DepositWithdrawModal({ account, type, isOpen, onClose, onSuccess }: Readonly<DepositWithdrawModalProps>) {
   const toast = useToast();
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
@@ -25,12 +25,19 @@ export function DepositWithdrawModal({ account, type, isOpen, onClose, onSuccess
 
   const isDeposit = type === 'deposit';
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  let submitLabel = 'Confirmar Retiro';
+  if (isLoading) {
+    submitLabel = 'Procesando...';
+  } else if (isDeposit) {
+    submitLabel = 'Abonar Saldo';
+  }
+
+  const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     setError(null);
 
-    const numericAmount = parseFloat(amount);
-    if (isNaN(numericAmount) || numericAmount <= 0) {
+    const numericAmount = Number.parseFloat(amount);
+    if (Number.isNaN(numericAmount) || numericAmount <= 0) {
       setError('Por favor ingresa un monto válido mayor a cero.');
       return;
     }
@@ -103,10 +110,11 @@ export function DepositWithdrawModal({ account, type, isOpen, onClose, onSuccess
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-muted-foreground mb-1">
+            <label htmlFor="dw-amount" className="block text-xs font-medium text-muted-foreground mb-1">
               Monto a {isDeposit ? 'ingresar' : 'retirar'} (COP)
             </label>
             <input
+              id="dw-amount"
               type="number"
               placeholder="0.00"
               value={amount}
@@ -117,10 +125,11 @@ export function DepositWithdrawModal({ account, type, isOpen, onClose, onSuccess
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-muted-foreground mb-1">
+            <label htmlFor="dw-description" className="block text-xs font-medium text-muted-foreground mb-1">
               Descripción / Concepto (opcional)
             </label>
             <input
+              id="dw-description"
               type="text"
               placeholder={isDeposit ? 'Abono en efectivo' : 'Retiro en cajero'}
               value={description}
@@ -146,7 +155,7 @@ export function DepositWithdrawModal({ account, type, isOpen, onClose, onSuccess
                   : 'bg-rose-600 hover:bg-rose-500 shadow-rose-900/20'
               } disabled:opacity-50`}
             >
-              {isLoading ? 'Procesando...' : isDeposit ? 'Abonar Saldo' : 'Confirmar Retiro'}
+              {submitLabel}
             </button>
           </div>
         </form>

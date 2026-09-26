@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { ServiceType } from '../../domain/entities/ServicePayment';
 
 export const createPaymentSchema = z.object({
-  accountId: z.string().uuid(),
+  accountId: z.uuid(),
   serviceType: z.enum([
     ServiceType.ENERGIA,
     ServiceType.AGUA,

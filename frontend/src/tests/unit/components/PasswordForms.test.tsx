@@ -2,11 +2,12 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ForgotPasswordForm } from '@/features/auth/components/ForgotPasswordForm';
 import { ResetPasswordForm } from '@/features/auth/components/ResetPasswordForm';
+import type { AnchorHTMLAttributes, ReactNode } from 'react';
 
 const state = vi.hoisted(() => ({
   requestReset: vi.fn(),
   resetPassword: vi.fn(),
-  hook: { isLoading: false, error: null, isSuccess: false },
+  hook: { isLoading: false, error: null as { code: string; message: string } | null, isSuccess: false },
 }));
 
 vi.mock('@/features/auth/hooks/usePasswordReset', () => ({
@@ -20,7 +21,7 @@ vi.mock('@/features/auth/hooks/usePasswordReset', () => ({
 }));
 
 vi.mock('next/link', () => ({
-  default: ({ href, children, ...props }: any) => (
+  default: ({ href, children, ...props }: { href: string; children: ReactNode } & AnchorHTMLAttributes<HTMLAnchorElement>) => (
     <a href={href} {...props}>
       {children}
     </a>

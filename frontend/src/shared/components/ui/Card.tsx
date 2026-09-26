@@ -1,7 +1,7 @@
 import React from 'react';
 import { cn } from '@/shared/utils/cn';
 
-export function Card({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+export function Card({ className, children, ...props }: Readonly<React.HTMLAttributes<HTMLDivElement>>) {
   return (
     <div
       className={cn(
@@ -15,7 +15,7 @@ export function Card({ className, children, ...props }: React.HTMLAttributes<HTM
   );
 }
 
-export function CardHeader({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+export function CardHeader({ className, children, ...props }: Readonly<React.HTMLAttributes<HTMLDivElement>>) {
   return (
     <div className={cn('flex flex-col space-y-1.5 p-6', className)} {...props}>
       {children}
@@ -23,7 +23,7 @@ export function CardHeader({ className, children, ...props }: React.HTMLAttribut
   );
 }
 
-export function CardTitle({ className, children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
+export function CardTitle({ className, children, ...props }: Readonly<React.HTMLAttributes<HTMLHeadingElement>>) {
   return (
     <h3 className={cn('font-semibold leading-none tracking-tight text-xl', className)} {...props}>
       {children}
@@ -31,7 +31,7 @@ export function CardTitle({ className, children, ...props }: React.HTMLAttribute
   );
 }
 
-export function CardContent({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+export function CardContent({ className, children, ...props }: Readonly<React.HTMLAttributes<HTMLDivElement>>) {
   return (
     <div className={cn('p-6 pt-0', className)} {...props}>
       {children}

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useMemo, useCallback, ReactNode } from 'react';
 import { PublicUser } from '@/features/auth/types/auth.types';
 import { useRouter } from 'next/navigation';
 import { authService } from '@/features/auth/services/auth.service';
@@ -17,37 +17,35 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<PublicUser | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+export function AuthProvider({ children }: { readonly children: ReactNode }) {
+  const [user, setUser] = useState<PublicUser | null>(() => {
+    try {
+      const storedUser = localStorage.getItem('user');
+      return storedUser ? (JSON.parse(storedUser) as PublicUser) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [token, setToken] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem('token');
+    } catch {
+      return null;
+    }
+  });
+  const [isLoading] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
-
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (e) {
-        console.error('Failed to parse user from localStorage', e);
-      }
-    }
-    setIsLoading(false);
-  }, []);
-
-  const login = (newUser: PublicUser, newToken: string) => {
+  const login = useCallback((newUser: PublicUser, newToken: string) => {
     setUser(newUser);
     setToken(newToken);
     localStorage.setItem('token', newToken);
     localStorage.setItem('user', JSON.stringify(newUser));
     document.cookie = `token=${newToken}; path=/; max-age=604800; SameSite=Strict`;
     router.push('/profile');
-  };
+  }, [router]);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     await authService.logout();
     setUser(null);
     setToken(null);
@@ -55,15 +53,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('user');
     document.cookie = `token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
     router.push('/login');
-  };
+  }, [router]);
 
-  const updateUser = (updatedUser: PublicUser) => {
+  const updateUser = useCallback((updatedUser: PublicUser) => {
     setUser(updatedUser);
     localStorage.setItem('user', JSON.stringify(updatedUser));
-  };
+  }, []);
+
+  const contextValue = useMemo<AuthContextType>(
+    () => ({ user, token, isAuthenticated: !!token, isLoading, login, logout, updateUser }),
+    [user, token, isLoading, login, logout, updateUser],
+  );
 
   return (
-    <AuthContext.Provider value={{ user, token, isAuthenticated: !!token, isLoading, login, logout, updateUser }}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ProfileEditForm } from '@/features/profile/components/ProfileEditForm';
-import { useUpdateProfile } from '@/features/profile/hooks/useUpdateProfile';
 import type { PublicUser } from '@/features/auth/types/auth.types';
 
 const { mockHandleUpdate, formState } = vi.hoisted(() => ({

@@ -83,12 +83,15 @@ export function LoansClient() {
   }, []);
 
   useEffect(() => {
-    void fetchMyLoans();
-    profileService
-      .getProfile()
-      .then(setProfile)
-      .catch(() => {
-      });
+    const timeoutId = globalThis.setTimeout(() => {
+      void fetchMyLoans();
+      profileService
+        .getProfile()
+        .then(setProfile)
+        .catch(() => {
+        });
+    }, 0);
+    return () => globalThis.clearTimeout(timeoutId);
   }, [fetchMyLoans]);
 
   const hasPending = useMemo(() => myLoans.some(l => l.status === 'PENDING'), [myLoans]);

@@ -9,6 +9,8 @@
  * resultado obtenido de cada uno.
  */
 
+import { getMessage } from '../../../shared/utils/getMessage';
+
 export type EstadoCamino = 'Aprobado' | 'Fallido' | 'No ejecutable';
 
 export interface EspecificacionCamino {
@@ -49,8 +51,8 @@ export async function camino(spec: EspecificacionCamino, fn: FuncionCamino): Pro
   try {
     obtenido = await fn();
     estado = 'Aprobado';
-  } catch (error: any) {
-    obtenido = `FALLO: ${error?.message ?? String(error)}`;
+  } catch (error: unknown) {
+    obtenido = `FALLO: ${getMessage(error, String(error))}`;
     estado = 'Fallido';
   }
 

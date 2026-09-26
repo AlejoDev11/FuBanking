@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import {
   backendMessage,
   loadPockets,
@@ -15,7 +15,7 @@ function pocket(id: string, name = 'Viaje'): PocketItem {
   return { id, accountId: 'acc-1', name, amount: 50000, createdAt: '2026-01-01', updatedAt: '2026-01-01' };
 }
 
-function toast(): PocketToast & { success: any; error: any; warning: any } {
+function toast(): PocketToast {
   return { success: vi.fn(), error: vi.fn(), warning: vi.fn() };
 }
 

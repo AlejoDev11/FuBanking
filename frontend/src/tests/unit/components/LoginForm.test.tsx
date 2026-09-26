@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { LoginForm } from '@/features/auth/components/LoginForm';
+import type { AnchorHTMLAttributes, ReactNode } from 'react';
 
 const { mockHandleLogin, loginState } = vi.hoisted(() => ({
   mockHandleLogin: vi.fn(),
@@ -12,7 +13,7 @@ vi.mock('@/features/auth/hooks/useLogin', () => ({
 }));
 
 vi.mock('next/link', () => ({
-  default: ({ href, children, ...props }: any) => (
+  default: ({ href, children, ...props }: { href: string; children: ReactNode } & AnchorHTMLAttributes<HTMLAnchorElement>) => (
     <a href={href} {...props}>
       {children}
     </a>

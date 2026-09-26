@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const createPocketSchema = z.object({
-  accountId: z.string().uuid({ message: 'accountId debe ser un UUID válido' }),
+  accountId: z.uuid({ error: 'accountId debe ser un UUID válido' }),
   name: z.string().min(1, 'El nombre del bolsillo es obligatorio').max(150, 'El nombre del bolsillo no puede superar 150 caracteres'),
   amount: z.coerce.number().min(0, 'El monto del bolsillo no puede ser negativo'),
 });
@@ -14,7 +14,7 @@ export const updatePocketSchema = z.object({
 });
 
 export const transferPocketSchema = z.object({
-  fromPocketId: z.string().uuid({ message: 'fromPocketId debe ser un UUID válido' }),
-  toPocketId: z.string().uuid({ message: 'toPocketId debe ser un UUID válido' }),
+  fromPocketId: z.uuid({ error: 'fromPocketId debe ser un UUID válido' }),
+  toPocketId: z.uuid({ error: 'toPocketId debe ser un UUID válido' }),
   amount: z.number().gt(0, 'El monto de transferencia debe ser mayor que cero'),
 });

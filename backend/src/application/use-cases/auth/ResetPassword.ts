@@ -30,7 +30,7 @@ export class ResetPassword {
     let payload;
     try {
       payload = this.tokenService.verify(dto.token);
-    } catch (error) {
+    } catch {
       throw new AuthError('El enlace de recuperación es inválido o ha expirado', 'TOKEN_INVALID');
     }
 

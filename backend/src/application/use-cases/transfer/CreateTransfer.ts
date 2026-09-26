@@ -1,4 +1,4 @@
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 import { IAccountRepository } from '../../../domain/repositories/IAccountRepository';
 import { ITransactionRepository } from '../../../domain/repositories/ITransactionRepository';
 import { IUserRepository } from '../../../domain/repositories/IUserRepository';

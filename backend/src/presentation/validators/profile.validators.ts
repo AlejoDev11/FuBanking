@@ -43,7 +43,7 @@ export const updateProfileSchema = z
       .or(z.literal(''))
       .nullable()
       .optional(),
-    avatarUrl: z.string().url('URL de avatar inválida').or(z.literal('')).nullable().optional(),
+    avatarUrl: z.url({ error: 'URL de avatar inválida' }).or(z.literal('')).nullable().optional(),
     monthlyIncome: z.number().positive('El ingreso mensual debe ser mayor a cero').nullable().optional(),
   })
   .refine(

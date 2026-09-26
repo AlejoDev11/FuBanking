@@ -3,10 +3,10 @@
 import Image from 'next/image';
 
 interface AuthSplitLayoutProps {
-  children: React.ReactNode;
+  readonly children: React.ReactNode;
 }
 
-export function AuthSplitLayout({ children }: AuthSplitLayoutProps) {
+export function AuthSplitLayout({ children }: Readonly<AuthSplitLayoutProps>) {
   return (
     <div className="flex min-h-screen">
       {/* Left: Brand visual */}

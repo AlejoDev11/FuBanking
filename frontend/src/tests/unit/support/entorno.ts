@@ -40,6 +40,43 @@ export interface Escenario {
 }
 
 
+/** Respuesta de los endpoints de autenticación (login/register). */
+interface AuthApiResult {
+  data?: {
+    token?: string;
+    requiresTwoFactor?: boolean;
+  };
+}
+
+/** Cuenta mínima para seleccionar la cuenta de trabajo. */
+interface CuentaApi {
+  id: string;
+  status?: string;
+  balance?: number | string;
+}
+
+/** Respuesta del listado de cuentas. */
+interface AccountsApiResult {
+  data?: CuentaApi[];
+}
+
+/** Respuesta con el id del recurso creado. */
+interface CreatedApiResult {
+  data?: {
+    id?: string;
+  };
+}
+
+/** Respuesta con un bolsillo. */
+interface PocketApiResult {
+  data?: PocketItem;
+}
+
+/** Respuesta con el listado de bolsillos. */
+interface PocketsApiResult {
+  data?: PocketItem[];
+}
+
 /**
  * Obtiene un token real del backend y lo fija en la instancia de axios.
  *
@@ -51,7 +88,7 @@ async function autenticar(): Promise<void> {
   let token: string | undefined;
 
   try {
-    const r: any = await apiClient.post('/auth/login', {
+    const r: AuthApiResult = await apiClient.post('/auth/login', {
       email: USUARIO_PRUEBA.email,
       password: USUARIO_PRUEBA.password,
     });
@@ -61,9 +98,13 @@ async function autenticar(): Promise<void> {
       );
     }
     token = r?.data?.token;
-  } catch (error: any) {
-    if (error?.code !== 'INVALID_CREDENTIALS') throw error;
-    const r: any = await apiClient.post('/auth/register', USUARIO_PRUEBA);
+  } catch (error: unknown) {
+    const code =
+      typeof error === 'object' && error !== null && 'code' in error
+        ? (error as { code?: unknown }).code
+        : undefined;
+    if (code !== 'INVALID_CREDENTIALS') throw error;
+    const r: AuthApiResult = await apiClient.post('/auth/register', USUARIO_PRUEBA);
     token = r?.data?.token;
   }
 
@@ -77,16 +118,18 @@ async function autenticar(): Promise<void> {
  * Reutiliza una cuenta previa si la hay, para no acumular cuentas en cada corrida.
  */
 async function prepararCuenta(): Promise<string> {
-  const propias: any = await apiClient.get('/accounts/me');
-  const cuentas: any[] = propias?.data ?? [];
+  const propias: AccountsApiResult = await apiClient.get('/accounts/me');
+  const cuentas = propias?.data ?? [];
 
   const utilizable = cuentas.find((c) => c.status === 'ACTIVA' && Number(c.balance) >= FONDOS);
   if (utilizable) return utilizable.id;
 
   const activa = cuentas.find((c) => c.status === 'ACTIVA');
-  const cuentaId = activa
-    ? activa.id
-    : ((await apiClient.post('/accounts', { type: 'AHORROS' })) as any)?.data?.id;
+  let cuentaId: string | undefined = activa?.id;
+  if (!cuentaId) {
+    const creada: CreatedApiResult = await apiClient.post('/accounts', { type: 'AHORROS' });
+    cuentaId = creada?.data?.id;
+  }
 
   if (!cuentaId) throw new Error('No se pudo obtener ni crear una cuenta de trabajo.');
 
@@ -114,7 +157,7 @@ export async function crearBolsilloReal(
   name: string,
   amount: number,
 ): Promise<PocketItem> {
-  const r: any = await apiClient.post('/pockets', { accountId, name, amount });
+  const r: PocketApiResult = await apiClient.post('/pockets', { accountId, name, amount });
   return r.data as PocketItem;
 }
 
@@ -129,8 +172,8 @@ export async function borrarBolsilloReal(pocketId: string): Promise<void> {
 
 /** Lista los bolsillos reales de una cuenta. */
 export async function listarBolsillosReales(accountId: string): Promise<PocketItem[]> {
-  const r: any = await apiClient.get(`/pockets/account/${accountId}`);
-  return (r.data ?? []) as PocketItem[];
+  const r: PocketsApiResult = await apiClient.get(`/pockets/account/${accountId}`);
+  return r.data ?? [];
 }
 
 

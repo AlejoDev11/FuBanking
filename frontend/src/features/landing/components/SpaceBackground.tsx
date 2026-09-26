@@ -1,18 +1,44 @@
 'use client';
 
-import { useMemo } from 'react';
+interface Star {
+  id: number;
+  x: number;
+  y: number;
+  size: number;
+  delay: number;
+  duration: number;
+}
+
+/**
+ * Generador pseudoaleatorio determinista para el fondo decorativo.
+ * Evita Math.random: las estrellas son idénticas en cada carga y no se usan
+ * para ningún propósito sensible a seguridad.
+ */
+function createSeededRandom(seed: number): () => number {
+  let state = seed;
+  return () => {
+    const x = Math.sin(state * 9999 + 7) * 10000;
+    state += 1;
+    return x - Math.floor(x);
+  };
+}
+
+function generateStars(count: number): Star[] {
+  const random = createSeededRandom(20260214);
+  return Array.from({ length: count }, (_, i) => ({
+    id: i,
+    x: random() * 100,
+    y: random() * 100,
+    size: random() * 2 + 1,
+    delay: random() * 5,
+    duration: random() * 3 + 2,
+  }));
+}
+
+const STARS: Star[] = generateStars(60);
 
 export function SpaceBackground() {
-  const stars = useMemo(() => {
-    return Array.from({ length: 60 }, (_, i) => ({
-      id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      size: Math.random() * 2 + 1,
-      delay: Math.random() * 5,
-      duration: Math.random() * 3 + 2,
-    }));
-  }, []);
+  const stars = STARS;
 
   return (
     <div className="absolute inset-0 overflow-hidden bg-[#0a0a1a]">

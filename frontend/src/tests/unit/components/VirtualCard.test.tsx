@@ -128,7 +128,7 @@ describe('VirtualCard', () => {
     );
 
     const face = screen.getByText('TEST USER').closest('div.space-y-4') as HTMLElement;
-    const flipper = face.querySelector('div[style*="preserve-3d"]') as HTMLElement;
+    const flipper = face.querySelector('[style*="preserve-3d"]') as HTMLElement;
     expect(flipper.style.transform).toBe('rotateY(0deg)');
 
     fireEvent.click(flipper);

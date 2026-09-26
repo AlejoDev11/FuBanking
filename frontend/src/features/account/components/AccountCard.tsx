@@ -15,7 +15,7 @@ interface AccountCardProps {
 /**
  * AccountCard — Tarjeta visual de una cuenta bancaria, estilo Nubank.
  */
-export function AccountCard({ account, showBalance = true, onClick, onDeposit, onWithdraw }: AccountCardProps) {
+export function AccountCard({ account, showBalance = true, onClick, onDeposit, onWithdraw }: Readonly<AccountCardProps>) {
   const maskedNumber = `****${account.accountNumber.slice(-4)}`;
 
   const statusColors: Record<AccountStatus, string> = {
@@ -51,29 +51,30 @@ export function AccountCard({ account, showBalance = true, onClick, onDeposit, o
       `}
     >
       {/* Clickable Area for Details */}
-      <div 
+      <button
+        type="button"
         onClick={() => onClick?.(account)}
-        className="cursor-pointer space-y-4"
+        className="cursor-pointer space-y-4 block w-full text-left"
       >
         {/* Header: tipo + estado */}
-        <div className="flex items-start justify-between">
-          <div>
-            <p className="text-xs text-white/50 uppercase tracking-widest mb-1 font-semibold">
+        <span className="flex items-start justify-between">
+          <span className="block">
+            <span className="block text-xs text-white/50 uppercase tracking-widest mb-1 font-semibold">
               {ACCOUNT_TYPE_LABELS[account.accountType]}
-            </p>
-            <p className="text-white/70 text-sm font-mono">{maskedNumber}</p>
-          </div>
+            </span>
+            <span className="block text-white/70 text-sm font-mono">{maskedNumber}</span>
+          </span>
           <span className={`text-xs px-3 py-1 rounded-full font-medium ${statusColors[account.status]}`}>
             {ACCOUNT_STATUS_LABELS[account.status]}
           </span>
-        </div>
+        </span>
 
         {/* Saldo */}
-        <div>
-          <p className="text-xs text-white/40 uppercase tracking-widest mb-1 font-medium">Saldo disponible</p>
-          <p className="text-3xl font-bold text-white tracking-tight">{formattedBalance}</p>
-        </div>
-      </div>
+        <span className="block">
+          <span className="block text-xs text-white/40 uppercase tracking-widest mb-1 font-medium">Saldo disponible</span>
+          <span className="block text-3xl font-bold text-white tracking-tight">{formattedBalance}</span>
+        </span>
+      </button>
 
       {/* Acciones rápidas (Abonar / Retirar) */}
       <div className="mt-5 pt-4 border-t border-white/10 flex items-center justify-between">

@@ -6,21 +6,34 @@ import { Button } from '@/shared/components/ui/Button';
 import { ShieldCheck, ArrowLeft, RefreshCw } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
+/** Identificadores estables de las 6 casillas (posiciones fijas, nunca se reordenan). */
+const CODE_INPUT_IDS = [
+  'two-factor-input-0',
+  'two-factor-input-1',
+  'two-factor-input-2',
+  'two-factor-input-3',
+  'two-factor-input-4',
+  'two-factor-input-5',
+] as const;
+
 export function TwoFactorVerifyForm() {
   const router = useRouter();
   const { handleVerify, handleResend, isLoading, isResending, error, resendSuccess } = useTwoFactor();
-  const [code, setCode] = useState<string[]>(Array(6).fill(''));
-  const [maskedEmail, setMaskedEmail] = useState<string>('');
+  const [code, setCode] = useState<string[]>(() => new Array<string>(6).fill(''));
+  const [maskedEmail] = useState<string>(() => {
+    try {
+      return sessionStorage.getItem('2fa_masked_email') ?? '';
+    } catch {
+      return '';
+    }
+  });
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
-    const email = sessionStorage.getItem('2fa_masked_email');
-    if (!email) {
+    if (!maskedEmail) {
       router.push('/login');
-    } else {
-      setMaskedEmail(email);
     }
-  }, [router]);
+  }, [maskedEmail, router]);
 
   const handleChange = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return; // Only allow digits
@@ -72,7 +85,7 @@ export function TwoFactorVerifyForm() {
     }
   };
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
     const fullCode = code.join('');
     if (fullCode.length === 6) {
@@ -107,14 +120,14 @@ export function TwoFactorVerifyForm() {
 
       <form onSubmit={onSubmit} className="space-y-6">
         <div className="flex justify-between gap-2">
-          {code.map((value, index) => (
+          {CODE_INPUT_IDS.map((inputId, index) => (
             <input
-              key={index}
+              key={inputId}
               ref={el => { inputRefs.current[index] = el; }}
               type="text"
               inputMode="numeric"
               maxLength={1}
-              value={value}
+              value={code[index] ?? ''}
               onChange={(e) => handleChange(index, e.target.value)}
               onKeyDown={(e) => handleKeyDown(index, e)}
               onPaste={handlePaste}

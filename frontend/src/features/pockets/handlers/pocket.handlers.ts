@@ -47,8 +47,20 @@ export type SetText = (value: string) => void;
  * Replica la cadena `error?.message || error?.error?.message || <fallback>`
  * que usaban todos los handlers del componente.
  */
-export function backendMessage(error: any, fallback: string): string {
-  return error?.message || error?.error?.message || fallback;
+export function backendMessage(error: unknown, fallback: string): string {
+  if (typeof error === 'object' && error !== null) {
+    const record = error as { message?: unknown; error?: unknown };
+    if (typeof record.message === 'string' && record.message) {
+      return record.message;
+    }
+    if (typeof record.error === 'object' && record.error !== null) {
+      const nested = (record.error as { message?: unknown }).message;
+      if (typeof nested === 'string' && nested) {
+        return nested;
+      }
+    }
+  }
+  return fallback;
 }
 
 
@@ -64,7 +76,7 @@ export async function loadPockets(deps: LoadPocketsDeps, accountId: string): Pro
   try {
     const data = await deps.service.getByAccount(accountId);
     deps.setPockets(data);
-  } catch (error: any) {
+  } catch (error: unknown) {
     const mensaje = backendMessage(error, 'No fue posible cargar los bolsillos.');
     deps.toast.error('No fue posible cargar los bolsillos', mensaje);
   } finally {
@@ -105,7 +117,7 @@ export async function handleCreate(deps: CreateDeps, input: CreateInput): Promis
     deps.setName('');
     deps.setAmount('');
     deps.toast.success('Bolsillo creado', 'Tu ahorro quedó organizado correctamente.');
-  } catch (error: any) {
+  } catch (error: unknown) {
     const mensaje = backendMessage(error, 'No fue posible crear el bolsillo.');
     deps.toast.error('No fue posible crear el bolsillo', mensaje);
   } finally {
@@ -142,7 +154,7 @@ export async function handleTransfer(deps: TransferDeps, input: TransferInput): 
     });
     deps.toast.success('Transferencia realizada', `${result.fromPocket.name} → ${result.toPocket.name}`);
     await deps.loadPockets();
-  } catch (error: any) {
+  } catch (error: unknown) {
     const mensaje = backendMessage(error, 'No fue posible transferir el saldo.');
     deps.toast.error('No fue posible transferir el saldo', mensaje);
   } finally {
@@ -180,7 +192,7 @@ export async function handleSaveEdit(deps: SaveEditDeps, input: SaveEditInput): 
     deps.setPockets((prev) => prev.map((pocket) => (pocket.id === input.pocketId ? updated : pocket)));
     deps.setEditingPocketId(null);
     deps.toast.success('Bolsillo actualizado', 'Los cambios quedaron guardados.');
-  } catch (error: any) {
+  } catch (error: unknown) {
     const mensaje = backendMessage(error, 'No fue posible actualizar el bolsillo.');
     deps.toast.error('No fue posible actualizar el bolsillo', mensaje);
   } finally {
@@ -208,7 +220,7 @@ export async function confirmDelete(
     await deps.service.remove(pendingDeletePocket.id);
     deps.setPockets((prev) => prev.filter((pocket) => pocket.id !== pendingDeletePocket.id));
     deps.toast.success('Bolsillo eliminado', 'El saldo volvió a la cuenta correctamente.');
-  } catch (error: any) {
+  } catch (error: unknown) {
     const mensaje = backendMessage(error, 'No fue posible eliminar el bolsillo.');
     deps.toast.error('No fue posible eliminar el bolsillo', mensaje);
   } finally {

@@ -5,7 +5,7 @@ import { TwoFactorVerifyForm } from '@/features/auth/components/TwoFactorVerifyF
 const state = vi.hoisted(() => ({
   handleVerify: vi.fn(),
   handleResend: vi.fn(),
-  hook: { isLoading: false, isResending: false, error: null, resendSuccess: false },
+  hook: { isLoading: false, isResending: false, error: null as { code: string; message: string } | null, resendSuccess: false },
   push: vi.fn(),
 }));
 
@@ -40,6 +40,19 @@ describe('TwoFactorVerifyForm', () => {
     render(<TwoFactorVerifyForm />);
 
     expect(state.push).toHaveBeenCalledWith('/login');
+  });
+
+  it('should default to empty masked email when storage is unavailable (SSR)', () => {
+    const globals = globalThis as unknown as { sessionStorage?: Storage };
+    const stash = globals.sessionStorage;
+    delete globals.sessionStorage;
+    try {
+      render(<TwoFactorVerifyForm />);
+
+      expect(state.push).toHaveBeenCalledWith('/login');
+    } finally {
+      globals.sessionStorage = stash;
+    }
   });
 
   it('should verify on completing 6 digits', () => {

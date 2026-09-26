@@ -101,7 +101,7 @@ export async function ejecutarCaminosActualizar(e: Escenario): Promise<void> {
         'El catch (nodo 7) toma el mensaje del backend, el nodo 9 lo muestra en un toast de error, el finally (nodo 10) apaga el indicador de carga y se permanece en modo edición con el bolsillo sin cambios.',
     },
     async () => {
-      const original: any = {
+      const original: PocketItem = {
         id: UUID_INEXISTENTE,
         accountId: e.accountId,
         name: 'Original',
@@ -154,7 +154,7 @@ export async function ejecutarCaminosActualizar(e: Escenario): Promise<void> {
     },
     async () => {
       const real = await crearBolsilloReal(e.accountId, 'Editable', 10_000);
-      const otro: any = {
+      const otro: PocketItem = {
         id: 'otro',
         accountId: e.accountId,
         name: 'Intacto',

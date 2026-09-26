@@ -1,4 +1,4 @@
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 import { IServicePaymentRepository } from '../../../domain/repositories/IServicePaymentRepository';
 import { ServicePayment } from '../../../domain/entities/ServicePayment';
 import { CreateServicePaymentDto, CreateServicePaymentResponseDto } from '../../dtos/payment/payment.dtos';
@@ -60,7 +60,7 @@ export class CreateServicePayment {
     }
 
     saved.markFailed();
-    saved = await this.paymentRepository.update(saved);
+    await this.paymentRepository.update(saved);
     throw new AppError(`Pago rechazado: ${result.error ?? 'Unknown'}`, 400, 'PAYMENT_FAILED');
   }
 }

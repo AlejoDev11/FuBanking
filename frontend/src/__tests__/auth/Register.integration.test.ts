@@ -1,5 +1,4 @@
-import { registerSchema } from '../../features/auth/schemas/auth.schemas';
-import { RegisterInput } from '../../features/auth/schemas/auth.schemas';
+import { registerSchema, type RegisterInput } from '../../features/auth/schemas/auth.schemas';
 
 interface FakeApiResponse {
   status: number;
@@ -63,7 +62,7 @@ describe('Registro — Pruebas de integración (tabla de caminos Frontend↔Back
 
       expect(response.status).toBe(201);
       expect(response.body.token).toBeDefined();
-      expect((response.body.user as any).email).toBe('juan@test.com');
+      expect((response.body.user as { email: string }).email).toBe('juan@test.com');
     });
   });
 

@@ -12,7 +12,7 @@ interface LoanCardProps {
   readonly isLoading: boolean;
 }
 
-export function LoanCard({ loan, onApprove, onReject, isLoading }: LoanCardProps) {
+export function LoanCard({ loan, onApprove, onReject, isLoading }: Readonly<LoanCardProps>) {
   const statusConfig: Record<string, { color: string; icon: React.ElementType; label: string }> = {
     PENDING: { color: 'bg-yellow-100 text-yellow-800', icon: Clock, label: 'Pendiente' },
     APPROVED: { color: 'bg-green-100 text-green-800', icon: CheckCircle, label: 'Aprobado' },

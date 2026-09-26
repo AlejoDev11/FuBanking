@@ -1,3 +1,9 @@
+/**
+ * IIFE para aislar las declaraciones de este archivo.
+ * Evita colisiones globales con otras suites (cada suite declara sus
+ * propios dobles de prueba con los mismos nombres).
+ */
+(() => {
 interface PublicUser {
   id: string;
   email: string;
@@ -105,7 +111,7 @@ async function runHandleUpdate(opts: {
     if (opts.onSuccessCallback) {
       opts.onSuccessCallback(updatedUser);
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     error = err as AuthError;
   }
   return { error };
@@ -176,7 +182,7 @@ describe('Editar perfil', () => {
     let handleUpdateCalled = false;
     const onSubmit = buildOnSubmit(
       user,
-      (_payload) => { handleUpdateCalled = true; },
+      () => { handleUpdateCalled = true; },
       cancelCaptor.fn.bind(cancelCaptor),
     );
 
@@ -271,3 +277,4 @@ describe('Editar perfil', () => {
     expect(successCallbackUser!.firstName).toBe('Maria');
   });
 });
+})();

@@ -13,7 +13,7 @@ const passwordSchema = z
   .min(8, 'La contraseña debe tener al menos 8 caracteres')
   .regex(/[A-Z]/, 'La contraseña debe contener al menos una letra mayúscula')
   .regex(/[a-z]/, 'La contraseña debe contener al menos una letra minúscula')
-  .regex(/[0-9]/, 'La contraseña debe contener al menos un número');
+  .regex(/\d/, { error: 'La contraseña debe contener al menos un número' });
 
 export const registerSchema = z
   .object({
@@ -51,7 +51,7 @@ export const registerSchema = z
         }
         return age >= 18;
       }, 'Debes ser mayor de 18 años para registrarte'),
-    email: z.string().email('Correo electrónico inválido').toLowerCase().trim(),
+    email: z.email({ error: 'Correo electrónico inválido' }).toLowerCase().trim(),
     document: z
       .string()
       .min(5, 'El documento debe tener al menos 5 caracteres')
@@ -72,13 +72,13 @@ export const registerSchema = z
   });
 
 export const loginSchema = z.object({
-  email: z.string().email('Correo electrónico inválido').toLowerCase().trim(),
+  email: z.email({ error: 'Correo electrónico inválido' }).toLowerCase().trim(),
   password: z.string().min(1, 'La contraseña es requerida'),
   rememberMe: z.boolean().optional(),
 });
 
 export const requestPasswordResetSchema = z.object({
-  email: z.string().email('Correo electrónico inválido').toLowerCase().trim(),
+  email: z.email({ error: 'Correo electrónico inválido' }).toLowerCase().trim(),
 });
 
 export const resetPasswordSchema = z

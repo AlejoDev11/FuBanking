@@ -30,7 +30,10 @@ export function useAccounts() {
   }, []);
 
   useEffect(() => {
-    fetchAccounts();
+    const timeoutId = globalThis.setTimeout(() => {
+      void fetchAccounts();
+    }, 0);
+    return () => globalThis.clearTimeout(timeoutId);
   }, [fetchAccounts]);
 
   return { accounts, isLoading, error, refetch: fetchAccounts };

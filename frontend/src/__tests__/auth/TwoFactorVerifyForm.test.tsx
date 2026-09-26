@@ -46,7 +46,7 @@ beforeEach(() => {
   mockError = null;
   mockResendSuccess = false;
 
-  Object.defineProperty(window, 'sessionStorage', {
+  Object.defineProperty(globalThis, 'sessionStorage', {
     value: {
       getItem: jest.fn((key: string) => {
         if (key === '2fa_masked_email') return 'j***@example.com';

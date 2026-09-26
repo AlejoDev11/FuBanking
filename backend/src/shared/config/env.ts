@@ -15,13 +15,13 @@ const envSchema = z.object({
   JWT_SECRET: z.string().min(16, 'JWT_SECRET must be at least 16 characters'),
   JWT_EXPIRES_IN: z.string().default('7d'),
 
-  SUPABASE_URL: z.string().url('SUPABASE_URL must be a valid URL'),
+  SUPABASE_URL: z.url({ error: 'SUPABASE_URL must be a valid URL' }),
   SUPABASE_ANON_KEY: z.string().min(1, 'SUPABASE_ANON_KEY is required'),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1, 'SUPABASE_SERVICE_ROLE_KEY is required'),
 
   CLIENT_URL: z.string().default('http://localhost:3000'),
 
-  GMAIL_USSER: z.string().email('GMAIL_USSER must be a valid email'),
+  GMAIL_USSER: z.email({ error: 'GMAIL_USSER must be a valid email' }),
   GMAIL_PASS: z.string().min(1, 'GMAIL_PASS is required'),
 });
 
@@ -29,7 +29,7 @@ const parsed = envSchema.safeParse(process.env);
 
 if (!parsed.success) {
   console.error('❌ Invalid environment variables:');
-  console.error(parsed.error.flatten().fieldErrors);
+  console.error(z.treeifyError(parsed.error));
   process.exit(1);
 }
 

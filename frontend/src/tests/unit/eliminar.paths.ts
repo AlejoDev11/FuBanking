@@ -95,7 +95,7 @@ export async function ejecutarCaminosEliminar(e: Escenario): Promise<void> {
         'El catch (nodo 7) toma el mensaje del backend, el nodo 9 lo muestra en un toast de error, el bolsillo permanece en la lista y el finally (nodo 10) apaga el indicador de carga y cierra el modal.',
     },
     async () => {
-      const fantasma: any = {
+      const fantasma: PocketItem = {
         id: UUID_INEXISTENTE,
         accountId: e.accountId,
         name: 'Fantasma',
@@ -147,7 +147,7 @@ export async function ejecutarCaminosEliminar(e: Escenario): Promise<void> {
     },
     async () => {
       const real = await crearBolsilloReal(e.accountId, 'Borrable', 10_000);
-      const laptop: any = {
+      const laptop: PocketItem = {
         id: 'laptop',
         accountId: e.accountId,
         name: 'Laptop',

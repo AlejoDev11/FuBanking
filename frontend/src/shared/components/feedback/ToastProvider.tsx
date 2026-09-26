@@ -67,13 +67,13 @@ const variantConfig = {
   },
 } satisfies Record<ToastVariant, { icon: React.ElementType; className: string; progress: string }>;
 
-export function ToastProvider({ children }: { children: ReactNode }) {
+export function ToastProvider({ children }: { readonly children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
-  const timersRef = useRef<Map<string, number>>(new Map());
+  const timersRef = useRef<Map<string, ReturnType<typeof globalThis.setTimeout>>>(new Map());
 
   const dismiss = useCallback((id?: string) => {
     if (!id) {
-      timersRef.current.forEach((timer) => window.clearTimeout(timer));
+      timersRef.current.forEach((timer) => globalThis.clearTimeout(timer));
       timersRef.current.clear();
       setToasts([]);
       return;
@@ -81,7 +81,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
     const timer = timersRef.current.get(id);
     if (timer) {
-      window.clearTimeout(timer);
+      globalThis.clearTimeout(timer);
       timersRef.current.delete(id);
     }
 
@@ -90,12 +90,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
   const addToast = useCallback(
     (variant: ToastVariant, title: string, description?: string, duration = DEFAULT_DURATION) => {
-      const id = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      const id = globalThis.crypto.randomUUID();
       const toast: Toast = { id, variant, title, description, duration };
 
       setToasts((current) => [toast, ...current].slice(0, 4));
 
-      const timer = window.setTimeout(() => {
+      const timer = globalThis.setTimeout(() => {
         dismiss(id);
       }, duration);
       timersRef.current.set(id, timer);
@@ -138,8 +138,8 @@ function ToastViewport({
   toasts,
   onDismiss,
 }: {
-  toasts: Toast[];
-  onDismiss: (id?: string) => void;
+  readonly toasts: Toast[];
+  readonly onDismiss: (id?: string) => void;
 }) {
   return (
     <div
@@ -154,7 +154,7 @@ function ToastViewport({
   );
 }
 
-function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }) {
+function ToastItem({ toast, onDismiss }: { readonly toast: Toast; readonly onDismiss: () => void }) {
   const config = variantConfig[toast.variant];
   const Icon = config.icon;
 

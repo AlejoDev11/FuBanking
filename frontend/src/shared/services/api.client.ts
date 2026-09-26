@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getMessage } from '../utils/getMessage';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1';
 
@@ -9,13 +10,19 @@ export const apiClient = axios.create({
   },
 });
 
+function getStoredToken(): string | null {
+  try {
+    return localStorage.getItem('token');
+  } catch {
+    return null;
+  }
+}
+
 apiClient.interceptors.request.use(
   (config) => {
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('token');
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
+    const token = getStoredToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
@@ -29,12 +36,20 @@ apiClient.interceptors.response.use(
     return response.data;
   },
   (error) => {
-    if (error.response && error.response.data && error.response.data.error) {
-      return Promise.reject(error.response.data.error);
+    const backendError: unknown = error.response?.data?.error;
+    if (backendError) {
+      if (backendError instanceof Error) {
+        return Promise.reject(backendError);
+      }
+      const message = getMessage(backendError, 'Error en la solicitud.');
+      const details =
+        typeof backendError === 'object' && backendError !== null
+          ? backendError
+          : { cause: backendError };
+      return Promise.reject(Object.assign(new Error(message), details));
     }
-    return Promise.reject({
-      code: 'NETWORK_ERROR',
-      message: 'No se pudo conectar al servidor.',
-    });
+    return Promise.reject(
+      Object.assign(new Error('No se pudo conectar al servidor.'), { code: 'NETWORK_ERROR' }),
+    );
   }
 );

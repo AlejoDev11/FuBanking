@@ -18,6 +18,16 @@ import { useAccounts } from '../hooks/useAccounts';
  * - Modal de creación (al hacer click en "Nueva cuenta").
  * - Estado vacío cuando el usuario no tiene cuentas aún.
  */
+function getAccountsCountLabel(count: number): string {
+  if (count === 0) {
+    return 'No tienes cuentas aún';
+  }
+  if (count === 1) {
+    return '1 cuenta';
+  }
+  return `${count} cuentas`;
+}
+
 export function AccountList() {
   const { accounts, isLoading, error, refetch } = useAccounts();
   const [selectedAccount, setSelectedAccount] = useState<Account | null>(null);
@@ -81,9 +91,7 @@ export function AccountList() {
           <div>
             <h2 className="text-white font-semibold">Mis cuentas</h2>
             <p className="text-white/40 text-xs">
-              {accounts.length === 0
-                ? 'No tienes cuentas aún'
-                : `${accounts.length} cuenta${accounts.length !== 1 ? 's' : ''}`}
+              {getAccountsCountLabel(accounts.length)}
             </p>
           </div>
         </div>

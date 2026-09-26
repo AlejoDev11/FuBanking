@@ -10,16 +10,41 @@
 export class Email {
   private readonly value: string;
 
-  private static readonly EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
   constructor(email: string) {
     const normalized = email.toLowerCase().trim();
 
-    if (!Email.EMAIL_REGEX.test(normalized)) {
+    if (!Email.isValidFormat(normalized)) {
       throw new Error(`"${email}" no es un correo electrónico válido`);
     }
 
     this.value = normalized;
+  }
+
+  /**
+   * Valida el formato sin expresiones regulares con backtracking.
+   * Equivale a `^[^\s@]+@[^\s@]+\.[^\s@]+$` con tiempo lineal garantizado.
+   */
+  private static isValidFormat(email: string): boolean {
+    const atIndex = email.indexOf('@');
+    if (atIndex <= 0 || atIndex !== email.lastIndexOf('@')) {
+      return false;
+    }
+    const local = email.slice(0, atIndex);
+    const domain = email.slice(atIndex + 1);
+    if (Email.hasWhitespace(local) || Email.hasWhitespace(domain)) {
+      return false;
+    }
+    const dotIndex = domain.indexOf('.');
+    return dotIndex > 0 && dotIndex < domain.length - 1;
+  }
+
+  private static hasWhitespace(value: string): boolean {
+    for (const char of value) {
+      if (char === ' ' || char === '\t' || char === '\n' || char === '\r' || char === '\f' || char === '\v') {
+        return true;
+      }
+    }
+    return false;
   }
 
   toString(): string {

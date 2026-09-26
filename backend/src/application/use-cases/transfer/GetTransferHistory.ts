@@ -64,8 +64,7 @@ export class GetTransferHistory {
     const resolvedHistory = await Promise.all(historyPromises);
 
     let currentBalance = account.balance;
-    for (let i = 0; i < resolvedHistory.length; i++) {
-      const item = resolvedHistory[i];
+    for (const item of resolvedHistory) {
       item.resultingBalance = currentBalance;
       if (item.direction === 'INCOMING') {
         currentBalance -= item.amount;

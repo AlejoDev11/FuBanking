@@ -15,7 +15,7 @@ export function usePasswordReset() {
     try {
       await authService.forgotPassword(data);
       setIsSuccess(true);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err as AuthError);
     } finally {
       setIsLoading(false);
@@ -29,7 +29,7 @@ export function usePasswordReset() {
     try {
       await authService.resetPassword(data);
       setIsSuccess(true);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err as AuthError);
     } finally {
       setIsLoading(false);

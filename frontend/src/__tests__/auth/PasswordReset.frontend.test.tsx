@@ -8,7 +8,7 @@
  *   C2 – Email válido, falla la petición forgotPassword → muestra error de envío
  *   C3 – Correo enviado, contraseñas no pasan validación en ResetPasswordForm → error de validación
  *   C4 – Contraseñas válidas, falla la petición resetPassword → muestra error del backend
- *   C5 – Todo válido: forgotPassword + resetPassword exitosos → confirmación + redirección a login
+ *   C5 – Caso válido: forgotPassword + resetPassword exitosos → confirmación + redirección a login
  *
  * Notas sobre inferencias:
  *   - Los nodos 3, 7, 13 y 17 del diagrama están "inferidos". Revisado contra el hook

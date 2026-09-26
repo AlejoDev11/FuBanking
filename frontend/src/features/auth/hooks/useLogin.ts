@@ -26,7 +26,7 @@ export function useLogin() {
       } else {
         login(response.user, response.token);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err as AuthError);
     } finally {
       setIsLoading(false);

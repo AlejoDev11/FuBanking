@@ -1,4 +1,5 @@
 import { cn } from '@/shared/utils/cn';
+import { getMessage } from '@/shared/utils/getMessage';
 import { CreditCard, Eye, EyeOff, Lock, Trash2, Unlock, Zap } from 'lucide-react';
 import React, { useState } from 'react';
 import { cardService } from '../services/card.service';
@@ -6,23 +7,22 @@ import { VirtualCard as CardType } from '../types/card.types';
 
 export type Card = CardType;
 
-interface VirtualCardProps {
-  card: CardType;
-  accountType?: 'AHORROS' | 'CORRIENTE' | 'NOMINA' | 'CREDITO';
-  onToggleLock: (cardId: string) => void;
-  onDelete?: (cardId: string) => void;
-  isLoading: boolean;
+type AccountPalette = 'AHORROS' | 'CORRIENTE' | 'NOMINA' | 'CREDITO';
+
+interface CardPalette {
+  face: string;
+  back: string;
+  badge: string;
 }
 
-export function VirtualCard({ card, accountType = 'AHORROS', onToggleLock, onDelete = () => {}, isLoading }: VirtualCardProps) {
-  const [isFlipped, setIsFlipped] = useState(false);
-  const [showSensitiveData, setShowSensitiveData] = useState(false);
-  const [sensitiveData, setSensitiveData] = useState<{ cardNumber: string; cvv: string } | null>(null);
-  const [isRevealing, setIsRevealing] = useState(false);
-  const [revealError, setRevealError] = useState<string | null>(null);
-  const isBlocked = card.status === 'BLOQUEADA';
+const DEFAULT_PALETTE: CardPalette = {
+  face: 'border border-primary/30 bg-gradient-to-br from-[#820AD1] via-[#53178f] to-[#18111f]',
+  back: 'border border-primary/30 bg-gradient-to-br from-[#18111f] via-[#2a0e4a] to-[#40126e]',
+  badge: 'bg-green-500/20 text-green-200',
+};
 
-  const colorPalette = {
+function getCardPalette(accountType: AccountPalette): CardPalette {
+  const palettes: Record<AccountPalette, CardPalette> = {
     AHORROS: {
       face: 'border border-primary/30 bg-gradient-to-br from-[#820AD1] via-[#53178f] to-[#18111f]',
       back: 'border border-primary/30 bg-gradient-to-br from-[#18111f] via-[#2a0e4a] to-[#40126e]',
@@ -43,23 +43,33 @@ export function VirtualCard({ card, accountType = 'AHORROS', onToggleLock, onDel
       back: 'border border-amber-500/30 bg-gradient-to-br from-[#451a03] via-[#78350f] to-[#92400e]',
       badge: 'bg-amber-500/20 text-amber-200',
     },
-  }[accountType] ?? {
-    face: 'border border-primary/30 bg-gradient-to-br from-[#820AD1] via-[#53178f] to-[#18111f]',
-    back: 'border border-primary/30 bg-gradient-to-br from-[#18111f] via-[#2a0e4a] to-[#40126e]',
-    badge: 'bg-green-500/20 text-green-200',
   };
+  return palettes[accountType] ?? DEFAULT_PALETTE;
+}
 
-  const cardFaceStyle: React.CSSProperties = {
-    backfaceVisibility: 'hidden',
-    WebkitBackfaceVisibility: 'hidden',
-  };
-  const cardBackStyle: React.CSSProperties = {
-    backfaceVisibility: 'hidden',
-    WebkitBackfaceVisibility: 'hidden',
-    transform: 'rotateY(180deg)',
-  };
+function formatCardNumber(value: string): string {
+  return value.replace(/(.{4})/g, '$1 ').trim();
+}
 
-  const formatCardNumber = (value: string) => value.replace(/(.{4})/g, '$1 ').trim();
+interface CardBackFaceProps {
+  card: CardType;
+  isBlocked: boolean;
+  backClassName: string;
+  faceStyle: React.CSSProperties;
+}
+
+function CardBackFace({ card, isBlocked, backClassName, faceStyle }: Readonly<CardBackFaceProps>) {
+  const [showSensitiveData, setShowSensitiveData] = useState(false);
+  const [sensitiveData, setSensitiveData] = useState<{ cardNumber: string; cvv: string } | null>(null);
+  const [isRevealing, setIsRevealing] = useState(false);
+  const [revealError, setRevealError] = useState<string | null>(null);
+
+  let revealButtonLabel = 'Ver numero y CVV';
+  if (isRevealing) {
+    revealButtonLabel = 'Cargando datos...';
+  } else if (showSensitiveData) {
+    revealButtonLabel = 'Ocultar numero y CVV';
+  }
 
   const handleRevealSensitiveData = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
@@ -81,23 +91,96 @@ export function VirtualCard({ card, accountType = 'AHORROS', onToggleLock, onDel
       setSensitiveData(details);
       setShowSensitiveData(true);
     } catch (error) {
-      const message = error && typeof error === 'object' && 'message' in error
-        ? String((error as { message?: string }).message || 'No fue posible revelar los datos.')
-        : 'No fue posible revelar los datos.';
-      setRevealError(message);
+      setRevealError(getMessage(error, 'No fue posible revelar los datos.'));
     } finally {
       setIsRevealing(false);
     }
   };
 
+  const displayedCvv = showSensitiveData && sensitiveData ? sensitiveData.cvv : card.cvvMasked;
+  const displayedNumber = showSensitiveData && sensitiveData
+    ? formatCardNumber(sensitiveData.cardNumber)
+    : `**** **** **** ${card.lastFour}`;
+
+  return (
+    <div
+      className={cn(
+        "absolute inset-0 w-full h-full rounded-2xl text-white shadow-xl overflow-hidden",
+        isBlocked
+          ? "border border-zinc-700/50 bg-gradient-to-br from-zinc-800 to-zinc-950 grayscale"
+          : backClassName
+      )}
+      style={faceStyle}
+    >
+      <div className="w-full h-12 bg-black/80 mt-6" />
+      <div className="px-6 py-4">
+        <div className="w-full bg-white/10 rounded h-10 flex items-center justify-end px-4">
+          <p className="font-mono text-lg tracking-widest italic flex items-center gap-2">
+            {showSensitiveData ? <Eye size={16} className="text-white/50" /> : <EyeOff size={16} className="text-white/50" />}
+            CVV {displayedCvv}
+          </p>
+        </div>
+        <div className="mt-3 min-h-[28px]">
+          <p className="font-mono text-sm tracking-[0.2em] text-white/80">
+            {displayedNumber}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={handleRevealSensitiveData}
+          disabled={isRevealing || card.status === 'CANCELADA'}
+          className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-white/15 disabled:opacity-50 disabled:pointer-events-none"
+        >
+          {showSensitiveData ? <EyeOff size={14} /> : <Eye size={14} />}
+          {revealButtonLabel}
+        </button>
+        {revealError && (
+          <p className="mt-2 text-center text-[10px] font-medium text-red-200">
+            {revealError}
+          </p>
+        )}
+        <p className="text-[10px] text-white/40 mt-4 leading-tight text-center">
+          Esta tarjeta virtual es personal e intransferible. Úsala para tus compras en línea de manera segura. El CVV cambia periódicamente.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+interface VirtualCardProps {
+  card: CardType;
+  accountType?: 'AHORROS' | 'CORRIENTE' | 'NOMINA' | 'CREDITO';
+  onToggleLock: (cardId: string) => void;
+  onDelete?: (cardId: string) => void;
+  isLoading: boolean;
+}
+
+export function VirtualCard({ card, accountType = 'AHORROS', onToggleLock, onDelete = () => {}, isLoading }: Readonly<VirtualCardProps>) {
+  const [isFlipped, setIsFlipped] = useState(false);
+  const isBlocked = card.status === 'BLOQUEADA';
+  const colorPalette = getCardPalette(accountType);
+
+  const cardFaceStyle: React.CSSProperties = {
+    backfaceVisibility: 'hidden',
+    WebkitBackfaceVisibility: 'hidden',
+  };
+  const cardBackStyle: React.CSSProperties = {
+    backfaceVisibility: 'hidden',
+    WebkitBackfaceVisibility: 'hidden',
+    transform: 'rotateY(180deg)',
+  };
+
   return (
     <div className="space-y-4" style={{ perspective: '1000px' }}>
       {/* Contenedor principal de la tarjeta con flip 3D */}
-      <div 
+      <button
+        type="button"
+        aria-pressed={isFlipped}
+        aria-label={isFlipped ? 'Ver frente de la tarjeta' : 'Ver reverso de la tarjeta'}
         className={cn(
-          "relative w-full h-[220px] cursor-pointer transition-all duration-700 hover:scale-[1.02] group"
+          "relative w-full h-[220px] cursor-pointer transition-all duration-700 hover:scale-[1.02] group text-left"
         )}
-        style={{ 
+        style={{
           transformStyle: 'preserve-3d',
           transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
         }}
@@ -154,48 +237,13 @@ export function VirtualCard({ card, accountType = 'AHORROS', onToggleLock, onDel
         </div>
 
         {/* Lado Reverso */}
-        <div 
-          className={cn(
-            "absolute inset-0 w-full h-full rounded-2xl text-white shadow-xl overflow-hidden",
-            isBlocked 
-              ? "border border-zinc-700/50 bg-gradient-to-br from-zinc-800 to-zinc-950 grayscale" 
-              : colorPalette.back
-          )}
-          style={cardBackStyle}
-        >
-          <div className="w-full h-12 bg-black/80 mt-6" />
-          <div className="px-6 py-4">
-            <div className="w-full bg-white/10 rounded h-10 flex items-center justify-end px-4">
-              <p className="font-mono text-lg tracking-widest italic flex items-center gap-2">
-                {showSensitiveData ? <Eye size={16} className="text-white/50" /> : <EyeOff size={16} className="text-white/50" />}
-                CVV {showSensitiveData && sensitiveData ? sensitiveData.cvv : card.cvvMasked}
-              </p>
-            </div>
-            <div className="mt-3 min-h-[28px]">
-              <p className="font-mono text-sm tracking-[0.2em] text-white/80">
-                {showSensitiveData && sensitiveData ? formatCardNumber(sensitiveData.cardNumber) : `**** **** **** ${card.lastFour}`}
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={handleRevealSensitiveData}
-              disabled={isRevealing || card.status === 'CANCELADA'}
-              className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-white/15 disabled:opacity-50 disabled:pointer-events-none"
-            >
-              {showSensitiveData ? <EyeOff size={14} /> : <Eye size={14} />}
-              {isRevealing ? 'Cargando datos...' : showSensitiveData ? 'Ocultar numero y CVV' : 'Ver numero y CVV'}
-            </button>
-            {revealError && (
-              <p className="mt-2 text-center text-[10px] font-medium text-red-200">
-                {revealError}
-              </p>
-            )}
-            <p className="text-[10px] text-white/40 mt-4 leading-tight text-center">
-              Esta tarjeta virtual es personal e intransferible. Úsala para tus compras en línea de manera segura. El CVV cambia periódicamente.
-            </p>
-          </div>
-        </div>
-      </div>
+        <CardBackFace
+          card={card}
+          isBlocked={isBlocked}
+          backClassName={colorPalette.back}
+          faceStyle={cardBackStyle}
+        />
+      </button>
 
       {/* Controles */}
       <div className="grid grid-cols-2 gap-2">

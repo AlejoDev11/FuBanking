@@ -27,7 +27,7 @@ describe('registerSchema — Pruebas de caja blanca (tabla de caminos Zod)', () 
       if (!result.success) {
         const firstNameIssues = result.error.issues.filter((i) => i.path.includes('firstName'));
         expect(firstNameIssues.length).toBeGreaterThanOrEqual(1);
-        expect(firstNameIssues[0]!.message).toBe('El primer nombre debe tener al menos 2 caracteres');
+        expect(firstNameIssues[0].message).toBe('El primer nombre debe tener al menos 2 caracteres');
       }
     });
   });
@@ -40,7 +40,7 @@ describe('registerSchema — Pruebas de caja blanca (tabla de caminos Zod)', () 
       if (!result.success) {
         const lastNameIssues = result.error.issues.filter((i) => i.path.includes('lastName'));
         expect(lastNameIssues.length).toBeGreaterThanOrEqual(1);
-        expect(lastNameIssues[0]!.message).toBe('Solo se permiten letras y espacios');
+        expect(lastNameIssues[0].message).toBe('Solo se permiten letras y espacios');
       }
     });
   });
@@ -53,7 +53,7 @@ describe('registerSchema — Pruebas de caja blanca (tabla de caminos Zod)', () 
       if (!result.success) {
         const birthDateIssues = result.error.issues.filter((i) => i.path.includes('birthDate'));
         expect(birthDateIssues.length).toBeGreaterThanOrEqual(1);
-        expect(birthDateIssues[0]!.message).toBe('La fecha no puede ser en el futuro');
+        expect(birthDateIssues[0].message).toBe('La fecha no puede ser en el futuro');
       }
     });
   });
@@ -66,7 +66,7 @@ describe('registerSchema — Pruebas de caja blanca (tabla de caminos Zod)', () 
       if (!result.success) {
         const emailIssues = result.error.issues.filter((i) => i.path.includes('email'));
         expect(emailIssues.length).toBeGreaterThanOrEqual(1);
-        expect(emailIssues[0]!.message).toBe('Correo electrónico inválido');
+        expect(emailIssues[0].message).toBe('Correo electrónico inválido');
       }
     });
   });
@@ -79,7 +79,7 @@ describe('registerSchema — Pruebas de caja blanca (tabla de caminos Zod)', () 
       if (!result.success) {
         const documentIssues = result.error.issues.filter((i) => i.path.includes('document'));
         expect(documentIssues.length).toBeGreaterThanOrEqual(1);
-        expect(documentIssues[0]!.message).toBe('Documento inválido');
+        expect(documentIssues[0].message).toBe('Documento inválido');
       }
     });
   });
@@ -96,7 +96,7 @@ describe('registerSchema — Pruebas de caja blanca (tabla de caminos Zod)', () 
       if (!result.success) {
         const passwordIssues = result.error.issues.filter((i) => i.path.includes('password'));
         expect(passwordIssues.length).toBeGreaterThanOrEqual(1);
-        expect(passwordIssues[0]!.message).toBe('Debe contener al menos una mayúscula');
+        expect(passwordIssues[0].message).toBe('Debe contener al menos una mayúscula');
       }
     });
   });
@@ -113,7 +113,7 @@ describe('registerSchema — Pruebas de caja blanca (tabla de caminos Zod)', () 
       if (!result.success) {
         const confirmIssues = result.error.issues.filter((i) => i.path.includes('confirmPassword'));
         expect(confirmIssues.length).toBeGreaterThanOrEqual(1);
-        expect(confirmIssues[0]!.message).toBe('Las contraseñas no coinciden');
+        expect(confirmIssues[0].message).toBe('Las contraseñas no coinciden');
       }
     });
   });

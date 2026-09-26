@@ -21,14 +21,15 @@ import { ejecutarCaminosEliminar } from './unit/eliminar.paths';
 import { ejecutarCaminosTransferir } from './unit/transferir.paths';
 import { montarEscenario } from './unit/support/entorno';
 import { obtenerCaminos, resumirCaminos } from './unit/support/runner';
+import { getMessage } from '../shared/utils/getMessage';
 
 async function main(): Promise<void> {
   let escenario;
   try {
     escenario = await montarEscenario();
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('No se pudo montar el escenario, así que no se ejecutó ningún camino.');
-    console.error(`Motivo: ${error?.message ?? error}`);
+    console.error(`Motivo: ${getMessage(error, String(error))}`);
     console.error('');
     console.error('Comprobaciones:');
     console.error('  1. ¿Está corriendo el backend?  cd backend && npm run dev');

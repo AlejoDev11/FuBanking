@@ -36,7 +36,7 @@ interface AccountDetailsRow {
  * Implementa IAccountRepository de la capa de dominio.
  * Es la única clase que conoce la estructura de las tablas `accounts` y `account_details`.
  *
- * Responsabilidad única: todo acceso a la BD de cuentas pasa por aquí.
+ * Responsabilidad única: cualquier acceso a la BD de cuentas pasa por aquí.
  */
 export class SupabaseAccountRepository implements IAccountRepository {
   private readonly TABLE = 'accounts';

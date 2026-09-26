@@ -20,7 +20,7 @@ interface AccountDetailModalProps {
  * del tipo de cuenta (tasa de interés, sobregiro, empresa, etc.).
  * También permite eliminar la cuenta (cierre suave) con confirmación.
  */
-export function AccountDetailModal({ account, isOpen, onClose, onAccountDeleted }: AccountDetailModalProps) {
+export function AccountDetailModal({ account, isOpen, onClose, onAccountDeleted }: Readonly<AccountDetailModalProps>) {
   const toast = useToast();
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -66,15 +66,18 @@ export function AccountDetailModal({ account, isOpen, onClose, onAccountDeleted 
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      onClick={onClose}
     >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+      <button
+        type="button"
+        aria-label="Cerrar detalle de cuenta"
+        onClick={onClose}
+        className="absolute inset-0 bg-black/70 backdrop-blur-sm cursor-default"
+      />
 
       {/* Modal */}
       <div
         className="relative z-10 w-full max-w-md bg-[#1a1a2e] border border-white/10 rounded-2xl p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200"
-        onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -170,15 +173,7 @@ export function AccountDetailModal({ account, isOpen, onClose, onAccountDeleted 
         {/* Eliminar cuenta (no disponible para cuentas de crédito) */}
         {!isCreditAccount && (
           <div className="border-t border-white/10 pt-4 mt-4">
-            {!confirmingDelete ? (
-              <button
-                onClick={() => setConfirmingDelete(true)}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 text-sm font-semibold border border-red-500/20 transition-colors"
-              >
-                <Trash2 className="w-4 h-4" />
-                Eliminar cuenta
-              </button>
-            ) : (
+            {confirmingDelete ? (
               <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 space-y-3">
                 <p className="text-sm text-red-300 flex items-start gap-2">
                   <TriangleAlert className="w-4 h-4 mt-0.5 shrink-0" />
@@ -205,6 +200,14 @@ export function AccountDetailModal({ account, isOpen, onClose, onAccountDeleted 
                   </button>
                 </div>
               </div>
+            ) : (
+              <button
+                onClick={() => setConfirmingDelete(true)}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 text-sm font-semibold border border-red-500/20 transition-colors"
+              >
+                <Trash2 className="w-4 h-4" />
+                Eliminar cuenta
+              </button>
             )}
           </div>
         )}
@@ -213,7 +216,7 @@ export function AccountDetailModal({ account, isOpen, onClose, onAccountDeleted 
   );
 }
 
-function InfoRow({ label, children }: { label: string; children: React.ReactNode }) {
+function InfoRow({ label, children }: { readonly label: string; readonly children: React.ReactNode }) {
   return (
     <div className="flex items-center justify-between">
       <span className="text-white/40 text-sm">{label}</span>

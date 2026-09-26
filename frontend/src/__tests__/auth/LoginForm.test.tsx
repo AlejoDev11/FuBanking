@@ -87,7 +87,6 @@ describe('LoginForm — Pruebas de caja blanca (tabla de caminos Frontend)', () 
 
   test('C3 - credenciales incorrectas: muestra mensaje de error devuelto por el hook', async () => {
     jest.resetModules();
-    const { useLogin: useLoginMock } = jest.requireMock('../../features/auth/hooks/useLogin') as any;
 
     jest.mock('../../features/auth/hooks/useLogin', () => ({
       useLogin: () => ({
