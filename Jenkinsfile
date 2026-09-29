@@ -163,7 +163,9 @@ GMAIL_PASS=ci-dummy
             # Actualiza los newTag de ambas imagenes en overlays/dev/kustomization.yaml
             # (ambas usan el mismo TAG = BUILD_NUMBER del pipeline)
             if [ -f overlays/dev/kustomization.yaml ]; then
-              sed -i "s/newTag: \".*\"/newTag: \"$TAG\"/g" overlays/dev/kustomization.yaml
+              # newTag SIEMPRE entrecomillado: un numero sin comillas rompe
+              # `kustomize build` (newTag debe ser string).
+              sed -i "s/newTag: .*/newTag: \"$TAG\"/g" overlays/dev/kustomization.yaml
               grep -A2 "name: abedoya923" overlays/dev/kustomization.yaml
             fi
 
