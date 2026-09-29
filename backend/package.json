@@ -11,7 +11,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "test:coverage:bolsillos": "c8 tsx src/tests/run-unit.ts && node scripts/normalize-lcov.mjs"
+    "test:coverage:bolsillos": "c8 tsx src/tests/run-unit.ts && node scripts/normalize-lcov.mjs",
+    "test:regression:bolsillos": "vitest run src/tests/regression src/tests/unit/pocket src/tests/unit/account"
   },
   "keywords": [
     "bank",
