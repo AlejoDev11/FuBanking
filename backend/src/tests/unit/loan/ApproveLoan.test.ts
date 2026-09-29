@@ -12,6 +12,27 @@ import {
 } from './in-memory-repos';
 import { buildPendingLoan } from './in-memory-repos';
 
+// El caso de uso genera el numero con crypto.randomInt (node:crypto),
+// por eso se mockea esa funcion y NO Math.random.
+vi.mock('node:crypto', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('node:crypto')>();
+  // Valor determinista por defecto: digitos 5500000000 -> 'BA5500000000'
+  return { ...actual, randomInt: vi.fn(() => 5500000000) };
+});
+
+const DEFAULT_DIGITS = 5500000000;
+
+async function mockRandomInt(value: number) {
+  const { randomInt } = await import('node:crypto');
+  vi.mocked(randomInt).mockReturnValue(value);
+}
+
+async function resetRandomIntMock() {
+  const { randomInt } = await import('node:crypto');
+  vi.mocked(randomInt).mockReset();
+  vi.mocked(randomInt).mockReturnValue(DEFAULT_DIGITS);
+}
+
 describe('ApproveLoan', () => {
   let loanRepo: InMemoryLoanRepo;
   let userRepo: InMemoryUserRepo;
@@ -144,7 +165,9 @@ describe('ApproveLoan', () => {
       );
       expect(existing.accountNumber).toBe(taken);
 
-      const randomSpy = vi.spyOn(Math, 'random').mockReturnValue(0.5);
+      // Math.random ya no se usa: el caso de uso genera digitos con crypto.randomInt.
+      // 5500000000 -> 'BA5500000000'
+      await mockRandomInt(5500000000);
 
       const realFind = accountRepo.findByAccountNumber.bind(accountRepo);
       let calls = 0;
@@ -164,7 +187,7 @@ describe('ApproveLoan', () => {
         expect(accounts).toHaveLength(2);
         expect(accounts.map((a) => a.accountNumber)).toContain('BA5500000000');
       } finally {
-        randomSpy.mockRestore();
+        await resetRandomIntMock();
       }
     });
 
@@ -176,7 +199,9 @@ describe('ApproveLoan', () => {
       const loan = buildPendingLoan(user.id);
       await loanRepo.save(loan);
 
-      const randomSpy = vi.spyOn(Math, 'random').mockReturnValue(0.123456789);
+      // 0.123456789 del Math.random anterior generaba digitos 2111111101;
+      // ahora se mockea crypto.randomInt directamente con ese valor.
+      await mockRandomInt(2111111101);
       accountRepo.findByAccountNumber = async () =>
         (await import('../../../domain/entities/Account')).Account.create({
           id: randomUUID(),
@@ -189,7 +214,7 @@ describe('ApproveLoan', () => {
         // Act + Assert
         await expect(useCase.execute(loan.id)).rejects.toThrow(/único/i);
       } finally {
-        randomSpy.mockRestore();
+        await resetRandomIntMock();
       }
     });
 
