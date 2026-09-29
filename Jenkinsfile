@@ -164,8 +164,9 @@ GMAIL_PASS=ci-dummy
             # (ambas usan el mismo TAG = BUILD_NUMBER del pipeline)
             if [ -f overlays/dev/kustomization.yaml ]; then
               # newTag SIEMPRE entrecomillado: un numero sin comillas rompe
-              # `kustomize build` (newTag debe ser string).
-              sed -i "s/newTag: .*/newTag: \"$TAG\"/g" overlays/dev/kustomization.yaml
+              # `kustomize build` (newTag debe ser string). Se evita \" anidado
+              # usando concatenacion de comillas simples.
+              sed -i 's/newTag: .*/newTag: "'"$TAG"'"/g' overlays/dev/kustomization.yaml
               grep -A2 "name: abedoya923" overlays/dev/kustomization.yaml
             fi
 
