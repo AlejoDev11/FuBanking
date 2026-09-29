@@ -84,20 +84,67 @@ GMAIL_PASS=ci-dummy
       }
     }
 
-    stage('Docker build & push') {
+    stage('Docker build') {
       steps {
         withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DH_USER', passwordVariable: 'DH_PASS')]) {
           sh '''
             echo "$DH_PASS" | docker login -u "$DH_USER" --password-stdin
             TAG="${BUILD_NUMBER}"
 
-            docker build -t $BACKEND_IMG:$TAG -t $BACKEND_IMG:latest ./backend
-            docker push $BACKEND_IMG:$TAG
-            docker push $BACKEND_IMG:latest
+            docker build -t $BACKEND_IMG:$TAG ./backend
 
             docker build \
               --build-arg NEXT_PUBLIC_API_URL=http://localhost:3001/api/v1 \
-              -t $FRONTEND_IMG:$TAG -t $FRONTEND_IMG:latest ./frontend
+              -t $FRONTEND_IMG:$TAG ./frontend
+          '''
+        }
+      }
+    }
+
+    stage('Run with Docker (smoke test)') {
+      steps {
+        sh '''
+          TAG="${BUILD_NUMBER}"
+          NET="ci-smoke-$TAG"
+          BE="be-smoke-$TAG"
+          FE="fe-smoke-$TAG"
+          cleanup() { docker rm -f "$BE" "$FE" >/dev/null 2>&1; docker network rm "$NET" >/dev/null 2>&1; }
+          trap cleanup EXIT
+          docker network create "$NET"
+          docker run -d --name "$BE" --network "$NET" \
+            -e PORT=3001 -e NODE_ENV=production \
+            -e JWT_SECRET=ci-dummy-secret-min-16-chars -e JWT_EXPIRES_IN=7d \
+            -e SUPABASE_URL=https://dummy.supabase.co \
+            -e SUPABASE_ANON_KEY=ci-dummy-anon-key \
+            -e SUPABASE_SERVICE_ROLE_KEY=ci-dummy-service-key \
+            -e CLIENT_URL=http://localhost:3000 \
+            -e GMAIL_USSER=ci@example.com -e GMAIL_PASS=ci-dummy \
+            $BACKEND_IMG:$TAG
+          docker run -d --name "$FE" --network "$NET" \
+            -e PORT=3000 -e HOSTNAME=0.0.0.0 \
+            $FRONTEND_IMG:$TAG
+          # Espera con reintentos a que ambos respondan (Jenkins corre en Docker:
+          # se usa red dedicada + nombre de contenedor, no localhost)
+          docker run --rm --network "$NET" curlimages/curl:latest \
+            --retry 12 --retry-delay 5 --retry-all-errors -sf http://$BE:3001/health
+          echo "backend OK"
+          docker run --rm --network "$NET" curlimages/curl:latest \
+            --retry 12 --retry-delay 5 --retry-all-errors -sf http://$FE:3000/
+          echo "frontend OK"
+        '''
+      }
+    }
+
+    stage('Docker push') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DH_USER', passwordVariable: 'DH_PASS')]) {
+          sh '''
+            echo "$DH_PASS" | docker login -u "$DH_USER" --password-stdin
+            TAG="${BUILD_NUMBER}"
+            docker tag $BACKEND_IMG:$TAG $BACKEND_IMG:latest
+            docker push $BACKEND_IMG:$TAG
+            docker push $BACKEND_IMG:latest
+            docker tag $FRONTEND_IMG:$TAG $FRONTEND_IMG:latest
             docker push $FRONTEND_IMG:$TAG
             docker push $FRONTEND_IMG:latest
           '''
