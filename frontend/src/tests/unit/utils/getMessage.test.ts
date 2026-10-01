@@ -1,16 +1,17 @@
+import { expect as assert } from '@assertive-ts/core';
 import { describe, it, expect } from 'vitest';
 import { getMessage } from '@/shared/utils/getMessage';
 
 describe('getMessage', () => {
   it('should return the server message when present', () => {
-    expect(getMessage({ message: 'Mal' }, 'Fallback')).toBe('Mal');
+    assert(getMessage({ message: 'Mal' }, 'Fallback')).toBeEqual('Mal');
   });
 
   it('should fall back without message, without object or empty', () => {
-    expect(getMessage({ message: '' }, 'Fallback')).toBe('Fallback');
-    expect(getMessage({}, 'Fallback')).toBe('Fallback');
-    expect(getMessage(null, 'Fallback')).toBe('Fallback');
-    expect(getMessage('boom', 'Fallback')).toBe('Fallback');
-    expect(getMessage(undefined, 'Fallback')).toBe('Fallback');
+    assert(getMessage({ message: '' }, 'Fallback')).toBeEqual('Fallback');
+    assert(getMessage({}, 'Fallback')).toBeEqual('Fallback');
+    assert(getMessage(null, 'Fallback')).toBeEqual('Fallback');
+    assert(getMessage('boom', 'Fallback')).toBeEqual('Fallback');
+    assert(getMessage(undefined, 'Fallback')).toBeEqual('Fallback');
   });
 });

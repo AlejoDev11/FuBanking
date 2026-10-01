@@ -1,3 +1,4 @@
+import { expect as assert } from '@assertive-ts/core';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useUpdateProfile } from '@/features/profile/hooks/useUpdateProfile';
@@ -36,7 +37,7 @@ describe('useUpdateProfile', () => {
     expect(mockLogin).toHaveBeenCalledWith(updated, 'jwt');
     expect(onSuccess).toHaveBeenCalledWith(updated);
     expect(result.current.error).toBeNull();
-    expect(result.current.isLoading).toBe(false);
+    assert(result.current.isLoading).toBeFalse();
   });
 
   it('should work without token and without callback', async () => {

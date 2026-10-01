@@ -1,3 +1,4 @@
+import { expect as assert } from '@assertive-ts/core';
 import { registerSchema } from '../../features/auth/schemas/auth.schemas';
 import { RegisterInput } from '../../features/auth/schemas/auth.schemas';
 
@@ -61,9 +62,9 @@ describe('Registro — Pruebas de integración (tabla de caminos Frontend↔Back
     it('1,2,3,5,6,8,10,12,13,F', async () => {
       const response = await handleRegister(BASE_VALID_INPUT);
 
-      expect(response.status).toBe(201);
+      assert(response.status).toBeEqual(201);
       expect(response.body.token).toBeDefined();
-      expect((response.body.user as any).email).toBe('juan@test.com');
+      assert((response.body.user as any).email).toBeEqual('juan@test.com');
     });
   });
 
@@ -71,10 +72,10 @@ describe('Registro — Pruebas de integración (tabla de caminos Frontend↔Back
     it('1,2,3,4,F', async () => {
       const response = await handleRegister({ ...BASE_VALID_INPUT, firstName: 'J' });
 
-      expect(response.status).toBe(422);
-      expect(response.body.code).toBe('VALIDATION_ERROR');
+      assert(response.status).toBeEqual(422);
+      assert(response.body.code).toBeEqual('VALIDATION_ERROR');
       const errors = response.body.errors as Array<{ path: (string | number)[]; message: string }>;
-      expect(errors.some((e) => e.path.includes('firstName'))).toBe(true);
+      assert(errors.some((e) => e.path.includes('firstName'))).toBeTrue();
     });
   });
 
@@ -86,10 +87,10 @@ describe('Registro — Pruebas de integración (tabla de caminos Frontend↔Back
         confirmPassword: 'OtraPassword456',
       });
 
-      expect(response.status).toBe(422);
-      expect(response.body.code).toBe('VALIDATION_ERROR');
+      assert(response.status).toBeEqual(422);
+      assert(response.body.code).toBeEqual('VALIDATION_ERROR');
       const errors = response.body.errors as Array<{ path: (string | number)[]; message: string }>;
-      expect(errors.some((e) => e.path.includes('confirmPassword'))).toBe(true);
+      assert(errors.some((e) => e.path.includes('confirmPassword'))).toBeTrue();
     });
   });
 
@@ -97,8 +98,8 @@ describe('Registro — Pruebas de integración (tabla de caminos Frontend↔Back
     it('1,2,3,5,6,8,9,F', async () => {
       const response = await handleRegister({ ...BASE_VALID_INPUT, email: 'existing-email@test.com' });
 
-      expect(response.status).toBe(409);
-      expect(response.body.code).toBe('EMAIL_ALREADY_EXISTS');
+      assert(response.status).toBeEqual(409);
+      assert(response.body.code).toBeEqual('EMAIL_ALREADY_EXISTS');
     });
   });
 
@@ -106,8 +107,8 @@ describe('Registro — Pruebas de integración (tabla de caminos Frontend↔Back
     it('1,2,3,5,6,8,10,11,F', async () => {
       const response = await handleRegister({ ...BASE_VALID_INPUT, document: 'DOC99999' });
 
-      expect(response.status).toBe(409);
-      expect(response.body.code).toBe('DOCUMENT_ALREADY_EXISTS');
+      assert(response.status).toBeEqual(409);
+      assert(response.body.code).toBeEqual('DOCUMENT_ALREADY_EXISTS');
     });
   });
 });

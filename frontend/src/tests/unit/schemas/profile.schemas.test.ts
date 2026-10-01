@@ -1,12 +1,13 @@
+import { expect as assert } from '@assertive-ts/core';
 import { describe, it, expect } from 'vitest';
 import { updateProfileSchema } from '@/features/profile/schemas/profile.schemas';
 
 describe('profile.schemas', () => {
   describe('updateProfileSchema', () => {
     it('should accept a single valid field', () => {
-      expect(updateProfileSchema.parse({ firstName: 'Maria' }).firstName).toBe('Maria');
-      expect(updateProfileSchema.parse({ phone: '+573001234567' }).phone).toBe('+573001234567');
-      expect(updateProfileSchema.parse({ monthlyIncome: 100 }).monthlyIncome).toBe(100);
+      assert(updateProfileSchema.parse({ firstName: 'Maria' }).firstName).toBeEqual('Maria');
+      assert(updateProfileSchema.parse({ phone: '+573001234567' }).phone).toBeEqual('+573001234567');
+      assert(updateProfileSchema.parse({ monthlyIncome: 100 }).monthlyIncome).toBeEqual(100);
     });
 
     it('should require at least one field', () => {

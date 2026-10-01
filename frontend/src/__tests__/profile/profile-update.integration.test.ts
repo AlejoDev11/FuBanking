@@ -1,3 +1,4 @@
+import { expect as assert } from '@assertive-ts/core';
 /**
  * Tests de integración — useUpdateProfile (lógica de hook).
  *
@@ -211,9 +212,9 @@ describe('Editar perfil — integración', () => {
 
     onSubmit(formData);
 
-    expect(handleUpdateCalled).toBe(false);
-    expect(fakeService.called).toBe(false);
-    expect(cancelCaptor.called).toBe(true);
+    assert(handleUpdateCalled).toBeFalse();
+    assert(fakeService.called).toBeFalse();
+    assert(cancelCaptor.called).toBeTrue();
   });
 
   /**
@@ -233,11 +234,11 @@ describe('Editar perfil — integración', () => {
       loginFn: loginCaptor.login.bind(loginCaptor),
     });
 
-    expect(fakeService.called).toBe(true);
+    assert(fakeService.called).toBeTrue();
     expect(error).not.toBeNull();
-    expect(error!.code).toBe('VALIDATION_ERROR');
+    assert(error!.code).toBeEqual('VALIDATION_ERROR');
     expect(error!.message).toMatch(/telefono|invalido/i);
-    expect(loginCaptor.called).toBe(false);
+    assert(loginCaptor.called).toBeFalse();
   });
 
   /**
@@ -257,10 +258,10 @@ describe('Editar perfil — integración', () => {
       loginFn: loginCaptor.login.bind(loginCaptor),
     });
 
-    expect(fakeService.called).toBe(true);
+    assert(fakeService.called).toBeTrue();
     expect(error).not.toBeNull();
-    expect(error!.code).toBe('NO_CHANGES');
-    expect(loginCaptor.called).toBe(false);
+    assert(error!.code).toBeEqual('NO_CHANGES');
+    assert(loginCaptor.called).toBeFalse();
   });
 
   /**
@@ -286,14 +287,14 @@ describe('Editar perfil — integración', () => {
     });
 
     expect(error).toBeNull();
-    expect(fakeService.called).toBe(true);
+    assert(fakeService.called).toBeTrue();
     expect(fakeService.lastPayload).toEqual({ firstName: 'Maria' });
 
-    expect(loginCaptor.called).toBe(true);
-    expect(loginCaptor.lastUser!.firstName).toBe('Maria');
-    expect(loginCaptor.lastToken).toBe('jwt-token-existente');
+    assert(loginCaptor.called).toBeTrue();
+    assert(loginCaptor.lastUser!.firstName).toBeEqual('Maria');
+    assert(loginCaptor.lastToken).toBeEqual('jwt-token-existente');
 
     expect(successCallbackUser).toBeDefined();
-    expect(successCallbackUser!.firstName).toBe('Maria');
+    assert(successCallbackUser!.firstName).toBeEqual('Maria');
   });
 });

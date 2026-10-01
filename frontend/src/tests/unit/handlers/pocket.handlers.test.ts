@@ -1,3 +1,4 @@
+import { expect as assert } from '@assertive-ts/core';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   backendMessage,
@@ -33,10 +34,10 @@ function setters() {
 
 describe('backendMessage', () => {
   it('should prefer message, then nested error, then fallback', () => {
-    expect(backendMessage({ message: 'm' }, 'f')).toBe('m');
-    expect(backendMessage({ error: { message: 'n' } }, 'f')).toBe('n');
-    expect(backendMessage(null, 'f')).toBe('f');
-    expect(backendMessage({}, 'f')).toBe('f');
+    assert(backendMessage({ message: 'm' }, 'f')).toBeEqual('m');
+    assert(backendMessage({ error: { message: 'n' } }, 'f')).toBeEqual('n');
+    assert(backendMessage(null, 'f')).toBeEqual('f');
+    assert(backendMessage({}, 'f')).toBeEqual('f');
   });
 });
 

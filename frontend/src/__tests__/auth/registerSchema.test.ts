@@ -1,3 +1,4 @@
+import { expect as assert } from '@assertive-ts/core';
 import { registerSchema, PASSWORD_MAX_LENGTH } from '../../features/auth/schemas/auth.schemas';
 
 const BASE_VALID = {
@@ -17,7 +18,7 @@ describe('registerSchema — Pruebas de caja blanca (tabla de caminos Zod)', () 
     it('1,2,4,6,8,10,12,14,16,F', () => {
       const result = registerSchema.safeParse(BASE_VALID);
 
-      expect(result.success).toBe(true);
+      assert(result.success).toBeTrue();
     });
   });
 
@@ -25,11 +26,11 @@ describe('registerSchema — Pruebas de caja blanca (tabla de caminos Zod)', () 
     it('1,2,3,F', () => {
       const result = registerSchema.safeParse({ ...BASE_VALID, firstName: 'J' });
 
-      expect(result.success).toBe(false);
+      assert(result.success).toBeFalse();
       if (!result.success) {
         const firstNameIssues = result.error.issues.filter((i) => i.path.includes('firstName'));
-        expect(firstNameIssues.length).toBeGreaterThanOrEqual(1);
-        expect(firstNameIssues[0]!.message).toBe('El primer nombre debe tener al menos 2 caracteres');
+        assert(firstNameIssues.length >= 1).toBeTrue();
+        assert(firstNameIssues[0]!.message).toBeEqual('El primer nombre debe tener al menos 2 caracteres');
       }
     });
   });
@@ -38,10 +39,10 @@ describe('registerSchema — Pruebas de caja blanca (tabla de caminos Zod)', () 
     it('1,2,4,5,F', () => {
       const result = registerSchema.safeParse({ ...BASE_VALID, lastName: 'P3rez' });
 
-      expect(result.success).toBe(false);
+      assert(result.success).toBeFalse();
       if (!result.success) {
         const lastNameIssues = result.error.issues.filter((i) => i.path.includes('lastName'));
-        expect(lastNameIssues.length).toBeGreaterThanOrEqual(1);
+        assert(lastNameIssues.length >= 1).toBeTrue();
         expect(lastNameIssues[0]!.message).toContain('Solo se permiten letras');
       }
     });
@@ -51,11 +52,11 @@ describe('registerSchema — Pruebas de caja blanca (tabla de caminos Zod)', () 
     it('1,2,4,6,7,F', () => {
       const result = registerSchema.safeParse({ ...BASE_VALID, birthDate: '2030-01-01' });
 
-      expect(result.success).toBe(false);
+      assert(result.success).toBeFalse();
       if (!result.success) {
         const birthDateIssues = result.error.issues.filter((i) => i.path.includes('birthDate'));
-        expect(birthDateIssues.length).toBeGreaterThanOrEqual(1);
-        expect(birthDateIssues[0]!.message).toBe('La fecha no puede ser en el futuro');
+        assert(birthDateIssues.length >= 1).toBeTrue();
+        assert(birthDateIssues[0]!.message).toBeEqual('La fecha no puede ser en el futuro');
       }
     });
   });
@@ -64,11 +65,11 @@ describe('registerSchema — Pruebas de caja blanca (tabla de caminos Zod)', () 
     it('1,2,4,6,8,9,F', () => {
       const result = registerSchema.safeParse({ ...BASE_VALID, email: 'correo-invalido' });
 
-      expect(result.success).toBe(false);
+      assert(result.success).toBeFalse();
       if (!result.success) {
         const emailIssues = result.error.issues.filter((i) => i.path.includes('email'));
-        expect(emailIssues.length).toBeGreaterThanOrEqual(1);
-        expect(emailIssues[0]!.message).toBe('Correo electrónico inválido');
+        assert(emailIssues.length >= 1).toBeTrue();
+        assert(emailIssues[0]!.message).toBeEqual('Correo electrónico inválido');
       }
     });
   });
@@ -77,11 +78,11 @@ describe('registerSchema — Pruebas de caja blanca (tabla de caminos Zod)', () 
     it('1,2,4,6,8,10,11,F', () => {
       const result = registerSchema.safeParse({ ...BASE_VALID, document: 'AB1' });
 
-      expect(result.success).toBe(false);
+      assert(result.success).toBeFalse();
       if (!result.success) {
         const documentIssues = result.error.issues.filter((i) => i.path.includes('document'));
-        expect(documentIssues.length).toBeGreaterThanOrEqual(1);
-        expect(documentIssues[0]!.message).toBe('Documento inválido');
+        assert(documentIssues.length >= 1).toBeTrue();
+        assert(documentIssues[0]!.message).toBeEqual('Documento inválido');
       }
     });
   });
@@ -94,11 +95,11 @@ describe('registerSchema — Pruebas de caja blanca (tabla de caminos Zod)', () 
         confirmPassword: 'abcdefgh',
       });
 
-      expect(result.success).toBe(false);
+      assert(result.success).toBeFalse();
       if (!result.success) {
         const passwordIssues = result.error.issues.filter((i) => i.path.includes('password'));
-        expect(passwordIssues.length).toBeGreaterThanOrEqual(1);
-        expect(passwordIssues[0]!.message).toBe('Debe contener al menos una mayúscula');
+        assert(passwordIssues.length >= 1).toBeTrue();
+        assert(passwordIssues[0]!.message).toBeEqual('Debe contener al menos una mayúscula');
       }
     });
   });
@@ -111,11 +112,11 @@ describe('registerSchema — Pruebas de caja blanca (tabla de caminos Zod)', () 
         confirmPassword: 'Otra456X',
       });
 
-      expect(result.success).toBe(false);
+      assert(result.success).toBeFalse();
       if (!result.success) {
         const confirmIssues = result.error.issues.filter((i) => i.path.includes('confirmPassword'));
-        expect(confirmIssues.length).toBeGreaterThanOrEqual(1);
-        expect(confirmIssues[0]!.message).toBe('Las contraseñas no coinciden');
+        assert(confirmIssues.length >= 1).toBeTrue();
+        assert(confirmIssues[0]!.message).toBeEqual('Las contraseñas no coinciden');
       }
     });
   });
@@ -131,7 +132,7 @@ describe('registerSchema — Defecto 2: límite máximo de contraseña', () => {
       password: pwd,
       confirmPassword: pwd,
     });
-    expect(result.success).toBe(true);
+    assert(result.success).toBeTrue();
   });
 
   it('rechaza una contraseña que supera el límite máximo (129 chars)', () => {
@@ -141,10 +142,10 @@ describe('registerSchema — Defecto 2: límite máximo de contraseña', () => {
       password: pwd,
       confirmPassword: pwd,
     });
-    expect(result.success).toBe(false);
+    assert(result.success).toBeFalse();
     if (!result.success) {
       const issues = result.error.issues.filter((i) => i.path.includes('password'));
-      expect(issues.some((i) => i.message.includes(`${PASSWORD_MAX_LENGTH}`))).toBe(true);
+      assert(issues.some((i) => i.message.includes(`${PASSWORD_MAX_LENGTH}`))).toBeTrue();
     }
   });
 });
@@ -154,36 +155,36 @@ describe('registerSchema — Defecto 2: límite máximo de contraseña', () => {
 describe('registerSchema — Defecto 3: nombres con caracteres repetidos', () => {
   it('rechaza firstName con 3 o más caracteres consecutivos idénticos', () => {
     const result = registerSchema.safeParse({ ...BASE_VALID, firstName: 'Joooohn' });
-    expect(result.success).toBe(false);
+    assert(result.success).toBeFalse();
     if (!result.success) {
       const issues = result.error.issues.filter((i) => i.path.includes('firstName'));
-      expect(issues.length).toBeGreaterThanOrEqual(1);
-      expect(issues[0]!.message).toBe('El nombre no puede contener 3 o más caracteres iguales consecutivos ni carecer de vocales');
+      assert(issues.length >= 1).toBeTrue();
+      assert(issues[0]!.message).toBeEqual('El nombre no puede contener 3 o más caracteres iguales consecutivos ni carecer de vocales');
     }
   });
 
   it('rechaza lastName con solo consonantes (sin vocal)', () => {
     const result = registerSchema.safeParse({ ...BASE_VALID, lastName: 'Xyz' });
-    expect(result.success).toBe(false);
+    assert(result.success).toBeFalse();
     if (!result.success) {
       const issues = result.error.issues.filter((i) => i.path.includes('lastName'));
-      expect(issues.length).toBeGreaterThanOrEqual(1);
+      assert(issues.length >= 1).toBeTrue();
     }
   });
 
   it('rechaza firstName "xxxxx"', () => {
     const result = registerSchema.safeParse({ ...BASE_VALID, firstName: 'xxxxx' });
-    expect(result.success).toBe(false);
+    assert(result.success).toBeFalse();
   });
 
   it('acepta nombre con doble consonante válido (Lee)', () => {
     const result = registerSchema.safeParse({ ...BASE_VALID, firstName: 'Lee' });
-    expect(result.success).toBe(true);
+    assert(result.success).toBeTrue();
   });
 
   it('acepta middleName vacío (opcional)', () => {
     const result = registerSchema.safeParse({ ...BASE_VALID, middleName: '' });
-    expect(result.success).toBe(true);
+    assert(result.success).toBeTrue();
   });
 });
 
@@ -192,7 +193,7 @@ describe('registerSchema — Defecto 3: nombres con caracteres repetidos', () =>
 describe('registerSchema — Defecto 4: parseo de fecha sin desfase UTC', () => {
   it('acepta la fecha "1990-01-01" exactamente (sin desfase UTC)', () => {
     const result = registerSchema.safeParse({ ...BASE_VALID, birthDate: '1990-01-01' });
-    expect(result.success).toBe(true);
+    assert(result.success).toBeTrue();
   });
 
   it('rechaza una fecha futura independientemente de la zona horaria', () => {
@@ -201,7 +202,7 @@ describe('registerSchema — Defecto 4: parseo de fecha sin desfase UTC', () => 
     const pad = (n: number) => String(n).padStart(2, '0');
     const futureStr = `${future.getFullYear()}-${pad(future.getMonth() + 1)}-${pad(future.getDate())}`;
     const result = registerSchema.safeParse({ ...BASE_VALID, birthDate: futureStr });
-    expect(result.success).toBe(false);
+    assert(result.success).toBeFalse();
   });
 
   it('acepta una fecha exactamente 18 años atrás', () => {
@@ -211,7 +212,7 @@ describe('registerSchema — Defecto 4: parseo de fecha sin desfase UTC', () => 
     const dateStr = `${eighteenYearsAgo.getFullYear()}-${pad(eighteenYearsAgo.getMonth() + 1)}-${pad(eighteenYearsAgo.getDate())}`;
     const result = registerSchema.safeParse({ ...BASE_VALID, birthDate: dateStr });
     // La persona cumple 18 HOY — es válido
-    expect(result.success).toBe(true);
+    assert(result.success).toBeTrue();
   });
 });
 
@@ -220,19 +221,19 @@ describe('registerSchema — Defecto 4: parseo de fecha sin desfase UTC', () => 
 describe('registerSchema — Defecto 5: límites de longitud en campos generales', () => {
   it('rechaza firstName que supera 100 caracteres', () => {
     const result = registerSchema.safeParse({ ...BASE_VALID, firstName: 'a'.repeat(51) + 'b'.repeat(51) });
-    expect(result.success).toBe(false);
+    assert(result.success).toBeFalse();
     if (!result.success) {
       const issues = result.error.issues.filter((i) => i.path.includes('firstName'));
-      expect(issues.some((i) => i.message.includes('100'))).toBe(true);
+      assert(issues.some((i) => i.message.includes('100'))).toBeTrue();
     }
   });
 
   it('rechaza document que supera 20 caracteres', () => {
     const result = registerSchema.safeParse({ ...BASE_VALID, document: 'A'.repeat(21) });
-    expect(result.success).toBe(false);
+    assert(result.success).toBeFalse();
     if (!result.success) {
       const issues = result.error.issues.filter((i) => i.path.includes('document'));
-      expect(issues.some((i) => i.message.includes('20'))).toBe(true);
+      assert(issues.some((i) => i.message.includes('20'))).toBeTrue();
     }
   });
 });

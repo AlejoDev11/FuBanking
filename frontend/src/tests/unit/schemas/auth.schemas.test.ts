@@ -1,3 +1,4 @@
+import { expect as assert } from '@assertive-ts/core';
 import { describe, it, expect } from 'vitest';
 import {
   loginSchema,
@@ -33,7 +34,7 @@ describe('auth.schemas', () => {
 
   describe('registerSchema', () => {
     it('should accept a valid payload', () => {
-      expect(registerSchema.parse(validRegister).document).toBe('1234567890');
+      assert(registerSchema.parse(validRegister).document).toBeEqual('1234567890');
     });
 
     it('should reject weak or mismatched passwords', () => {
@@ -56,7 +57,7 @@ describe('auth.schemas', () => {
 
   describe('password reset schemas', () => {
     it('should validate request and reset payloads', () => {
-      expect(requestPasswordResetSchema.parse({ email: 'a@b.co' }).email).toBe('a@b.co');
+      assert(requestPasswordResetSchema.parse({ email: 'a@b.co' }).email).toBeEqual('a@b.co');
       expect(() => requestPasswordResetSchema.parse({ email: 'bad' })).toThrow();
 
       expect(

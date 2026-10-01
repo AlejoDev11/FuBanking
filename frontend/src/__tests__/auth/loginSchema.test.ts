@@ -1,3 +1,4 @@
+import { expect as assert } from '@assertive-ts/core';
 /**
  * loginSchema.test.ts
  * Pruebas unitarias de caja blanca — Frontend / Esquema Zod
@@ -25,10 +26,10 @@ describe('loginSchema — Pruebas de caja blanca (tabla de caminos Zod)', () => 
 
       const result = loginSchema.safeParse(input);
 
-      expect(result.success).toBe(true);
+      assert(result.success).toBeTrue();
       if (result.success) {
-        expect(result.data.email).toBe('ana@mail.com');
-        expect(result.data.password).toBe('abc123');
+        assert(result.data.email).toBeEqual('ana@mail.com');
+        assert(result.data.password).toBeEqual('abc123');
         expect(result.data.rememberMe).toBeUndefined();
       }
     });
@@ -37,9 +38,9 @@ describe('loginSchema — Pruebas de caja blanca (tabla de caminos Zod)', () => 
       const input = { email: 'ANA@MAIL.COM', password: 'abc123' };
       const result = loginSchema.safeParse(input);
 
-      expect(result.success).toBe(true);
+      assert(result.success).toBeTrue();
       if (result.success) {
-        expect(result.data.email).toBe('ana@mail.com');
+        assert(result.data.email).toBeEqual('ana@mail.com');
       }
     });
 
@@ -47,9 +48,9 @@ describe('loginSchema — Pruebas de caja blanca (tabla de caminos Zod)', () => 
       const input = { email: 'ana@mail.com', password: 'abc123', rememberMe: true };
       const result = loginSchema.safeParse(input);
 
-      expect(result.success).toBe(true);
+      assert(result.success).toBeTrue();
       if (result.success) {
-        expect(result.data.rememberMe).toBe(true);
+        assert(result.data.rememberMe).toBeTrue();
       }
     });
   });
@@ -60,15 +61,15 @@ describe('loginSchema — Pruebas de caja blanca (tabla de caminos Zod)', () => 
 
       const result = loginSchema.safeParse(input);
 
-      expect(result.success).toBe(false);
+      assert(result.success).toBeFalse();
       if (!result.success) {
         const issues = result.error.issues;
         const emailIssues = issues.filter((i) => i.path.includes('email'));
         const passwordIssues = issues.filter((i) => i.path.includes('password'));
 
-        expect(emailIssues.length).toBeGreaterThanOrEqual(1);
-        expect(emailIssues[0].message).toBe('Correo electrónico inválido');
-        expect(passwordIssues.length).toBe(0);
+        assert(emailIssues.length >= 1).toBeTrue();
+        assert(emailIssues[0].message).toBeEqual('Correo electrónico inválido');
+        assert(passwordIssues.length).toBeEqual(0);
       }
     });
   });
@@ -79,15 +80,15 @@ describe('loginSchema — Pruebas de caja blanca (tabla de caminos Zod)', () => 
 
       const result = loginSchema.safeParse(input);
 
-      expect(result.success).toBe(false);
+      assert(result.success).toBeFalse();
       if (!result.success) {
         const issues = result.error.issues;
         const emailIssues = issues.filter((i) => i.path.includes('email'));
         const passwordIssues = issues.filter((i) => i.path.includes('password'));
 
-        expect(passwordIssues.length).toBeGreaterThanOrEqual(1);
-        expect(passwordIssues[0].message).toBe('La contraseña es requerida');
-        expect(emailIssues.length).toBe(0);
+        assert(passwordIssues.length >= 1).toBeTrue();
+        assert(passwordIssues[0].message).toBeEqual('La contraseña es requerida');
+        assert(emailIssues.length).toBeEqual(0);
       }
     });
   });
@@ -98,17 +99,17 @@ describe('loginSchema — Pruebas de caja blanca (tabla de caminos Zod)', () => 
 
       const result = loginSchema.safeParse(input);
 
-      expect(result.success).toBe(false);
+      assert(result.success).toBeFalse();
       if (!result.success) {
         const issues = result.error.issues;
         const emailIssues = issues.filter((i) => i.path.includes('email'));
         const passwordIssues = issues.filter((i) => i.path.includes('password'));
 
-        expect(emailIssues.length).toBeGreaterThanOrEqual(1);
-        expect(passwordIssues.length).toBeGreaterThanOrEqual(1);
+        assert(emailIssues.length >= 1).toBeTrue();
+        assert(passwordIssues.length >= 1).toBeTrue();
 
-        expect(emailIssues[0].message).toBe('Correo electrónico inválido');
-        expect(passwordIssues[0].message).toBe('La contraseña es requerida');
+        assert(emailIssues[0].message).toBeEqual('Correo electrónico inválido');
+        assert(passwordIssues[0].message).toBeEqual('La contraseña es requerida');
       }
     });
   });
@@ -118,9 +119,9 @@ describe('loginSchema — Pruebas de caja blanca (tabla de caminos Zod)', () => 
       const longEmail = 'a'.repeat(91) + '@gmail.com';
       const input = { email: longEmail, password: 'abc' };
       const result = loginSchema.safeParse(input);
-      expect(result.success).toBe(false);
+      assert(result.success).toBeFalse();
       if (!result.success) {
-        expect(result.error.issues.some(i => i.message.includes('100 caracteres'))).toBe(true);
+        assert(result.error.issues.some(i => i.message.includes('100 caracteres'))).toBeTrue();
       }
     });
 
@@ -128,18 +129,18 @@ describe('loginSchema — Pruebas de caja blanca (tabla de caminos Zod)', () => 
       const longPassword = 'a'.repeat(65);
       const input = { email: 'test@mail.com', password: longPassword };
       const result = loginSchema.safeParse(input);
-      expect(result.success).toBe(false);
+      assert(result.success).toBeFalse();
       if (!result.success) {
-        expect(result.error.issues.some(i => i.message.includes('64 caracteres'))).toBe(true);
+        assert(result.error.issues.some(i => i.message.includes('64 caracteres'))).toBeTrue();
       }
     });
 
     it('rechaza email con múltiples @', () => {
       const input = { email: 'test@gmail.com@gmail.com', password: 'abc' };
       const result = loginSchema.safeParse(input);
-      expect(result.success).toBe(false);
+      assert(result.success).toBeFalse();
       if (!result.success) {
-        expect(result.error.issues.some(i => i.message.includes('inválido'))).toBe(true);
+        assert(result.error.issues.some(i => i.message.includes('inválido'))).toBeTrue();
       }
     });
   });

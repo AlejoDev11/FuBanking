@@ -1,3 +1,4 @@
+import { expect as assert } from '@assertive-ts/core';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { apiClient } from '@/shared/services/api.client';
 import { profileService } from '@/features/profile/services/profile.service';
@@ -49,7 +50,7 @@ describe('profileService', () => {
       { headers: { 'Content-Type': 'multipart/form-data' } },
     );
     const sent = post.mock.calls[0][1] as FormData;
-    expect(sent.get('document')).toBe(file);
+    assert(sent.get('document')).toBeEqual(file);
     expect(result).toEqual(profile);
   });
 

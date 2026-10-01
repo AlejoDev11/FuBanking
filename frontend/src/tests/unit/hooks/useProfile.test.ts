@@ -1,3 +1,4 @@
+import { expect as assert } from '@assertive-ts/core';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useProfile } from '@/features/profile/hooks/useProfile';
@@ -19,9 +20,9 @@ describe('useProfile', () => {
     getProfile.mockResolvedValue(profile);
     const { result } = renderHook(() => useProfile());
 
-    expect(result.current.isLoading).toBe(true);
+    assert(result.current.isLoading).toBeTrue();
 
-    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    await waitFor(() => assert(result.current.isLoading).toBeEqual(false));
     expect(result.current.profile).toEqual(profile);
     expect(result.current.error).toBeNull();
   });
@@ -30,7 +31,7 @@ describe('useProfile', () => {
     getProfile.mockRejectedValue({ code: 'UNAUTHORIZED', message: 'No' });
     const { result } = renderHook(() => useProfile());
 
-    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    await waitFor(() => assert(result.current.isLoading).toBeEqual(false));
     expect(result.current.profile).toBeNull();
     expect(result.current.error).toEqual({ code: 'UNAUTHORIZED', message: 'No' });
   });

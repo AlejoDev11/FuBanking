@@ -1,3 +1,4 @@
+import { expect as assert } from '@assertive-ts/core';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useLogin } from '@/features/auth/hooks/useLogin';
@@ -39,7 +40,7 @@ describe('useLogin', () => {
 
     expect(mockLogin).toHaveBeenCalledWith(user, 'jwt', undefined);
     expect(result.current.error).toBeNull();
-    expect(result.current.isLoading).toBe(false);
+    assert(result.current.isLoading).toBeFalse();
   });
 
   it('should stash the temp token and redirect on 2FA', async () => {
@@ -54,8 +55,8 @@ describe('useLogin', () => {
       await result.current.handleLogin({ email: 'a@b.co', password: 'x' });
     });
 
-    expect(sessionStorage.getItem('2fa_temp_token')).toBe('tmp');
-    expect(sessionStorage.getItem('2fa_masked_email')).toBe('a***@b.co');
+    assert(sessionStorage.getItem('2fa_temp_token')).toBeEqual('tmp');
+    assert(sessionStorage.getItem('2fa_masked_email')).toBeEqual('a***@b.co');
     expect(mockPush).toHaveBeenCalledWith('/verify-two-factor');
     expect(mockLogin).not.toHaveBeenCalled();
   });
@@ -69,6 +70,6 @@ describe('useLogin', () => {
     });
 
     expect(result.current.error).toEqual({ code: 'INVALID_CREDENTIALS', message: 'Bad credentials' });
-    expect(result.current.isLoading).toBe(false);
+    assert(result.current.isLoading).toBeFalse();
   });
 });

@@ -1,3 +1,4 @@
+import { expect as assert } from '@assertive-ts/core';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useAdminLoans } from '@/features/admin/hooks/useAdminLoans';
@@ -42,7 +43,7 @@ describe('useAdminLoans', () => {
       expect(returned).toEqual(loans);
       expect(result.current.loans).toEqual(loans);
       expect(result.current.error).toBeNull();
-      expect(result.current.isLoading).toBe(false);
+      assert(result.current.isLoading).toBeFalse();
     });
 
     it('should return [] and fallback message on failure', async () => {
@@ -55,7 +56,7 @@ describe('useAdminLoans', () => {
       });
 
       expect(returned).toEqual([]);
-      expect(result.current.error).toBe('No fue posible obtener los prestamos.');
+      assert(result.current.error).toBeEqual('No fue posible obtener los prestamos.');
       expect(result.current.loans).toEqual([]);
     });
   });
@@ -97,7 +98,7 @@ describe('useAdminLoans', () => {
       });
 
       expect(returned).toBeNull();
-      expect(result.current.error).toBe('Ya fue procesado');
+      assert(result.current.error).toBeEqual('Ya fue procesado');
       expect(result.current.loans).toEqual(before);
     });
 
@@ -109,7 +110,7 @@ describe('useAdminLoans', () => {
         await result.current.approveLoan('loan-1');
       });
 
-      expect(result.current.error).toBe('No fue posible aprobar el prestamo.');
+      assert(result.current.error).toBeEqual('No fue posible aprobar el prestamo.');
     });
 
     it('should fall back when the message is empty', async () => {
@@ -120,7 +121,7 @@ describe('useAdminLoans', () => {
         await result.current.approveLoan('loan-1');
       });
 
-      expect(result.current.error).toBe('No fue posible aprobar el prestamo.');
+      assert(result.current.error).toBeEqual('No fue posible aprobar el prestamo.');
     });
 
     it('should fall back when the error is a plain string', async () => {
@@ -131,7 +132,7 @@ describe('useAdminLoans', () => {
         await result.current.rejectLoan('loan-1');
       });
 
-      expect(result.current.error).toBe('No fue posible rechazar el prestamo.');
+      assert(result.current.error).toBeEqual('No fue posible rechazar el prestamo.');
     });
   });
 
@@ -163,7 +164,7 @@ describe('useAdminLoans', () => {
       });
 
       expect(returned).toBeNull();
-      expect(result.current.error).toBe('No fue posible rechazar el prestamo.');
+      assert(result.current.error).toBeEqual('No fue posible rechazar el prestamo.');
     });
   });
 });

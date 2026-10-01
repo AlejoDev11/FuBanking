@@ -1,3 +1,4 @@
+import { expect as assert } from '@assertive-ts/core';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useRegister } from '@/features/auth/hooks/useRegister';
@@ -33,7 +34,7 @@ describe('useRegister', () => {
     expect(register).toHaveBeenCalledWith(payload);
     expect(mockLogin).toHaveBeenCalledWith(user, 'jwt');
     expect(result.current.error).toBeNull();
-    expect(result.current.isLoading).toBe(false);
+    assert(result.current.isLoading).toBeFalse();
   });
 
   it('should set the server error on failure', async () => {

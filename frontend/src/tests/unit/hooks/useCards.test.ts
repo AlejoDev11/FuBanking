@@ -1,3 +1,4 @@
+import { expect as assert } from '@assertive-ts/core';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useCards } from '@/features/cards/hooks/useCards';
@@ -34,7 +35,7 @@ describe('useCards', () => {
     const { result } = renderHook(() => useCards());
 
     expect(result.current.cards).toEqual([]);
-    expect(result.current.isLoading).toBe(false);
+    assert(result.current.isLoading).toBeFalse();
     expect(result.current.error).toBeNull();
   });
 
@@ -64,7 +65,7 @@ describe('useCards', () => {
       });
 
       expect(returned).toEqual([]);
-      expect(result.current.error).toBe('No se pudieron cargar las tarjetas.');
+      assert(result.current.error).toBeEqual('No se pudieron cargar las tarjetas.');
     });
   });
 
@@ -99,7 +100,7 @@ describe('useCards', () => {
       });
 
       expect(returned).toBeNull();
-      expect(result.current.error).toBe('Cuenta inválida');
+      assert(result.current.error).toBeEqual('Cuenta inválida');
     });
 
     it('should fall back on empty message', async () => {
@@ -110,7 +111,7 @@ describe('useCards', () => {
         await result.current.createCard('acc-1');
       });
 
-      expect(result.current.error).toBe('No se pudo crear la tarjeta.');
+      assert(result.current.error).toBeEqual('No se pudo crear la tarjeta.');
     });
   });
 
@@ -143,7 +144,7 @@ describe('useCards', () => {
       });
 
       expect(returned).toBeNull();
-      expect(result.current.error).toBe('No se pudo actualizar la tarjeta.');
+      assert(result.current.error).toBeEqual('No se pudo actualizar la tarjeta.');
     });
   });
 });

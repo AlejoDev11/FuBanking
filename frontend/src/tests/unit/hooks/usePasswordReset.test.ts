@@ -1,3 +1,4 @@
+import { expect as assert } from '@assertive-ts/core';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { usePasswordReset } from '@/features/auth/hooks/usePasswordReset';
@@ -25,7 +26,7 @@ describe('usePasswordReset', () => {
     });
 
     expect(forgotPassword).toHaveBeenCalledWith({ email: 'a@b.co' });
-    expect(result.current.isSuccess).toBe(true);
+    assert(result.current.isSuccess).toBeTrue();
     expect(result.current.error).toBeNull();
   });
 
@@ -37,7 +38,7 @@ describe('usePasswordReset', () => {
       await result.current.requestReset({ email: 'a@b.co' });
     });
 
-    expect(result.current.isSuccess).toBe(false);
+    assert(result.current.isSuccess).toBeFalse();
     expect(result.current.error).toEqual({ code: 'NOT_FOUND', message: 'No existe' });
   });
 
@@ -51,7 +52,7 @@ describe('usePasswordReset', () => {
     });
 
     expect(resetPassword).toHaveBeenCalledWith(payload);
-    expect(result.current.isSuccess).toBe(true);
+    assert(result.current.isSuccess).toBeTrue();
   });
 
   it('should set error on reset failure', async () => {
@@ -62,9 +63,9 @@ describe('usePasswordReset', () => {
       await result.current.resetPassword({ token: 'bad' } as never);
     });
 
-    expect(result.current.isSuccess).toBe(false);
+    assert(result.current.isSuccess).toBeFalse();
     expect(result.current.error).toEqual({ code: 'TOKEN_INVALID', message: 'Expirado' });
-    expect(result.current.isLoading).toBe(false);
+    assert(result.current.isLoading).toBeFalse();
   });
 
   it('verifyToken should set status to valid', async () => {
@@ -75,7 +76,7 @@ describe('usePasswordReset', () => {
       await result.current.verifyToken('valid-token');
     });
 
-    expect(result.current.tokenStatus).toBe('valid');
+    assert(result.current.tokenStatus).toBeEqual('valid');
   });
 
   it('verifyToken should set status to used if TOKEN_ALREADY_USED', async () => {
@@ -86,7 +87,7 @@ describe('usePasswordReset', () => {
       await result.current.verifyToken('used-token');
     });
 
-    expect(result.current.tokenStatus).toBe('used');
+    assert(result.current.tokenStatus).toBeEqual('used');
   });
 
   it('verifyToken should set status to expired if TOKEN_EXPIRED', async () => {
@@ -97,7 +98,7 @@ describe('usePasswordReset', () => {
       await result.current.verifyToken('expired-token');
     });
 
-    expect(result.current.tokenStatus).toBe('expired');
+    assert(result.current.tokenStatus).toBeEqual('expired');
   });
 
   it('verifyToken should set status to invalid otherwise', async () => {
@@ -108,6 +109,6 @@ describe('usePasswordReset', () => {
       await result.current.verifyToken('bad-token');
     });
 
-    expect(result.current.tokenStatus).toBe('invalid');
+    assert(result.current.tokenStatus).toBeEqual('invalid');
   });
 });

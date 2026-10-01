@@ -1,3 +1,4 @@
+import { expect as assert } from '@assertive-ts/core';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useTwoFactor } from '@/features/auth/hooks/useTwoFactor';
@@ -62,7 +63,7 @@ describe('useTwoFactor', () => {
     });
 
     expect(result.current.error).toEqual({ code: 'INVALID_OTP', message: 'Mal' });
-    expect(result.current.isLoading).toBe(false);
+    assert(result.current.isLoading).toBeFalse();
   });
 
   it('should fail resend without a temp token', async () => {
@@ -89,14 +90,14 @@ describe('useTwoFactor', () => {
         await result.current.handleResend();
       });
 
-      expect(sessionStorage.getItem('2fa_temp_token')).toBe('tmp2');
-      expect(result.current.resendSuccess).toBe(true);
-      expect(result.current.isResending).toBe(false);
+      assert(sessionStorage.getItem('2fa_temp_token')).toBeEqual('tmp2');
+      assert(result.current.resendSuccess).toBeTrue();
+      assert(result.current.isResending).toBeFalse();
 
       await act(async () => {
         vi.advanceTimersByTime(4000);
       });
-      expect(result.current.resendSuccess).toBe(false);
+      assert(result.current.resendSuccess).toBeFalse();
     } finally {
       vi.useRealTimers();
     }
@@ -112,6 +113,6 @@ describe('useTwoFactor', () => {
     });
 
     expect(result.current.error).toEqual({ code: 'RATE_LIMIT', message: 'Espera' });
-    expect(result.current.resendSuccess).toBe(false);
+    assert(result.current.resendSuccess).toBeFalse();
   });
 });

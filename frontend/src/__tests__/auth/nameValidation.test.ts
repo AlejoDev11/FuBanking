@@ -1,3 +1,4 @@
+import { expect as assert } from '@assertive-ts/core';
 import { isValidName } from '../../features/auth/utils/nameValidation';
 
 describe('isValidName — Validación semántica de nombres', () => {
@@ -5,46 +6,46 @@ describe('isValidName — Validación semántica de nombres', () => {
 
   describe('Casos válidos', () => {
     it('acepta un nombre simple', () => {
-      expect(isValidName('Juan')).toBe(true);
+      assert(isValidName('Juan')).toBeTrue();
     });
 
     it('acepta un nombre con tilde', () => {
-      expect(isValidName('María')).toBe(true);
+      assert(isValidName('María')).toBeTrue();
     });
 
     it('acepta un apellido compuesto con guion', () => {
-      expect(isValidName('García-López')).toBe(true);
+      assert(isValidName('García-López')).toBeTrue();
     });
 
     it('acepta nombre con apóstrofe (estilo anglosajón)', () => {
-      expect(isValidName("O'Brien")).toBe(true);
+      assert(isValidName("O'Brien")).toBeTrue();
     });
 
     it('acepta nombre con eñe', () => {
-      expect(isValidName('Nuñez')).toBe(true);
+      assert(isValidName('Nuñez')).toBeTrue();
     });
 
     it('acepta doble consonante corta (Lee, Ann)', () => {
-      expect(isValidName('Lee')).toBe(true);
-      expect(isValidName('Ann')).toBe(true);
+      assert(isValidName('Lee')).toBeTrue();
+      assert(isValidName('Ann')).toBeTrue();
     });
 
     it('acepta nombre con doble carácter seguido (no triple)', () => {
       // "aa" (2 repeticiones) → aceptado; "aaa" (3) → rechazado
-      expect(isValidName('Aabria')).toBe(true);
+      assert(isValidName('Aabria')).toBeTrue();
     });
 
     it('devuelve true para cadena vacía (campo opcional)', () => {
-      expect(isValidName('')).toBe(true);
-      expect(isValidName('   ')).toBe(true);
+      assert(isValidName('')).toBeTrue();
+      assert(isValidName('   ')).toBeTrue();
     });
 
     it('devuelve true para undefined (campo opcional)', () => {
-      expect(isValidName(undefined)).toBe(true);
+      assert(isValidName(undefined)).toBeTrue();
     });
 
     it('acepta nombre completo con múltiples palabras', () => {
-      expect(isValidName('Ana María')).toBe(true);
+      assert(isValidName('Ana María')).toBeTrue();
     });
   });
 
@@ -52,42 +53,42 @@ describe('isValidName — Validación semántica de nombres', () => {
 
   describe('Casos inválidos — 3 o más caracteres consecutivos', () => {
     it('rechaza "xxxxx"', () => {
-      expect(isValidName('xxxxx')).toBe(false);
+      assert(isValidName('xxxxx')).toBeFalse();
     });
 
     it('rechaza "aaaaaa"', () => {
-      expect(isValidName('aaaaaa')).toBe(false);
+      assert(isValidName('aaaaaa')).toBeFalse();
     });
 
     it('rechaza "bbbbb"', () => {
-      expect(isValidName('bbbbb')).toBe(false);
+      assert(isValidName('bbbbb')).toBeFalse();
     });
 
     it('rechaza triple repetición dentro de un nombre', () => {
-      expect(isValidName('Jooohn')).toBe(false);
+      assert(isValidName('Jooohn')).toBeFalse();
     });
 
     it('rechaza triple repetición de consonante', () => {
-      expect(isValidName('Brrron')).toBe(false);
+      assert(isValidName('Brrron')).toBeFalse();
     });
 
     it('rechaza triple repetición indiferente a mayúsculas', () => {
       // /(.)\1{2,}/i — la i hace que 'AAA' también sea detectado
-      expect(isValidName('AAA')).toBe(false);
+      assert(isValidName('AAA')).toBeFalse();
     });
   });
 
   describe('Casos inválidos — sin vocal', () => {
     it('rechaza cadena solo de consonantes "bcd"', () => {
-      expect(isValidName('Bcd')).toBe(false);
+      assert(isValidName('Bcd')).toBeFalse();
     });
 
     it('rechaza cadena de consonantes largas "QRSTZ"', () => {
-      expect(isValidName('QRSTZ')).toBe(false);
+      assert(isValidName('QRSTZ')).toBeFalse();
     });
 
     it('rechaza "Xyz"', () => {
-      expect(isValidName('Xyz')).toBe(false);
+      assert(isValidName('Xyz')).toBeFalse();
     });
   });
 });

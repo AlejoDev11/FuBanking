@@ -23,6 +23,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@assertive-ts/core": "^2.1.0",
     "@swc/core": "^1.16.1",
     "@swc/jest": "^0.2.39",
     "@types/bcrypt": "^6.0.0",

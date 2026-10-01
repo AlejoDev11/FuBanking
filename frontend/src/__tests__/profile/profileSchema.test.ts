@@ -1,3 +1,4 @@
+import { expect as assert } from '@assertive-ts/core';
 import { updateProfileSchema, parseDateLocal } from '../../features/profile/schemas/profile.schemas';
 
 /**
@@ -35,9 +36,9 @@ function messagesFor(
 describe('updateProfileSchema — Defecto #1: límites de longitud en campos de texto', () => {
   it('rechaza firstName con más de 100 caracteres', () => {
     const result = updateProfileSchema.safeParse({ firstName: 'A'.repeat(101) });
-    expect(result.success).toBe(false);
+    assert(result.success).toBeFalse();
     const msgs = messagesFor(result, 'firstName');
-    expect(msgs.some((m) => m.includes('100'))).toBe(true);
+    assert(msgs.some((m) => m.includes('100'))).toBeTrue();
   });
 
   it('acepta firstName exactamente en el límite (100 chars)', () => {
@@ -46,28 +47,28 @@ describe('updateProfileSchema — Defecto #1: límites de longitud en campos de 
     // Nota: puede fallar por isValidName (3+ consecutivos), lo cual es correcto
     // Lo que importa es que el mensaje NO diga "superar 100 caracteres"
     const msgs = messagesFor(result, 'firstName');
-    expect(msgs.some((m) => m.includes('superar los 100'))).toBe(false);
+    assert(msgs.some((m) => m.includes('superar los 100'))).toBeFalse();
   });
 
   it('rechaza middleName con más de 100 caracteres', () => {
     const result = updateProfileSchema.safeParse({ middleName: 'B'.repeat(101) });
-    expect(result.success).toBe(false);
+    assert(result.success).toBeFalse();
     const msgs = messagesFor(result, 'middleName');
-    expect(msgs.some((m) => m.includes('100'))).toBe(true);
+    assert(msgs.some((m) => m.includes('100'))).toBeTrue();
   });
 
   it('rechaza lastName con más de 100 caracteres', () => {
     const result = updateProfileSchema.safeParse({ lastName: 'C'.repeat(101) });
-    expect(result.success).toBe(false);
+    assert(result.success).toBeFalse();
     const msgs = messagesFor(result, 'lastName');
-    expect(msgs.some((m) => m.includes('100'))).toBe(true);
+    assert(msgs.some((m) => m.includes('100'))).toBeTrue();
   });
 
   it('rechaza secondLastName con más de 100 caracteres', () => {
     const result = updateProfileSchema.safeParse({ secondLastName: 'D'.repeat(101) });
-    expect(result.success).toBe(false);
+    assert(result.success).toBeFalse();
     const msgs = messagesFor(result, 'secondLastName');
-    expect(msgs.some((m) => m.includes('100'))).toBe(true);
+    assert(msgs.some((m) => m.includes('100'))).toBeTrue();
   });
 });
 
@@ -76,23 +77,23 @@ describe('updateProfileSchema — Defecto #1: límites de longitud en campos de 
 describe('parseDateLocal — Defecto #2: parseo sin desfase UTC', () => {
   it('parsea "2000-01-01" como 1 enero 2000 sin desfase', () => {
     const date = parseDateLocal('2000-01-01');
-    expect(date.getFullYear()).toBe(2000);
-    expect(date.getMonth()).toBe(0); // enero = 0
-    expect(date.getDate()).toBe(1);
+    assert(date.getFullYear()).toBeEqual(2000);
+    assert(date.getMonth()).toBeEqual(0); // enero = 0
+    assert(date.getDate()).toBeEqual(1);
   });
 
   it('parsea "1990-05-15" correctamente en zona UTC-5', () => {
     const date = parseDateLocal('1990-05-15');
-    expect(date.getFullYear()).toBe(1990);
-    expect(date.getMonth()).toBe(4); // mayo = 4
-    expect(date.getDate()).toBe(15);
+    assert(date.getFullYear()).toBeEqual(1990);
+    assert(date.getMonth()).toBeEqual(4); // mayo = 4
+    assert(date.getDate()).toBeEqual(15);
   });
 
   it('parsea "2023-12-31" sin desfase al día anterior', () => {
     const date = parseDateLocal('2023-12-31');
-    expect(date.getFullYear()).toBe(2023);
-    expect(date.getMonth()).toBe(11); // diciembre = 11
-    expect(date.getDate()).toBe(31);
+    assert(date.getFullYear()).toBeEqual(2023);
+    assert(date.getMonth()).toBeEqual(11); // diciembre = 11
+    assert(date.getDate()).toBeEqual(31);
   });
 });
 
@@ -101,28 +102,28 @@ describe('parseDateLocal — Defecto #2: parseo sin desfase UTC', () => {
 describe('updateProfileSchema — Defecto #4: nombres sin sentido rechazados', () => {
   it('rechaza firstName con 3 o más caracteres consecutivos idénticos', () => {
     const result = updateProfileSchema.safeParse({ firstName: 'Joooohn' });
-    expect(result.success).toBe(false);
+    assert(result.success).toBeFalse();
     const msgs = messagesFor(result, 'firstName');
-    expect(msgs.some((m) => m.includes('consecutivos'))).toBe(true);
+    assert(msgs.some((m) => m.includes('consecutivos'))).toBeTrue();
   });
 
   it('rechaza lastName sin vocales (solo consonantes)', () => {
     const result = updateProfileSchema.safeParse({ lastName: 'Xyz' });
-    expect(result.success).toBe(false);
+    assert(result.success).toBeFalse();
     const msgs = messagesFor(result, 'lastName');
-    expect(msgs.length).toBeGreaterThanOrEqual(1);
+    assert(msgs.length >= 1).toBeTrue();
   });
 
   it('rechaza firstName "aaaaa"', () => {
     const result = updateProfileSchema.safeParse({ firstName: 'aaaaa' });
-    expect(result.success).toBe(false);
+    assert(result.success).toBeFalse();
   });
 
   it('acepta firstName con doble consonante corta (Lee)', () => {
     const result = updateProfileSchema.safeParse({ firstName: 'Lee' });
     // Acepta: 2 'e' no son 3 consecutivos
     const msgs = messagesFor(result, 'firstName');
-    expect(msgs.some((m) => m.includes('consecutivos'))).toBe(false);
+    assert(msgs.some((m) => m.includes('consecutivos'))).toBeFalse();
   });
 
   it('acepta middleName vacío o nulo (campo opcional)', () => {
@@ -130,14 +131,14 @@ describe('updateProfileSchema — Defecto #4: nombres sin sentido rechazados', (
     // Si solo se envía middleName vacío, falla por "al menos un campo"
     // pero NO por validación de nombre
     const msgs = messagesFor(result, 'middleName');
-    expect(msgs.length).toBe(0);
+    assert(msgs.length).toBeEqual(0);
   });
 
   it('rechaza middleName con 3+ caracteres consecutivos', () => {
     const result = updateProfileSchema.safeParse({ middleName: 'Luuuis' });
-    expect(result.success).toBe(false);
+    assert(result.success).toBeFalse();
     const msgs = messagesFor(result, 'middleName');
-    expect(msgs.some((m) => m.includes('consecutivos'))).toBe(true);
+    assert(msgs.some((m) => m.includes('consecutivos'))).toBeTrue();
   });
 });
 
@@ -147,7 +148,7 @@ describe('updateProfileSchema — Defecto #5: límite máximo de contraseña', (
   it('acepta newPassword vacío (no cambiar contraseña)', () => {
     const result = updateProfileSchema.safeParse({ firstName: 'Juan', newPassword: '' });
     const msgs = messagesFor(result, 'newPassword');
-    expect(msgs.length).toBe(0);
+    assert(msgs.length).toBeEqual(0);
   });
 
   it('acepta newPassword en el límite exacto (128 chars)', () => {
@@ -156,7 +157,7 @@ describe('updateProfileSchema — Defecto #5: límite máximo de contraseña', (
       newPassword: 'x'.repeat(128),
     });
     const msgs = messagesFor(result, 'newPassword');
-    expect(msgs.length).toBe(0);
+    assert(msgs.length).toBeEqual(0);
   });
 
   it('rechaza newPassword que supera el límite (129 chars)', () => {
@@ -164,9 +165,9 @@ describe('updateProfileSchema — Defecto #5: límite máximo de contraseña', (
       firstName: 'Juan',
       newPassword: 'x'.repeat(129),
     });
-    expect(result.success).toBe(false);
+    assert(result.success).toBeFalse();
     const msgs = messagesFor(result, 'newPassword');
-    expect(msgs.some((m) => m.includes('128'))).toBe(true);
+    assert(msgs.some((m) => m.includes('128'))).toBeTrue();
   });
 });
 
@@ -175,23 +176,23 @@ describe('updateProfileSchema — Defecto #5: límite máximo de contraseña', (
 describe('updateProfileSchema — Defecto #6: validación de formulario vacío', () => {
   it('rechaza objeto vacío con mensaje "al menos un campo"', () => {
     const result = updateProfileSchema.safeParse({});
-    expect(result.success).toBe(false);
+    assert(result.success).toBeFalse();
     const msgs = extractMessages(result);
-    expect(msgs.some((m) => /al menos un campo/i.test(m))).toBe(true);
+    assert(msgs.some((m) => /al menos un campo/i.test(m))).toBeTrue();
   });
 
   it('rechaza firstName con menos de 2 caracteres y muestra mensaje de mínimo', () => {
     const result = updateProfileSchema.safeParse({ firstName: 'A' });
-    expect(result.success).toBe(false);
+    assert(result.success).toBeFalse();
     const msgs = messagesFor(result, 'firstName');
-    expect(msgs.some((m) => m.includes('al menos 2'))).toBe(true);
+    assert(msgs.some((m) => m.includes('al menos 2'))).toBeTrue();
   });
 
   it('rechaza lastName con menos de 2 caracteres y muestra mensaje de mínimo', () => {
     const result = updateProfileSchema.safeParse({ lastName: 'B' });
-    expect(result.success).toBe(false);
+    assert(result.success).toBeFalse();
     const msgs = messagesFor(result, 'lastName');
-    expect(msgs.some((m) => m.includes('al menos 2'))).toBe(true);
+    assert(msgs.some((m) => m.includes('al menos 2'))).toBeTrue();
   });
 });
 
@@ -205,10 +206,10 @@ describe('updateProfileSchema — Defecto #7: mensajes de error diferenciados', 
     const msgsTooLong = messagesFor(tooLong, 'firstName');
     const msgsBadFormat = messagesFor(badFormat, 'firstName');
 
-    expect(msgsTooLong.some((m) => m.includes('superar'))).toBe(true);
-    expect(msgsBadFormat.some((m) => m.includes('letras'))).toBe(true);
+    assert(msgsTooLong.some((m) => m.includes('superar'))).toBeTrue();
+    assert(msgsBadFormat.some((m) => m.includes('letras'))).toBeTrue();
     // Los mensajes son distintos
-    expect(msgsTooLong[0]).not.toBe(msgsBadFormat[0]);
+    assert(msgsTooLong[0]).not.toBeEqual(msgsBadFormat[0]);
   });
 
   it('mensaje de consecutivos es DIFERENTE al de longitud', () => {
@@ -218,8 +219,8 @@ describe('updateProfileSchema — Defecto #7: mensajes de error diferenciados', 
     const msgsConsecutive = messagesFor(consecutive, 'firstName');
     const msgsTooLong = messagesFor(tooLong, 'firstName');
 
-    expect(msgsConsecutive.some((m) => m.includes('consecutivos'))).toBe(true);
-    expect(msgsTooLong.some((m) => m.includes('superar'))).toBe(true);
+    assert(msgsConsecutive.some((m) => m.includes('consecutivos'))).toBeTrue();
+    assert(msgsTooLong.some((m) => m.includes('superar'))).toBeTrue();
   });
 });
 
@@ -230,7 +231,7 @@ describe('updateProfileSchema — Defecto #9: birthDate no es un campo editable'
     const schemaShape = (updateProfileSchema as unknown as { _def: { schema: { shape: Record<string, unknown> } } })
       ._def?.schema?.shape;
     if (schemaShape) {
-      expect(Object.keys(schemaShape)).not.toContain('birthDate');
+      assert(Object.keys(schemaShape).includes('birthDate')).toBeFalse();
     }
   });
 
@@ -244,7 +245,7 @@ describe('updateProfileSchema — Defecto #9: birthDate no es un campo editable'
     // No debe haber error por birthDate (puede haber error por "al menos un campo" si todos son vacíos)
     if (!result.success) {
       const msgs = messagesFor(result, 'birthDate');
-      expect(msgs.length).toBe(0);
+      assert(msgs.length).toBeEqual(0);
     }
   });
 
@@ -252,7 +253,7 @@ describe('updateProfileSchema — Defecto #9: birthDate no es un campo editable'
     // Verificación de tipo en runtime: el parsed output no contiene birthDate
     const result = updateProfileSchema.safeParse({ firstName: 'Ana', birthDate: '1990-01-01' });
     if (result.success) {
-      expect('birthDate' in result.data).toBe(false);
+      assert('birthDate' in result.data).toBeFalse();
     }
   });
 });
@@ -262,30 +263,30 @@ describe('updateProfileSchema — Defecto #9: birthDate no es un campo editable'
 describe('updateProfileSchema — caminos válidos', () => {
   it('acepta solo firstName válido', () => {
     const result = updateProfileSchema.safeParse({ firstName: 'Maria' });
-    expect(result.success).toBe(true);
+    assert(result.success).toBeTrue();
     if (result.success) {
-      expect(result.data.firstName).toBe('Maria');
+      assert(result.data.firstName).toBeEqual('Maria');
     }
   });
 
   it('acepta solo lastName válido', () => {
     const result = updateProfileSchema.safeParse({ lastName: 'Lopez' });
-    expect(result.success).toBe(true);
+    assert(result.success).toBeTrue();
   });
 
   it('acepta solo phone válido', () => {
     const result = updateProfileSchema.safeParse({ phone: '+573001234567' });
-    expect(result.success).toBe(true);
+    assert(result.success).toBeTrue();
   });
 
   it('acepta solo avatarUrl válida', () => {
     const result = updateProfileSchema.safeParse({ avatarUrl: 'https://cdn.example.com/img.png' });
-    expect(result.success).toBe(true);
+    assert(result.success).toBeTrue();
   });
 
   it('acepta solo monthlyIncome positivo', () => {
     const result = updateProfileSchema.safeParse({ monthlyIncome: 2500000 });
-    expect(result.success).toBe(true);
+    assert(result.success).toBeTrue();
   });
 
   it('acepta payload con múltiples campos válidos', () => {
@@ -295,38 +296,38 @@ describe('updateProfileSchema — caminos válidos', () => {
       phone: '+57 310 000 0000',
       monthlyIncome: 3000000,
     });
-    expect(result.success).toBe(true);
+    assert(result.success).toBeTrue();
   });
 
   it('acepta nombre con acento (Álvaro)', () => {
     const result = updateProfileSchema.safeParse({ firstName: 'Álvaro' });
-    expect(result.success).toBe(true);
+    assert(result.success).toBeTrue();
   });
 
   it('acepta nombre con eñe (Ñoño)', () => {
     // "Ñoño" tiene 2 ñ pero no 3 consecutivas, y tiene vocal
     const result = updateProfileSchema.safeParse({ firstName: 'Ñoño' });
-    expect(result.success).toBe(true);
+    assert(result.success).toBeTrue();
   });
 
   it('rechaza monthlyIncome negativo', () => {
     const result = updateProfileSchema.safeParse({ monthlyIncome: -100 });
-    expect(result.success).toBe(false);
+    assert(result.success).toBeFalse();
     const msgs = messagesFor(result, 'monthlyIncome');
-    expect(msgs.some((m) => m.includes('mayor a cero'))).toBe(true);
+    assert(msgs.some((m) => m.includes('mayor a cero'))).toBeTrue();
   });
 
   it('rechaza phone con formato inválido', () => {
     const result = updateProfileSchema.safeParse({ phone: '123' });
-    expect(result.success).toBe(false);
+    assert(result.success).toBeFalse();
     const msgs = messagesFor(result, 'phone');
-    expect(msgs.some((m) => /inv[aá]lid/i.test(m))).toBe(true);
+    assert(msgs.some((m) => /inv[aá]lid/i.test(m))).toBeTrue();
   });
 
   it('rechaza avatarUrl con formato inválido', () => {
     const result = updateProfileSchema.safeParse({ avatarUrl: 'no-es-una-url' });
-    expect(result.success).toBe(false);
+    assert(result.success).toBeFalse();
     const msgs = messagesFor(result, 'avatarUrl');
-    expect(msgs.length).toBeGreaterThanOrEqual(1);
+    assert(msgs.length >= 1).toBeTrue();
   });
 });

@@ -1,3 +1,4 @@
+import { expect as assert } from '@assertive-ts/core';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { apiClient } from '@/shared/services/api.client';
 import { loanService } from '@/features/loans/services/loan.service';

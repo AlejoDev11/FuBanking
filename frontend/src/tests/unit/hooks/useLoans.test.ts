@@ -1,3 +1,4 @@
+import { expect as assert } from '@assertive-ts/core';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useLoans } from '@/features/loans/hooks/useLoans';
@@ -22,7 +23,7 @@ describe('useLoans', () => {
     // Assert
     expect(result.current.simulation).toBeNull();
     expect(result.current.application).toBeNull();
-    expect(result.current.isLoading).toBe(false);
+    assert(result.current.isLoading).toBeFalse();
     expect(result.current.error).toBeNull();
   });
 
@@ -43,7 +44,7 @@ describe('useLoans', () => {
       expect(returned).toEqual(simulation);
       expect(result.current.simulation).toEqual(simulation);
       expect(result.current.error).toBeNull();
-      expect(result.current.isLoading).toBe(false);
+      assert(result.current.isLoading).toBeFalse();
     });
 
     it('should set the server message on failure', async () => {
@@ -59,9 +60,9 @@ describe('useLoans', () => {
 
       // Assert
       expect(returned).toBeNull();
-      expect(result.current.error).toBe('Monto inválido');
+      assert(result.current.error).toBeEqual('Monto inválido');
       expect(result.current.simulation).toBeNull();
-      expect(result.current.isLoading).toBe(false);
+      assert(result.current.isLoading).toBeFalse();
     });
 
     it('should fall back when the error is a plain string', async () => {
@@ -75,7 +76,7 @@ describe('useLoans', () => {
       });
 
       // Assert
-      expect(result.current.error).toBe('No fue posible simular el credito.');
+      assert(result.current.error).toBeEqual('No fue posible simular el credito.');
     });
 
     it('should fall back when the message is empty', async () => {
@@ -86,7 +87,7 @@ describe('useLoans', () => {
         await result.current.simulateLoan({ amount: 1, installments: 1, annualRate: 0 });
       });
 
-      expect(result.current.error).toBe('No fue posible simular el credito.');
+      assert(result.current.error).toBeEqual('No fue posible simular el credito.');
     });
 
     it('should fall back when the error has no message', async () => {
@@ -100,7 +101,7 @@ describe('useLoans', () => {
       });
 
       // Assert
-      expect(result.current.error).toBe('No fue posible simular el credito.');
+      assert(result.current.error).toBeEqual('No fue posible simular el credito.');
     });
   });
 
@@ -140,7 +141,7 @@ describe('useLoans', () => {
 
       // Assert
       expect(returned).toBeNull();
-      expect(result.current.error).toBe('No fue posible crear la solicitud.');
+      assert(result.current.error).toBeEqual('No fue posible crear la solicitud.');
       expect(result.current.application).toBeNull();
     });
 
@@ -154,7 +155,7 @@ describe('useLoans', () => {
       });
 
       // Assert
-      expect(result.current.error).toBe('custom');
+      assert(result.current.error).toBeEqual('custom');
     });
   });
 });
