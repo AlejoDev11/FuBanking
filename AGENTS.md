@@ -6,6 +6,7 @@ Banca web: **backend** Express 5 + TypeScript + Supabase (`:3001/api/v1`, `/heal
 FuBanking/
   backend/src/{app.ts,server.ts,presentation,application,domain,infrastructure,shared,tests/}
   frontend/src/{app/(auth)+(dashboard),features/<mod>/,shared/}
+  mcp-server/src/index.ts      # MCP solo-lectura (ver docs/mcp.md)
   frontend/middleware.ts  Jenkinsfile  ci/  scripts/  docs/
   package.json  sonar-project.properties
 ```
@@ -44,4 +45,4 @@ Detalle por lado: `backend/AGENTS.md`, `frontend/AGENTS.md`.
 
 ## Links
 
-`backend/AGENTS.md` · `frontend/AGENTS.md` · `docs/README.md` · `docs/api/endpoints.md` · `docs/ops/sonar.md` · `Jenkinsfile`
+`backend/AGENTS.md` · `frontend/AGENTS.md` · `docs/README.md` · `docs/api/endpoints.md` · `docs/ops/sonar.md` · `docs/mcp.md` · `Jenkinsfile`
