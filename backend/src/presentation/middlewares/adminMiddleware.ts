@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import { JwtTokenService } from '../../infrastructure/services/JwtTokenService';
 import { SupabaseUserRepository } from '../../infrastructure/repositories/SupabaseUserRepository';
+import { IUserRepository } from '../../domain/repositories/IUserRepository';
 import supabaseClient from '../../infrastructure/database/supabase.client';
 import { sendError } from '../../shared/utils/response';
 
 const tokenService = new JwtTokenService();
-const userRepository = new SupabaseUserRepository(supabaseClient);
+const defaultUserRepository = new SupabaseUserRepository(supabaseClient);
 
 /**
  * Middleware de autorización admin.
@@ -14,7 +15,16 @@ const userRepository = new SupabaseUserRepository(supabaseClient);
  * luego busca el usuario en la BD y verifica que sea admin.
  * Si no es admin, retorna 403.
  */
-export async function adminMiddleware(req: Request, res: Response, next: NextFunction): Promise<void> {
+/**
+ * Fábrica del middleware de autorización admin.
+ *
+ * El repositorio es inyectable para permitir tests HTTP con fakes
+ * en memoria; en producción se usa el valor por defecto (Supabase).
+ */
+export function createAdminMiddleware(
+  userRepository: IUserRepository = defaultUserRepository,
+) {
+  return async function adminMiddleware(req: Request, res: Response, next: NextFunction): Promise<void> {
   const authHeader = req.headers['authorization'];
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -52,4 +62,11 @@ export async function adminMiddleware(req: Request, res: Response, next: NextFun
   } catch {
     sendError(res, 'Error de autenticación', 'UNAUTHORIZED', 401);
   }
+  };
 }
+
+/**
+ * Instancia por defecto (producción, Supabase).
+ * Uso: router.get('/admin', authMiddleware, adminMiddleware, ...).
+ */
+export const adminMiddleware = createAdminMiddleware();

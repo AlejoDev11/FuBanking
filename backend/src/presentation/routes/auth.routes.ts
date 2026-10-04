@@ -110,7 +110,21 @@ const twoFactorController = new TwoFactorController(
 );
 
 router.post('/register', controller.register);
-router.post('/login', controller.login);
+
+/**
+ * Anti fuerza-bruta en login: 10 intentos/min por IP.
+ * Clave por email+IP para no bloquear a toda una red por un atacante.
+ */
+export const loginRateLimiter = createRateLimiter({
+  maxRequests: 10,
+  windowMs: 60_000,
+  keyExtractor: (req) => {
+    const email = (req.body as Record<string, unknown>)?.email;
+    const who = typeof email === 'string' && email.length > 0 ? email.toLowerCase().trim() : 'no-email';
+    return `login:${who}:ip:${req.ip ?? 'unknown'}`;
+  },
+});
+router.post('/login', loginRateLimiter, controller.login);
 router.post('/forgot-password', controller.forgotPassword);
 router.post('/reset-password', controller.resetPassword);
 router.get('/verify-reset-token', controller.verifyResetToken);

@@ -9,7 +9,7 @@ docs/
   estado-fase-actual.md      # bitácora temporal: qué está hecho / pendiente
   ux/toasts-y-estilos.md     # toasts, tokens, reglas visuales
   ops/sonar.md               # análisis SonarQube (host, token, lcov)
-  qa/                        # (vacío) futuros reportes de calidad en .md
+  qa/                        # entrega-testing-creditos.md (regresión+perf+seguridad loans)
   plan-de-pruebas*.md, pruebas-*.md, informe-*.md, registro-*.md/.json
                              # evidencia bolsillos (fuente .md)
   _archive/                  # .docx/.pdf/.xlsx/.html/.drawio.xml (no editar)

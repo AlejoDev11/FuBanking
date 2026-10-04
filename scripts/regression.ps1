@@ -7,12 +7,15 @@
 #   .\scripts\regression.ps1 -Coverage       # Incluye reporte de cobertura
 #   .\scripts\regression.ps1 -Only backend   # Solo backend
 #   .\scripts\regression.ps1 -Only frontend  # Solo frontend
+#   .\scripts\regression.ps1 -Module loans   # Solo modulo creditos (test:loans)
 # =============================================================================
 
 param(
     [switch]$Coverage,
     [ValidateSet("backend", "frontend", "both")]
-    [string]$Only = "both"
+    [string]$Only = "both",
+    [ValidateSet("all", "loans")]
+    [string]$Module = "all"
 )
 
 # Forzar UTF-8 para caracteres especiales en la consola
@@ -39,12 +42,18 @@ $StartTime   = Get-Date
 $BackendPassed  = $false
 $FrontendPassed = $false
 
-# -- Seleccionar comando segun flag -Coverage ----------------------------------
-if ($Coverage) {
-    $TestCmd = "test:coverage"
+# -- Seleccionar comando segun flags -------------------------------------------
+if ($Module -eq "loans") {
+    $BackendCmd = "test:loans"
+    $FrontendCmd = "test:loans"
+    $ModoLabel = "Modulo creditos"
+} elseif ($Coverage) {
+    $BackendCmd = "test:coverage"
+    $FrontendCmd = "test:coverage"
     $ModoLabel = "Con cobertura"
 } else {
-    $TestCmd = "test"
+    $BackendCmd = "test"
+    $FrontendCmd = "test"
     $ModoLabel = "Sin cobertura"
 }
 
@@ -85,12 +94,12 @@ function Invoke-Tests {
 
 # -- Ejecutar Backend ---------------------------------------------------------
 if ($Only -eq "backend" -or $Only -eq "both") {
-    $BackendPassed = Invoke-Tests -Label "Backend" -Dir $BackendDir -Command $TestCmd
+    $BackendPassed = Invoke-Tests -Label "Backend" -Dir $BackendDir -Command $BackendCmd
 }
 
 # -- Ejecutar Frontend --------------------------------------------------------
 if ($Only -eq "frontend" -or $Only -eq "both") {
-    $FrontendPassed = Invoke-Tests -Label "Frontend" -Dir $FrontendDir -Command $TestCmd
+    $FrontendPassed = Invoke-Tests -Label "Frontend" -Dir $FrontendDir -Command $FrontendCmd
 }
 
 # -- Resumen final ------------------------------------------------------------

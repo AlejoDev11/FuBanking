@@ -13,6 +13,7 @@ import { SupabaseAccountRepository } from '../../infrastructure/repositories/Sup
 import supabaseClient from '../../infrastructure/database/supabase.client';
 import { authMiddleware } from '../middlewares/authMiddleware';
 import { adminMiddleware } from '../middlewares/adminMiddleware';
+import { createRateLimiter } from '../middlewares/rateLimitMiddleware';
 
 const router = Router();
 
@@ -37,8 +38,15 @@ const controller = new LoanController(
   rejectLoan,
 );
 
-router.post('/simulate', authMiddleware, controller.simulate);
-router.post('/', authMiddleware, controller.create);
+// Anti-abuso: la simulación es barata pero pública para autenticados;
+// la creación toca DB + notificaciones. Clave por usuario (con fallback a IP).
+const byUserOrIp = (prefix: string) => (req: { user?: { id: string }; ip?: string }) =>
+  `${prefix}:${req.user?.id ?? `ip:${req.ip ?? 'unknown'}`}`;
+export const simulateLimiter = createRateLimiter({ maxRequests: 30, windowMs: 60_000, keyExtractor: byUserOrIp('loan-simulate') });
+export const createLoanLimiter = createRateLimiter({ maxRequests: 10, windowMs: 60_000, keyExtractor: byUserOrIp('loan-create') });
+
+router.post('/simulate', authMiddleware, simulateLimiter, controller.simulate);
+router.post('/', authMiddleware, createLoanLimiter, controller.create);
 router.get('/me', authMiddleware, controller.getMyLoans);
 
 router.get('/admin', authMiddleware, adminMiddleware, controller.getAll);

@@ -19,7 +19,7 @@ No existe `fronted/` (typo histórico) ni `k8s/` (GitOps vive en repo externo `F
 npm run test:backend            # cd backend && vitest run
 npm run test:frontend           # cd frontend && vitest run
 npm run test:coverage           # ambos con cobertura
-sh scripts/regression.sh [backend|frontend]   # regresión (CI/Linux; en Windows: scripts/regression.ps1)
+sh scripts/regression.sh [backend|frontend|loans]   # regresión (CI/Linux; en Windows: scripts/regression.ps1 [-Module loans])
 npm run sonar                   # requiere lcov + SONAR_TOKEN (ver docs/ops/sonar.md)
 ```
 

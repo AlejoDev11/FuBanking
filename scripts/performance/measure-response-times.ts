@@ -1,12 +1,24 @@
 /**
- * FuBanking — Medición de tiempos de respuesta del backend
+ * FuBanking — Medición de tiempos de respuesta del backend (módulo créditos)
  *
- * Ejecutar: cd backend && npx tsx measure-response-times.ts
- * Requiere: backend corriendo en http://localhost:3001
+ * Ejecutar: cd backend && npx tsx ../scripts/performance/measure-response-times.ts
+ * Requiere: backend corriendo en http://localhost:3001 + usuarios semilla
+ *   testperf99@example.com/Test1234 y admintest@example.com/Admin1234.
+ * Sale con código != 0 si algún p95 supera su SLO (apto para CI).
  */
 
 const BASE = 'http://localhost:3001/api/v1';
 const REPETITIONS = 20;
+
+/** SLO por endpoint (p95, ms). Generosos para máquina local; endurecer en CI. */
+const SLOS: Record<string, number> = {
+  'POST /loans/simulate': 500,
+  'POST /loans/': 2000,
+  'GET /loans/me': 1000,
+  'GET /loans/admin': 1000,
+  'PATCH /loans/admin/:id/approve': 2000,
+  'PATCH /loans/admin/:id/reject': 2000,
+};
 
 async function login(email: string, password: string): Promise<string> {
   const res = await fetch(`${BASE}/auth/login`, {
@@ -152,6 +164,21 @@ async function main() {
   for (const r of results) {
     console.log(`${r.label}: ${r.times.join(', ')}ms`);
   }
+
+  // ─── SLOs ────────────────────────────────────────────────────────────
+  console.log('\n=== SLOS (p95) ===\n');
+  let failed = 0;
+  for (const r of results) {
+    const slo = SLOS[r.label] ?? 2000;
+    const ok = r.p95 <= slo;
+    if (!ok) failed++;
+    console.log(`${ok ? 'OK  ' : 'FAIL'} ${r.label}: p95=${r.p95}ms (SLO ${slo}ms)`);
+  }
+  if (failed > 0) {
+    console.error(`\n${failed} endpoint(s) superaron su SLO.`);
+    process.exit(1);
+  }
+  console.log('\nTodos los SLOs cumplidos.');
 }
 
 main().catch(console.error);

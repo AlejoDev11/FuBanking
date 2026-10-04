@@ -21,6 +21,17 @@ pipeline {
       steps { checkout scm }
     }
 
+    stage('Security: npm audit') {
+      steps {
+        dir('backend') {
+          sh 'npm audit --audit-level=high || echo "WARN: vulnerabilidades high/critical en backend"'
+        }
+        dir('frontend') {
+          sh 'npm audit --audit-level=high || echo "WARN: vulnerabilidades high/critical en frontend"'
+        }
+      }
+    }
+
     stage('Backend: install + test + build') {
       steps {
         dir('backend') {
@@ -81,6 +92,22 @@ GMAIL_PASS=ci-dummy
           // Requiere webhook Sonar -> http://host.docker.internal:8080/sonarqube-webhook/
           waitForQualityGate abortPipeline: true
         }
+      }
+    }
+
+    stage('Performance: k6 modulo creditos') {
+      steps {
+        sh '''
+          if ! command -v k6 >/dev/null 2>&1; then
+            echo "SKIP: k6 no instalado en el agente (ver docs/qa/entrega-testing-creditos.md para corrida manual)"
+            exit 0
+          fi
+          if [ -z "$FUBANKING_JWT" ]; then
+            echo "SKIP: sin FUBANKING_JWT (credential de staging). k6 requiere back vivo + JWT real."
+            exit 0
+          fi
+          k6 run scripts/performance/loans-load.js
+        '''
       }
     }
 

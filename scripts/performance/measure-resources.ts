@@ -1,8 +1,8 @@
 /**
- * FuBanking — Medición de CPU y Memoria del backend (v2)
+ * FuBanking — Medición de CPU y Memoria del backend (módulo créditos, v2)
  *
- * Usa PowerShell para medir el proceso Node.js real.
- * Ejecutar: cd backend && npx tsx measure-resources.ts
+ * Usa PowerShell para medir el proceso Node.js real (solo Windows).
+ * Ejecutar: cd backend && npx tsx ../scripts/performance/measure-resources.ts
  * Requiere: backend corriendo en http://localhost:3001
  */
 

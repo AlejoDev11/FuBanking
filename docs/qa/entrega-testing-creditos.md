@@ -1,0 +1,39 @@
+# Entrega testing — módulo créditos (+ base común)
+
+Patrón del ejemplo del profesor (`RegressionTesting`): AAA obligatorio, FIRST, tablas de bordes, presupuesto explícito en performance, asserts negativos en seguridad.
+
+## 1. Regresión
+
+| Qué | Dónde | Resultado |
+|---|---|---|
+| Selectiva backend loans | `npm run test:loans` → `src/tests/unit/loan/**` + `src/tests/integration/loan.http.test.ts` | 14 archivos, 119 tests |
+| Selectiva frontend loans | `npm run test:loans` → service/hooks/`LoansClient`/`LoanCard`/admin (7 specs) | 7 archivos |
+| Atajo | `sh scripts/regression.sh loans` / `.\scripts\regression.ps1 -Module loans` / `npm run test:regression:loans` | OK |
+| Contrato HTTP nuevo | `backend/src/tests/integration/loan.http.test.ts` (18 tests: simulate 200, create 201, duplicado 400 `LOAN_ALREADY_PENDING`, `/me` solo propios, flujo admin approve/reject, 429 rate-limit) vía `tests/helpers/createLoanTestApp.ts` (repos en memoria, JWT reales con env dummy) | 18/18 |
+| `loanResponseMapper` | `src/tests/unit/loan/loanResponseMapper.test.ts` (único use-case sin spec directo) | 2/2 |
+
+## 2. Performance
+
+| Qué | Dónde | SLO |
+|---|---|---|
+| Tiempos F01–F05 loans | `scripts/performance/measure-response-times.ts` (3 warm-up + 20 reps, avg/min/max/p50/p95; **exit 1 si p95 > SLO**) | simulate 500ms, lecturas 1000ms, escrituras 2000ms |
+| Recursos | `scripts/performance/measure-resources.ts` (solo Windows) | informativo |
+| Cálculo puro CI-friendly | `SimulateLoan.performance.test.ts` (mediana de 5 <500ms + correctitud por repetición; corre en cada regresión) | <500ms |
+| Carga concurrente | `scripts/performance/loans-load.js` — k6, 20 VUs/30s, `p(95)<500`, `failed<1%` sobre `simulate` + `me`. Requiere back vivo + `FUBANKING_JWT`. Jenkins: stage `Performance: k6` con SKIP si falta k6 o JWT | p95<500 |
+| Limpieza | eliminados `backend-measure-*.ts` (duplicados) y `test-performance.ts` (roto, rutas inexistentes) | — |
+
+## 3. Seguridad
+
+| Qué | Dónde |
+|---|---|
+| Rate-limit loans | `loan.routes.ts`: `simulateLimiter` 30/min, `createLoanLimiter` 10/min (clave usuario, fallback IP) → 429 `RATE_LIMIT_EXCEEDED` + `Retry-After` |
+| Rate-limit base común | `auth.routes.ts`: `loginRateLimiter` 10/min por email+IP (anti fuerza-bruta) |
+| Tests HTTP | `loan.http.test.ts`: 401 sin token (POST+GET), 401 token inválido, 403 no-admin en `/admin/*`, fuzz 400 (`amount/installments/annualRate`, id no-uuid), aislamiento `/me` por usuario, 429 contra la config real de producción |
+| Existente reutilizado | helmet+CORS+10kb, `authMiddleware`/`adminMiddleware` (fábrica `createAdminMiddleware(repo?)` para fakes), zod, `npm audit --audit-level=high` en Jenkins (stage `Security: npm audit`) |
+
+## 4. Cómo reproducir
+
+```bash
+npm run test:regression:loans
+k6 run scripts/performance/loans-load.js   # con FUBANKING_JWT exportado
+```

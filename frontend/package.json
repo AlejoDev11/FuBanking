@@ -9,7 +9,8 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test:loans": "vitest run src/tests/unit/services/loan.service.test.ts src/tests/unit/services/admin.service.test.ts src/tests/unit/hooks/useLoans.test.ts src/tests/unit/hooks/useAdminLoans.test.ts src/tests/unit/components/LoansClient.test.tsx src/tests/unit/components/LoanCard.test.tsx src/tests/unit/components/AdminLoansClient.test.tsx"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",

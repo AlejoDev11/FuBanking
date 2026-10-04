@@ -11,7 +11,8 @@
     "test:coverage": "npm --prefix backend run test:coverage && npm --prefix frontend run test:coverage",
     "test:regression": "sh scripts/regression.sh",
     "test:regression:backend": "sh scripts/regression.sh backend",
-    "test:regression:frontend": "sh scripts/regression.sh frontend"
+    "test:regression:frontend": "sh scripts/regression.sh frontend",
+    "test:regression:loans": "sh scripts/regression.sh loans"
   },
   "devDependencies": {
     "sonarqube-scanner": "^4.2.9"

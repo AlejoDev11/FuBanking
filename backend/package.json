@@ -9,7 +9,8 @@
     "start": "node dist/server.js",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test:loans": "vitest run src/tests/unit/loan src/tests/integration/loan.http.test.ts"
   },
   "keywords": [
     "bank",

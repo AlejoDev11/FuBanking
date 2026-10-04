@@ -33,6 +33,7 @@ Env mínimo (ver `.env.example`): `PORT JWT_SECRET(≥16) SUPABASE_URL SUPABASE_
 ```bash
 npm run dev | build | start          # tsx watch / tsc→dist / node dist/server.js
 npm run test | test:watch | test:coverage   # vitest run (include src/tests/**, thresholds 85/80/85/85)
+npm run test:loans                 # solo módulo créditos (unit/loan + integration/loan.http)
 ```
 
 Legacy en retirada (no usar): `jest.config.ts`, `test:unit` (`run-unit.ts`), `test:coverage:bolsillos` (`c8` + `normalize-lcov.mjs`).
@@ -40,6 +41,7 @@ Legacy en retirada (no usar): `jest.config.ts`, `test:unit` (`run-unit.ts`), `te
 ## Patrón nuevo endpoint
 
 `routes/*.routes.ts` → validator zod → `controllers/*` → `application/use-cases/*` → repo `infrastructure/repositories/Supabase*` → dto. Respuesta siempre `{ success, message, data }` vía `errorHandler`. Auth: `authMiddleware` (JWT `Bearer`) y `adminMiddleware` donde aplique. Caso especial: `POST /auth/2fa/resend` lleva rate-limit.
+Rate-limit (`createRateLimiter`, in-memory, 429 `RATE_LIMIT_EXCEEDED` + `Retry-After`): `POST /auth/login` (10/min por email+IP), `POST /loans/simulate` (30/min por usuario), `POST /loans` (10/min por usuario). `adminMiddleware` expone fábrica `createAdminMiddleware(repo?)` para tests HTTP con fakes.
 
 Cada carpeta de `application/use-cases/{account,auth,card,loan,money-request,notification,payment,pocket,profile,transfer,user}/` espeja un `presentation/routes/*.routes.ts`.
 
