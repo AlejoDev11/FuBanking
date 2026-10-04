@@ -2,9 +2,16 @@
   "name": "fubanking-sonar-tooling",
   "version": "1.0.0",
   "private": true,
-  "description": "Tooling para ejecutar el analisis de SonarQube del proyecto FuBank. Lee la configuracion de sonar-project.properties.",
+  "description": "FuBanking - scripts raiz para CI local y sustentacion + analisis SonarQube.",
   "scripts": {
-    "sonar": "sonar-scanner"
+    "sonar": "sonar-scanner",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "npm --prefix backend test",
+    "test:frontend": "npm --prefix frontend test",
+    "test:coverage": "npm --prefix backend run test:coverage && npm --prefix frontend run test:coverage",
+    "test:regression": "sh scripts/regression.sh",
+    "test:regression:backend": "sh scripts/regression.sh backend",
+    "test:regression:frontend": "sh scripts/regression.sh frontend"
   },
   "devDependencies": {
     "sonarqube-scanner": "^4.2.9"

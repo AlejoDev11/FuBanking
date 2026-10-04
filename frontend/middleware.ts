@@ -5,7 +5,14 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get('token')?.value;
   
   const { pathname } = request.nextUrl;
-  
+
+  // Archivos estaticos de public/ (logo.png, *.jpg, *.svg, ...): dejar pasar
+  // siempre. Sin esto, pedir /logo.png sin cookie cae en el redirect a /login
+  // y las imagenes se ven rotas.
+  if (/\.[a-zA-Z0-9]+$/.test(pathname)) {
+    return NextResponse.next();
+  }
+
   const isAuthRoute = pathname === '/login' || pathname === '/register' || pathname === '/forgot-password' || pathname.startsWith('/reset-password');
   
   // Si intenta acceder a una ruta protegida y no tiene token, redirigir a /login
