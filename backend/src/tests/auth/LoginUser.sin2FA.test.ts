@@ -1,6 +1,6 @@
 /**
  *
- * Ejecutar: npx jest src/__tests__/auth/LoginUser.sin2FA.test.ts
+ * Ejecutar: npx vitest run src/tests/auth/LoginUser.sin2FA.test.ts
  */
 
 import { LoginUser } from '../../application/use-cases/auth/LoginUser';

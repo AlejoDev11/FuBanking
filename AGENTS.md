@@ -1,0 +1,47 @@
+# FuBanking — Mapa para agentes
+
+Banca web: **backend** Express 5 + TypeScript + Supabase (`:3001/api/v1`, `/health`) + **frontend** Next.js 16 + React 19 (`:3000`).
+
+```txt
+FuBanking/
+  backend/src/{app.ts,server.ts,presentation,application,domain,infrastructure,shared,tests/}
+  frontend/src/{app/(auth)+(dashboard),features/<mod>/,shared/}
+  frontend/middleware.ts  Jenkinsfile  ci/  scripts/  docs/
+  package.json  sonar-project.properties
+```
+
+No existe `fronted/` (typo histórico) ni `k8s/` (GitOps vive en repo externo `FuBanking-gitops`).
+
+## Comandos
+
+```bash
+npm run test:backend            # cd backend && vitest run
+npm run test:frontend           # cd frontend && vitest run
+npm run test:coverage           # ambos con cobertura
+sh scripts/regression.sh [backend|frontend]   # regresión (CI/Linux; en Windows: scripts/regression.ps1)
+npm run sonar                   # requiere lcov + SONAR_TOKEN (ver docs/ops/sonar.md)
+```
+
+Detalle por lado: `backend/AGENTS.md`, `frontend/AGENTS.md`.
+
+## Dónde poner qué
+
+| Quiero... | Va en... |
+|---|---|
+| Nuevo endpoint | `backend/src/presentation/routes/` + controller + `application/use-cases/` + repo Supabase |
+| Nueva pantalla | `frontend/src/app/(dashboard)/` + `features/<mod>/` |
+| Cambio reusable UI/API front | `frontend/src/shared/` |
+| Script operativo | `scripts/` (documentado en `scripts/README.md`) |
+| Doc permanente | `docs/` (índice en `docs/README.md`) |
+
+## Límites globales
+
+1. No recrear `fronted/`, no commitear `.env`, `coverage/`, `dist/`, `.next/`, `node_modules/`.
+2. Tests canónicos con **vitest** (`src/tests/`); `jest`/`c8`/`run-unit.ts` son legacy en retirada.
+3. Frontend usa **`features/pockets/`** (plural, coincide con ruta `/pockets`); `features/pocket/` está eliminado.
+4. No inventar `resultingBalance` en front si el back no lo devuelve (ver `docs/estado-fase-actual.md`).
+5. `NEXT_PUBLIC_*` es lo único que puede bajar al browser; `service_role` jamás sale del backend.
+
+## Links
+
+`backend/AGENTS.md` · `frontend/AGENTS.md` · `docs/README.md` · `docs/api/endpoints.md` · `docs/ops/sonar.md` · `Jenkinsfile`

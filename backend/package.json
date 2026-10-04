@@ -7,11 +7,9 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "test:unit": "tsx src/tests/run-unit.ts",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
-    "test:coverage:bolsillos": "c8 tsx src/tests/run-unit.ts && node scripts/normalize-lcov.mjs"
+    "test:coverage": "vitest run --coverage"
   },
   "keywords": [
     "bank",
