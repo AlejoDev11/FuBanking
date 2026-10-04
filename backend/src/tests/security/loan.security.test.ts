@@ -16,53 +16,14 @@ function appWithLimiter(limiter: Middleware) {
 }
 
 /**
- * Regresión por contrato HTTP + seguridad del módulo créditos.
- * Patrón AAA + FIRST (ver ejemplo del profesor: RegressionTesting).
+ * Security testing del módulo créditos (+ login como base común).
+ * Patrón AAA + FIRST: tablas negativas, asserts not.toContain/400/401/403/429.
  * App con repos en memoria (sin Supabase, sin red).
+ *
+ * Ejecutar: npm run test:security (o npx vitest run src/tests/security)
  */
-describe('Loans HTTP (contrato + seguridad)', () => {
-  // ---------- REGRESIÓN: contrato ----------
-
-  it('POST /simulate responde 200 con cuota calculada', async () => {
-    // Arrange
-    const { app, deps } = createLoanTestApp();
-    // Act
-    const res = await request(app)
-      .post('/api/v1/loans/simulate')
-      .set('Authorization', `Bearer ${deps.userToken}`)
-      .send({ amount: 5_000_000, installments: 24, annualRate: 0.24 });
-    // Assert
-    expect(res.status).toBe(200);
-    expect(res.body.success).toBe(true);
-    expect(res.body.data.monthlyPayment).toBeGreaterThan(0);
-  });
-
-  it('POST / crea solicitud PENDING (201)', async () => {
-    // Arrange
-    const { app, deps } = createLoanTestApp();
-    // Act
-    const res = await request(app)
-      .post('/api/v1/loans')
-      .set('Authorization', `Bearer ${deps.userToken}`)
-      .send({ amount: 5_000_000, installments: 12, annualRate: 24, monthlyIncome: 1_800_000 });
-    // Assert
-    expect(res.status).toBe(201);
-    expect(res.body.data.status).toBe('PENDING');
-  });
-
-  it('POST / duplicado PENDING responde 400 LOAN_ALREADY_PENDING', async () => {
-    // Arrange
-    const { app, deps } = createLoanTestApp();
-    const payload = { amount: 5_000_000, installments: 12, annualRate: 24, monthlyIncome: 1_800_000 };
-    await request(app).post('/api/v1/loans').set('Authorization', `Bearer ${deps.userToken}`).send(payload);
-    // Act
-    const res = await request(app).post('/api/v1/loans').set('Authorization', `Bearer ${deps.userToken}`).send(payload);
-    // Assert
-    expect(res.status).toBe(400);
-    expect(res.body.error.code).toBe('LOAN_ALREADY_PENDING');
-  });
-
-  it('GET /me lista solo los préstamos propios', async () => {
+describe('Loans HTTP (seguridad)', () => {
+  it('GET /me lista solo los préstamos propios (aislamiento)', async () => {
     // Arrange
     const { app, deps } = createLoanTestApp();
     await request(app)
@@ -77,43 +38,6 @@ describe('Loans HTTP (contrato + seguridad)', () => {
     expect(mine.body.data).toHaveLength(1);
     expect(adminView.body.data).toHaveLength(0);
   });
-
-  it('flujo admin: GET /admin + approve crea cuenta CREDITO', async () => {
-    // Arrange
-    const { app, deps } = createLoanTestApp();
-    const created = await request(app)
-      .post('/api/v1/loans')
-      .set('Authorization', `Bearer ${deps.userToken}`)
-      .send({ amount: 5_000_000, installments: 12, annualRate: 24, monthlyIncome: 1_800_000 });
-    const loanId = created.body.data.id as string;
-    // Act
-    const list = await request(app).get('/api/v1/loans/admin').set('Authorization', `Bearer ${deps.adminToken}`);
-    const approved = await request(app)
-      .patch(`/api/v1/loans/admin/${loanId}/approve`)
-      .set('Authorization', `Bearer ${deps.adminToken}`);
-    // Assert
-    expect(list.status).toBe(200);
-    expect(approved.status).toBe(200);
-    expect(approved.body.data.status).toBe('APPROVED');
-  });
-
-  it('PATCH /admin/:id/reject rechaza un PENDING', async () => {
-    // Arrange
-    const { app, deps } = createLoanTestApp();
-    const created = await request(app)
-      .post('/api/v1/loans')
-      .set('Authorization', `Bearer ${deps.userToken}`)
-      .send({ amount: 5_000_000, installments: 12, annualRate: 24, monthlyIncome: 1_800_000 });
-    // Act
-    const res = await request(app)
-      .patch(`/api/v1/loans/admin/${created.body.data.id}/reject`)
-      .set('Authorization', `Bearer ${deps.adminToken}`);
-    // Assert
-    expect(res.status).toBe(200);
-    expect(res.body.data.status).toBe('REJECTED');
-  });
-
-  // ---------- SEGURIDAD ----------
 
   it.each([['/simulate'], ['/']])('401 sin token en POST %s', async (path) => {
     // Arrange
@@ -192,8 +116,6 @@ describe('Loans HTTP (contrato + seguridad)', () => {
     // Assert
     expect(res.status).toBe(400);
   });
-
-  // ---------- RATE LIMIT (configuración real de producción) ----------
 
   it('429 al superar simulateLimiter (30/min)', async () => {
     // Arrange

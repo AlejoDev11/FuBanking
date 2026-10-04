@@ -33,7 +33,8 @@ Env mínimo (ver `.env.example`): `PORT JWT_SECRET(≥16) SUPABASE_URL SUPABASE_
 ```bash
 npm run dev | build | start          # tsx watch / tsc→dist / node dist/server.js
 npm run test | test:watch | test:coverage   # vitest run (include src/tests/**, thresholds 85/80/85/85)
-npm run test:loans                 # solo módulo créditos (unit/loan + integration/loan.http)
+npm run test:loans                 # solo módulo créditos (unit/loan + regression/ + security/ + performance/)
+npm run test:regression | test:security | test:performance   # por tipo (carpetas espejo del ejemplo del profesor)
 ```
 
 Legacy en retirada (no usar): `jest.config.ts`, `test:unit` (`run-unit.ts`), `test:coverage:bolsillos` (`c8` + `normalize-lcov.mjs`).

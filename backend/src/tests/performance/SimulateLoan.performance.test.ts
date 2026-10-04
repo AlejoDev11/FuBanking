@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { SimulateLoan } from '../../../application/use-cases/loan/SimulateLoan';
+import { SimulateLoan } from '../../application/use-cases/loan/SimulateLoan';
 
 /**
  * Performance del cálculo puro de simulación (sin DB ni red).

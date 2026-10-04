@@ -10,7 +10,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "test:loans": "vitest run src/tests/unit/loan src/tests/integration/loan.http.test.ts"
+    "test:loans": "vitest run src/tests/unit/loan src/tests/regression src/tests/security src/tests/performance",
+    "test:regression": "vitest run src/tests/regression",
+    "test:security": "vitest run src/tests/security",
+    "test:performance": "vitest run src/tests/performance"
   },
   "keywords": [
     "bank",

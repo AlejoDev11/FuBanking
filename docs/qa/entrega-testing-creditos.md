@@ -6,10 +6,11 @@ Patrón del ejemplo del profesor (`RegressionTesting`): AAA obligatorio, FIRST, 
 
 | Qué | Dónde | Resultado |
 |---|---|---|
-| Selectiva backend loans | `npm run test:loans` → `src/tests/unit/loan/**` + `src/tests/integration/loan.http.test.ts` | 14 archivos, 119 tests |
+| Selectiva backend loans | `npm run test:loans` → `unit/loan/**` + `regression/` + `security/` + `performance/` | 15 archivos, 119 tests |
+| Selectiva por tipo | `npm run test:regression` / `test:security` / `test:performance` (carpetas espejo del ejemplo del profesor, cada una con README) | — |
 | Selectiva frontend loans | `npm run test:loans` → service/hooks/`LoansClient`/`LoanCard`/admin (7 specs) | 7 archivos |
 | Atajo | `sh scripts/regression.sh loans` / `.\scripts\regression.ps1 -Module loans` / `npm run test:regression:loans` | OK |
-| Contrato HTTP nuevo | `backend/src/tests/integration/loan.http.test.ts` (18 tests: simulate 200, create 201, duplicado 400 `LOAN_ALREADY_PENDING`, `/me` solo propios, flujo admin approve/reject, 429 rate-limit) vía `tests/helpers/createLoanTestApp.ts` (repos en memoria, JWT reales con env dummy) | 18/18 |
+| Contrato HTTP nuevo | `src/tests/regression/loan.regression.test.ts` (5 tests: simulate 200, create 201, duplicado 400 `LOAN_ALREADY_PENDING`, flujo admin approve/reject) vía `tests/helpers/createLoanTestApp.ts` (repos en memoria, JWT reales con env dummy) | 5/5 |
 | `loanResponseMapper` | `src/tests/unit/loan/loanResponseMapper.test.ts` (único use-case sin spec directo) | 2/2 |
 
 ## 2. Performance
@@ -28,7 +29,7 @@ Patrón del ejemplo del profesor (`RegressionTesting`): AAA obligatorio, FIRST, 
 |---|---|
 | Rate-limit loans | `loan.routes.ts`: `simulateLimiter` 30/min, `createLoanLimiter` 10/min (clave usuario, fallback IP) → 429 `RATE_LIMIT_EXCEEDED` + `Retry-After` |
 | Rate-limit base común | `auth.routes.ts`: `loginRateLimiter` 10/min por email+IP (anti fuerza-bruta) |
-| Tests HTTP | `loan.http.test.ts`: 401 sin token (POST+GET), 401 token inválido, 403 no-admin en `/admin/*`, fuzz 400 (`amount/installments/annualRate`, id no-uuid), aislamiento `/me` por usuario, 429 contra la config real de producción |
+| Tests HTTP | `src/tests/security/loan.security.test.ts` (13 tests): 401 sin token (POST+GET), 401 token inválido, 403 no-admin en `/admin/*`, fuzz 400 (`amount/installments/annualRate`, id no-uuid), aislamiento `/me` por usuario, 429 contra la config real de producción | 13/13 |
 | Existente reutilizado | helmet+CORS+10kb, `authMiddleware`/`adminMiddleware` (fábrica `createAdminMiddleware(repo?)` para fakes), zod, `npm audit --audit-level=high` en Jenkins (stage `Security: npm audit`) |
 
 ## 4. Cómo reproducir
