@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import { GetUserLoans } from '../../../application/use-cases/loan/GetUserLoans';
 import { LoanApplication } from '../../../domain/entities/LoanApplication';
-import { InMemoryLoanRepo } from './in-memory-repos';
+import { InMemoryLoanRepo } from '../../fakes/loan.in-memory-repos';
 
 describe('GetUserLoans', () => {
   let loanRepo: InMemoryLoanRepo;

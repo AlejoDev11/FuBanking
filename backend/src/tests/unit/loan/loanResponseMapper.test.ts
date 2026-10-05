@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { toLoanResponseDto } from '../../../application/use-cases/loan/loanResponseMapper';
-import { buildPendingLoan } from './in-memory-repos';
+import { buildPendingLoan } from '../../fakes/loan.in-memory-repos';
 
 describe('toLoanResponseDto', () => {
   it('serializa todos los campos públicos del préstamo', async () => {

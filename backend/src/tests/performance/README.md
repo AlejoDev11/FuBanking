@@ -9,4 +9,4 @@ k6 run ../../../scripts/performance/loans-load.js   # carga concurrente (requier
 
 | Archivo | Cubre |
 |---|---|
-| `SimulateLoan.performance.test.ts` | cálculo puro: correctitud por repetición + mediana de 5 <500ms |
+| `loan.performance.test.ts` | cálculo puro: regresión numérica (`toBeCloseTo` fórmula francesa) + mediana de 5 <500ms |

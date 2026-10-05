@@ -9,8 +9,8 @@ import {
   InMemoryAccountRepo,
   InMemoryNotificationRepo,
   createTestUser,
-} from './in-memory-repos';
-import { buildPendingLoan } from './in-memory-repos';
+} from '../../fakes/loan.in-memory-repos';
+import { buildPendingLoan } from '../../fakes/loan.in-memory-repos';
 
 describe('ApproveLoan', () => {
   let loanRepo: InMemoryLoanRepo;

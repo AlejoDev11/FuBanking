@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { GetAllLoans } from '../../../application/use-cases/loan/GetAllLoans';
-import { InMemoryLoanRepo, createTestUser, buildPendingLoan } from './in-memory-repos';
+import { InMemoryLoanRepo, createTestUser, buildPendingLoan } from '../../fakes/loan.in-memory-repos';
 
 describe('GetAllLoans', () => {
   let loanRepo: InMemoryLoanRepo;

@@ -1,12 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { LoanApplication, LoanApplicationStatus } from '../../../domain/entities/LoanApplication';
-
-
-function expectedFrenchPayment(amount: number, annualRate: number, installments: number): number {
-  const monthlyRate = annualRate / 100 / 12;
-  if (monthlyRate === 0) return amount / installments;
-  return (amount * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -installments));
-}
+import { expectedFrenchPayment } from '../../helpers/loanMath';
 
 describe('LoanApplication — Entity', () => {
   describe('create()', () => {

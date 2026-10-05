@@ -37,7 +37,7 @@ expect(result.status).toBe(LoanApplicationStatus.APPROVED);
 | Tipo | Dónde (archivo:línea aprox.) |
 |---|---|
 | Dummy | `ApproveLoan.test.ts` (`undefined` como notification repo); `confirmDelete(..., null)` en handlers |
-| Fake | `backend/src/tests/unit/loan/in-memory-repos.ts` (repos Map en memoria) |
+| Fake | `backend/src/tests/fakes/loan.in-memory-repos.ts` (repos Map en memoria) |
 | Stub | `CardController.test.ts` (`vi.fn().mockResolvedValue(dto)`) |
 | Spy | `ApproveLoan.test.ts` (`vi.spyOn(Math, 'random')` para forzar colisión de cuenta) |
 | Mock | `useLoans.test.ts` (`vi.mock('@/features/loans/services/loan.service')`); `adminMiddleware.test.ts` (mock Jwt + Supabase) |

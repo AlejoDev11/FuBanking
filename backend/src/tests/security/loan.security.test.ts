@@ -117,6 +117,9 @@ describe('Loans HTTP (seguridad)', () => {
     expect(res.status).toBe(400);
   });
 
+  // NOTA: se prueban los singletons reales de producción (no factorías frescas)
+  // para evidenciar su configuración. Es determinista porque vitest aísla
+  // módulos por archivo y cada limiter tiene su propio store en memoria.
   it('429 al superar simulateLimiter (30/min)', async () => {
     // Arrange
     const app = appWithLimiter(simulateLimiter);

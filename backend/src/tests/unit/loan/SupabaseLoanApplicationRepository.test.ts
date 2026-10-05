@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { SupabaseLoanApplicationRepository } from '../../../infrastructure/repositories/SupabaseLoanApplicationRepository';
 import { LoanApplicationStatus } from '../../../domain/entities/LoanApplication';
 import { AppError } from '../../../shared/errors/AppError';
-import { buildPendingLoan } from './in-memory-repos';
+import { buildPendingLoan } from '../../fakes/loan.in-memory-repos';
 
 function loanRow(overrides: Record<string, unknown> = {}) {
   return {

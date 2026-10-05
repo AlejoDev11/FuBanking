@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import type { Request, Response, NextFunction } from 'express';
 import { LoanController } from '../../../presentation/controllers/LoanController';
 import { LoanApplicationStatus } from '../../../domain/entities/LoanApplication';
-import { buildPendingLoan } from './in-memory-repos';
+import { buildPendingLoan } from '../../fakes/loan.in-memory-repos';
 
 function mockRes() {
   const json = vi.fn();

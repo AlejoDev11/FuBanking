@@ -23,7 +23,7 @@ vi.mock('../../../infrastructure/database/supabase.client', () => ({
 }));
 
 import { adminMiddleware } from '../../../presentation/middlewares/adminMiddleware';
-import { createTestUser } from './in-memory-repos';
+import { createTestUser } from '../../fakes/loan.in-memory-repos';
 
 function mockRes() {
   const json = vi.fn();

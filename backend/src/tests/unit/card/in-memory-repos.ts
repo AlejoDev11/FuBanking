@@ -7,7 +7,7 @@ import {
   InMemoryNotificationRepo,
   InMemoryUserRepo,
   createTestUser,
-} from '../loan/in-memory-repos';
+} from '../../fakes/loan.in-memory-repos';
 
 export { InMemoryAccountRepo, InMemoryNotificationRepo, InMemoryUserRepo, createTestUser };
 

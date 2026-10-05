@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { SimulateLoan } from '../../application/use-cases/loan/SimulateLoan';
+import { expectedFrenchPayment } from '../helpers/loanMath';
 
 /**
  * Performance del cálculo puro de simulación (sin DB ni red).
@@ -18,8 +19,9 @@ describe('SimulateLoan performance', () => {
       const start = performance.now();
       const result = await useCase.execute(input);
       durations.push(performance.now() - start);
-      // Assert (correctitud en cada repetición)
+      // Assert (correctitud en cada repetición: regresión numérica)
       expect(result.monthlyPayment).toBeGreaterThan(0);
+      expect(result.monthlyPayment).toBeCloseTo(expectedFrenchPayment(5_000_000, 0.24, 24), 2);
     }
     durations.sort((a, b) => a - b);
     const median = durations[Math.floor(durations.length / 2)]!;

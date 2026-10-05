@@ -1,4 +1,4 @@
-import express, { Application, Request, Response, Router } from 'express';
+import { Application, Router } from 'express';
 import { LoanController } from '../../presentation/controllers/LoanController';
 import { CreateLoanApplication } from '../../application/use-cases/loan/CreateLoanApplication';
 import { SimulateLoan } from '../../application/use-cases/loan/SimulateLoan';
@@ -8,7 +8,7 @@ import { ApproveLoan } from '../../application/use-cases/loan/ApproveLoan';
 import { RejectLoan } from '../../application/use-cases/loan/RejectLoan';
 import { authMiddleware } from '../../presentation/middlewares/authMiddleware';
 import { createAdminMiddleware } from '../../presentation/middlewares/adminMiddleware';
-import { errorHandler } from '../../presentation/middlewares/errorHandler';
+import { mountTestApi } from './mountTestApi';
 import { JwtTokenService } from '../../infrastructure/services/JwtTokenService';
 import {
   InMemoryLoanRepo,
@@ -16,7 +16,7 @@ import {
   InMemoryAccountRepo,
   InMemoryNotificationRepo,
   createTestUser,
-} from '../unit/loan/in-memory-repos';
+} from '../fakes/loan.in-memory-repos';
 
 export interface LoanTestDeps {
   loanRepo: InMemoryLoanRepo;
@@ -64,13 +64,7 @@ export function createLoanTestApp(): { app: Application; deps: LoanTestDeps } {
   loanRouter.patch('/admin/:id/approve', authMiddleware, adminOnly, controller.approve);
   loanRouter.patch('/admin/:id/reject', authMiddleware, adminOnly, controller.reject);
 
-  const app = express();
-  app.use(express.json());
-  app.use('/api/v1/loans', loanRouter);
-  app.use((_req: Request, res: Response) => {
-    res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Ruta no encontrada' } });
-  });
-  app.use(errorHandler);
+  const app: Application = mountTestApi(loanRouter, '/api/v1/loans');
 
   const tokens = new JwtTokenService();
   return {

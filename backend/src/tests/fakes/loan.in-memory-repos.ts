@@ -1,14 +1,14 @@
 import { randomUUID } from 'node:crypto';
-import { LoanApplication } from '../../../domain/entities/LoanApplication';
-import { ILoanApplicationRepository } from '../../../domain/repositories/ILoanApplicationRepository';
-import { User } from '../../../domain/entities/User';
-import { IUserRepository } from '../../../domain/repositories/IUserRepository';
-import { Account, AccountStatus, AccountDetails } from '../../../domain/entities/Account';
-import { IAccountRepository } from '../../../domain/repositories/IAccountRepository';
-import { Notification } from '../../../domain/entities/Notification';
-import { INotificationRepository } from '../../../domain/repositories/INotificationRepository';
-import { Email } from '../../../domain/value-objects/Email';
-import { Document } from '../../../domain/value-objects/Document';
+import { LoanApplication } from '../../domain/entities/LoanApplication';
+import { ILoanApplicationRepository } from '../../domain/repositories/ILoanApplicationRepository';
+import { User } from '../../domain/entities/User';
+import { IUserRepository } from '../../domain/repositories/IUserRepository';
+import { Account, AccountStatus, AccountDetails } from '../../domain/entities/Account';
+import { IAccountRepository } from '../../domain/repositories/IAccountRepository';
+import { Notification } from '../../domain/entities/Notification';
+import { INotificationRepository } from '../../domain/repositories/INotificationRepository';
+import { Email } from '../../domain/value-objects/Email';
+import { Document } from '../../domain/value-objects/Document';
 
 
 export class InMemoryLoanRepo implements ILoanApplicationRepository {

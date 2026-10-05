@@ -19,7 +19,7 @@ Patrón del ejemplo del profesor (`RegressionTesting`): AAA obligatorio, FIRST, 
 |---|---|---|
 | Tiempos F01–F05 loans | `scripts/performance/measure-response-times.ts` (3 warm-up + 20 reps, avg/min/max/p50/p95; **exit 1 si p95 > SLO**) | simulate 500ms, lecturas 1000ms, escrituras 2000ms |
 | Recursos | `scripts/performance/measure-resources.ts` (solo Windows) | informativo |
-| Cálculo puro CI-friendly | `SimulateLoan.performance.test.ts` (mediana de 5 <500ms + correctitud por repetición; corre en cada regresión) | <500ms |
+| Cálculo puro CI-friendly | `src/tests/performance/loan.performance.test.ts` (regresión numérica `toBeCloseTo` + mediana de 5 <500ms; corre en cada regresión) | <500ms |
 | Carga concurrente | `scripts/performance/loans-load.js` — k6, 20 VUs/30s, `p(95)<500`, `failed<1%` sobre `simulate` + `me`. Requiere back vivo + `FUBANKING_JWT`. Jenkins: stage `Performance: k6` con SKIP si falta k6 o JWT | p95<500 |
 | Limpieza | eliminados `backend-measure-*.ts` (duplicados) y `test-performance.ts` (roto, rutas inexistentes) | — |
 
