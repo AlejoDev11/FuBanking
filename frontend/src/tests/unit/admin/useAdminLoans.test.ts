@@ -1,17 +1,16 @@
-import { expect as assert } from '@assertive-ts/core';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useAdminLoans } from '@/features/admin/hooks/useAdminLoans';
-import { adminService } from '@/features/admin/services/admin.service';
+import { adminLoansService } from '@/features/admin/services/adminLoans.service';
 import type { AdminLoanApplication } from '@/features/admin/types/admin.types';
 
-vi.mock('@/features/admin/services/admin.service', () => ({
-  adminService: { getAllLoans: vi.fn(), approveLoan: vi.fn(), rejectLoan: vi.fn() },
+vi.mock('@/features/admin/services/adminLoans.service', () => ({
+  adminLoansService: { getAllLoans: vi.fn(), approveLoan: vi.fn(), rejectLoan: vi.fn() },
 }));
 
-const getAllLoans = adminService.getAllLoans as unknown as ReturnType<typeof vi.fn>;
-const approveLoan = adminService.approveLoan as unknown as ReturnType<typeof vi.fn>;
-const rejectLoan = adminService.rejectLoan as unknown as ReturnType<typeof vi.fn>;
+const getAllLoans = adminLoansService.getAllLoans as unknown as ReturnType<typeof vi.fn>;
+const approveLoan = adminLoansService.approveLoan as unknown as ReturnType<typeof vi.fn>;
+const rejectLoan = adminLoansService.rejectLoan as unknown as ReturnType<typeof vi.fn>;
 
 function loan(id: string, status: AdminLoanApplication['status'] = 'PENDING'): AdminLoanApplication {
   return {
@@ -43,7 +42,7 @@ describe('useAdminLoans', () => {
       expect(returned).toEqual(loans);
       expect(result.current.loans).toEqual(loans);
       expect(result.current.error).toBeNull();
-      assert(result.current.isLoading).toBeFalse();
+      expect(result.current.isLoading).toBe(false);
     });
 
     it('should return [] and fallback message on failure', async () => {
@@ -56,7 +55,7 @@ describe('useAdminLoans', () => {
       });
 
       expect(returned).toEqual([]);
-      assert(result.current.error).toBeEqual('No fue posible obtener los prestamos.');
+      expect(result.current.error).toEqual('No fue posible obtener los prestamos.');
       expect(result.current.loans).toEqual([]);
     });
   });
@@ -98,7 +97,7 @@ describe('useAdminLoans', () => {
       });
 
       expect(returned).toBeNull();
-      assert(result.current.error).toBeEqual('Ya fue procesado');
+      expect(result.current.error).toEqual('Ya fue procesado');
       expect(result.current.loans).toEqual(before);
     });
 
@@ -110,7 +109,7 @@ describe('useAdminLoans', () => {
         await result.current.approveLoan('loan-1');
       });
 
-      assert(result.current.error).toBeEqual('No fue posible aprobar el prestamo.');
+      expect(result.current.error).toEqual('No fue posible aprobar el prestamo.');
     });
 
     it('should fall back when the message is empty', async () => {
@@ -121,9 +120,12 @@ describe('useAdminLoans', () => {
         await result.current.approveLoan('loan-1');
       });
 
-      assert(result.current.error).toBeEqual('No fue posible aprobar el prestamo.');
+      expect(result.current.error).toEqual('No fue posible aprobar el prestamo.');
     });
 
+  });
+
+  describe('rejectLoan', () => {
     it('should fall back when the error is a plain string', async () => {
       rejectLoan.mockRejectedValue('boom');
       const { result } = renderHook(() => useAdminLoans());
@@ -132,11 +134,9 @@ describe('useAdminLoans', () => {
         await result.current.rejectLoan('loan-1');
       });
 
-      assert(result.current.error).toBeEqual('No fue posible rechazar el prestamo.');
+      expect(result.current.error).toEqual('No fue posible rechazar el prestamo.');
     });
-  });
 
-  describe('rejectLoan', () => {
     it('should replace only the rejected loan', async () => {
       const before = [loan('loan-1'), loan('loan-2')];
       getAllLoans.mockResolvedValue(before);
@@ -164,7 +164,7 @@ describe('useAdminLoans', () => {
       });
 
       expect(returned).toBeNull();
-      assert(result.current.error).toBeEqual('No fue posible rechazar el prestamo.');
+      expect(result.current.error).toEqual('No fue posible rechazar el prestamo.');
     });
   });
 });

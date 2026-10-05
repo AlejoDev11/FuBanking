@@ -1,7 +1,7 @@
 import { apiClient } from '@/shared/services/api.client';
 import { AdminLoanApplication } from '../types/admin.types';
 
-class AdminService {
+class AdminLoansService {
   async getAllLoans(): Promise<AdminLoanApplication[]> {
     const response = await apiClient.get<AdminLoanApplication[]>('/loans/admin');
     return response.data;
@@ -18,4 +18,4 @@ class AdminService {
   }
 }
 
-export const adminService = new AdminService();
+export const adminLoansService = new AdminLoansService();

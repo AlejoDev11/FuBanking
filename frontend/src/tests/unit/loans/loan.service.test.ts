@@ -1,4 +1,3 @@
-import { expect as assert } from '@assertive-ts/core';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { apiClient } from '@/shared/services/api.client';
 import { loanService } from '@/features/loans/services/loan.service';
@@ -16,29 +15,20 @@ describe('loanService', () => {
   });
 
   describe('simulate / simulateLoan', () => {
-    it('should POST /loans/simulate and return data', async () => {
+    it('should POST /loans/simulate and return data (both aliases)', async () => {
       // Arrange
       const payload = { amount: 5_000_000, installments: 12, annualRate: 24 };
       const simulation = { ...payload, monthlyRate: 0.02, monthlyPayment: 470_000, totalToPay: 5_640_000, totalInterest: 640_000 };
       post.mockResolvedValue({ data: simulation });
 
       // Act
-      const result = await loanService.simulate(payload);
+      const viaSimulate = await loanService.simulate(payload);
+      const viaAlias = await loanService.simulateLoan(payload);
 
       // Assert
       expect(post).toHaveBeenCalledWith('/loans/simulate', payload);
-      expect(result).toEqual(simulation);
-    });
-
-    it('should delegate simulateLoan to simulate', async () => {
-      // Arrange
-      const payload = { amount: 1_000_000, installments: 6, annualRate: 12 };
-      const simulation = { ...payload, monthlyRate: 0.01, monthlyPayment: 172_000, totalToPay: 1_032_000, totalInterest: 32_000 };
-      post.mockResolvedValue({ data: simulation });
-
-      // Act + Assert
-      await expect(loanService.simulateLoan(payload)).resolves.toEqual(simulation);
-      expect(post).toHaveBeenCalledWith('/loans/simulate', payload);
+      expect(viaSimulate).toEqual(simulation);
+      expect(viaAlias).toEqual(simulation);
     });
 
     it('should propagate errors', async () => {
@@ -53,28 +43,20 @@ describe('loanService', () => {
   });
 
   describe('create / createLoan', () => {
-    it('should POST /loans and return the application', async () => {
+    it('should POST /loans and return the application (both aliases)', async () => {
       // Arrange
       const payload = { amount: 5_000_000, installments: 12, annualRate: 24, monthlyIncome: 1_800_000 };
       const application = { ...payload, id: 'loan-1', userId: 'user-1', status: 'PENDING' };
       post.mockResolvedValue({ data: application });
 
       // Act
-      const result = await loanService.create(payload);
+      const viaCreate = await loanService.create(payload);
+      const viaAlias = await loanService.createLoan(payload);
 
       // Assert
       expect(post).toHaveBeenCalledWith('/loans', payload);
-      expect(result).toEqual(application);
-    });
-
-    it('should delegate createLoan to create', async () => {
-      // Arrange
-      const payload = { amount: 2_000_000, installments: 12, annualRate: 18, monthlyIncome: 2_000_000 };
-      const application = { ...payload, id: 'loan-2', userId: 'user-1', status: 'PENDING' };
-      post.mockResolvedValue({ data: application });
-
-      // Act + Assert
-      await expect(loanService.createLoan(payload)).resolves.toEqual(application);
+      expect(viaCreate).toEqual(application);
+      expect(viaAlias).toEqual(application);
     });
   });
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { adminService } from '../services/admin.service';
+import { adminLoansService } from '../services/adminLoans.service';
 import { AdminLoanApplication } from '../types/admin.types';
 import { getMessage } from '@/shared/utils/getMessage';
 
@@ -14,7 +14,7 @@ export function useAdminLoans() {
     setIsLoading(true);
     setError(null);
     try {
-      const result = await adminService.getAllLoans();
+      const result = await adminLoansService.getAllLoans();
       setLoans(result);
       return result;
     } catch (err) {
@@ -29,7 +29,7 @@ export function useAdminLoans() {
     setIsLoading(true);
     setError(null);
     try {
-      const result = await adminService.approveLoan(id);
+      const result = await adminLoansService.approveLoan(id);
       setLoans(prev => prev.map(loan => loan.id === id ? result : loan));
       return result;
     } catch (err) {
@@ -44,7 +44,7 @@ export function useAdminLoans() {
     setIsLoading(true);
     setError(null);
     try {
-      const result = await adminService.rejectLoan(id);
+      const result = await adminLoansService.rejectLoan(id);
       setLoans(prev => prev.map(loan => loan.id === id ? result : loan));
       return result;
     } catch (err) {

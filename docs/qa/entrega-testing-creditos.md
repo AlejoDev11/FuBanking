@@ -8,7 +8,7 @@ Patrón del ejemplo del profesor (`RegressionTesting`): AAA obligatorio, FIRST, 
 |---|---|---|
 | Selectiva backend loans | `npm run test:loans` → `unit/loan/**` + `regression/` + `security/` + `performance/` | 15 archivos, 119 tests |
 | Selectiva por tipo | `npm run test:regression` / `test:security` / `test:performance` (carpetas espejo del ejemplo del profesor, cada una con README) | — |
-| Selectiva frontend loans | `npm run test:loans` → service/hooks/`LoansClient`/`LoanCard`/admin (7 specs) | 7 archivos |
+| Selectiva frontend loans | `npm run test:loans` → `src/tests/unit/loans/` (usuario) + `src/tests/unit/admin/` (aprobación, espejo de `features/`) | 9 archivos, 69 tests |
 | Atajo | `sh scripts/regression.sh loans` / `.\scripts\regression.ps1 -Module loans` / `npm run test:regression:loans` | OK |
 | Contrato HTTP nuevo | `src/tests/regression/loan.regression.test.ts` (5 tests: simulate 200, create 201, duplicado 400 `LOAN_ALREADY_PENDING`, flujo admin approve/reject) vía `tests/helpers/createLoanTestApp.ts` (repos en memoria, JWT reales con env dummy) | 5/5 |
 | `loanResponseMapper` | `src/tests/unit/loan/loanResponseMapper.test.ts` (único use-case sin spec directo) | 2/2 |
