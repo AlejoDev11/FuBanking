@@ -40,7 +40,7 @@ export function evaluatePasswordCriteria(password: string): PasswordCriteria {
  * - **Media**: cumple los mínimos obligatorios pero sin símbolo especial.
  * - **Fuerte**: cumple todos los criterios incluyendo símbolo especial.
  */
-export function calculateStrength(criteria: PasswordCriteria): PasswordStrength {
+export function calculateStrength(criteria: PasswordCriteria): Exclude<PasswordStrength, 'empty'> {
   const { hasMinLength, hasUppercase, hasLowercase, hasNumber, hasSymbol } = criteria;
   const meetsMinimums = hasMinLength && hasUppercase && hasLowercase && hasNumber;
 

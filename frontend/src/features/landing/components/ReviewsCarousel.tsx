@@ -46,7 +46,7 @@ export function ReviewsCarousel() {
   const duplicatedReviews = [...reviews, ...reviews];
 
   return (
-    <section className="py-24 bg-muted/30">
+    <section className="py-24 bg-[#0a0a1a] text-white border-t border-white/5">
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -55,10 +55,10 @@ export function ReviewsCarousel() {
           transition={{ duration: 0.6 }}
           className="text-center mb-14"
         >
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-white">
             Lo que dicen nuestros usuarios
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <p className="text-white/60 text-lg max-w-2xl mx-auto">
             Miles de personas ya confían en FuBank para su day a day financiero.
           </p>
         </motion.div>
@@ -69,20 +69,20 @@ export function ReviewsCarousel() {
           {duplicatedReviews.map((review, i) => (
             <div
               key={`${review.name}-${i}`}
-              className="shrink-0 w-[320px] bg-card border border-border rounded-2xl p-6"
+              className="shrink-0 w-[320px] bg-white/[0.04] border border-white/10 rounded-2xl p-6 backdrop-blur-sm"
             >
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center">
                   <span className="text-sm font-semibold text-primary">
                     {review.initials}
                   </span>
                 </div>
                 <div>
-                  <p className="font-medium text-sm">{review.name}</p>
+                  <p className="font-medium text-sm text-white">{review.name}</p>
                   <StarRating rating={review.rating} />
                 </div>
               </div>
-              <p className="text-muted-foreground text-sm leading-relaxed">
+              <p className="text-white/60 text-sm leading-relaxed">
                 &ldquo;{review.comment}&rdquo;
               </p>
             </div>

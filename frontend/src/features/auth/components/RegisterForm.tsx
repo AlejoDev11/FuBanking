@@ -21,6 +21,18 @@ const FIELD_MAX = {
   password: PASSWORD_MAX_LENGTH,
 } as const;
 
+// Marca de campo obligatorio: asterisco visible + texto solo para lectores de pantalla.
+// Junto al tag "(opcional)" de los opcionales, cada label lleva su marcador y
+// el ritmo visual del formulario queda simétrico (recomendación Baymard).
+function RequiredMark() {
+  return (
+    <>
+      <span aria-hidden="true" className="text-primary ml-0.5">*</span>
+      <span className="sr-only"> (obligatorio)</span>
+    </>
+  );
+}
+
 export function RegisterForm() {
   const { handleRegister, isLoading, error } = useRegister();
   const [showPassword, setShowPassword] = useState(false);
@@ -72,7 +84,7 @@ export function RegisterForm() {
       <div className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="firstName">Primer nombre</Label>
+            <Label htmlFor="firstName">Primer nombre<RequiredMark /></Label>
             <Input
               id="firstName"
               placeholder="Ej. Juan"
@@ -83,18 +95,20 @@ export function RegisterForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="middleName">Segundo nombre (opcional)</Label>
+            <Label htmlFor="middleName">Segundo nombre</Label>
             <Input
               id="middleName"
               placeholder="Ej. Carlos"
               maxLength={FIELD_MAX.name}
               error={errors.middleName?.message}
+              aria-describedby="middleName-optional"
               {...register('middleName')}
             />
+            <p id="middleName-optional" className="text-xs text-muted-foreground ml-1">Opcional</p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="lastName">Primer apellido</Label>
+            <Label htmlFor="lastName">Primer apellido<RequiredMark /></Label>
             <Input
               id="lastName"
               placeholder="Ej. Pérez"
@@ -105,19 +119,21 @@ export function RegisterForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="secondLastName">Segundo apellido (opcional)</Label>
+            <Label htmlFor="secondLastName">Segundo apellido</Label>
             <Input
               id="secondLastName"
               placeholder="Ej. Gómez"
               maxLength={FIELD_MAX.name}
               error={errors.secondLastName?.message}
+              aria-describedby="secondLastName-optional"
               {...register('secondLastName')}
             />
+            <p id="secondLastName-optional" className="text-xs text-muted-foreground ml-1">Opcional</p>
           </div>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="birthDate">Fecha de nacimiento</Label>
+          <Label htmlFor="birthDate">Fecha de nacimiento<RequiredMark /></Label>
           <Input
             id="birthDate"
             type="date"
@@ -127,7 +143,7 @@ export function RegisterForm() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="email">Correo electrónico</Label>
+          <Label htmlFor="email">Correo electrónico<RequiredMark /></Label>
           <Input
             id="email"
             type="email"
@@ -139,7 +155,7 @@ export function RegisterForm() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="document">Documento</Label>
+          <Label htmlFor="document">Documento<RequiredMark /></Label>
           <Input
             id="document"
             placeholder="123456789"
@@ -150,7 +166,7 @@ export function RegisterForm() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="monthlyIncome">Ingreso mensual</Label>
+          <Label htmlFor="monthlyIncome">Ingreso mensual<RequiredMark /></Label>
           <Input
             id="monthlyIncome"
             type="number"
@@ -161,18 +177,20 @@ export function RegisterForm() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="phone">Teléfono (opcional)</Label>
+          <Label htmlFor="phone">Teléfono</Label>
           <Input
             id="phone"
             placeholder="+57 300 000 0000"
             maxLength={FIELD_MAX.phone}
             error={errors.phone?.message}
+            aria-describedby="phone-optional"
             {...register('phone')}
           />
+          <p id="phone-optional" className="text-xs text-muted-foreground ml-1">Opcional</p>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="password">Contraseña</Label>
+          <Label htmlFor="password">Contraseña<RequiredMark /></Label>
           <div className="relative">
             <Input
               id="password"
@@ -200,7 +218,7 @@ export function RegisterForm() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="confirmPassword">Confirmar contraseña</Label>
+          <Label htmlFor="confirmPassword">Confirmar contraseña<RequiredMark /></Label>
           <div className="relative">
             <Input
               id="confirmPassword"

@@ -3,12 +3,14 @@
 import { useAccounts } from '@/features/account/hooks/useAccounts';
 import { VirtualCard } from '@/features/cards/components/VirtualCard';
 import { useCards } from '@/features/cards/hooks/useCards';
+import { useAuth } from '@/shared/hooks/useAuth';
 import { useToast } from '@/shared/components/feedback/ToastProvider';
 import { AlertCircle, CreditCard, Plus } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export default function CardsPage() {
   const toast = useToast();
+  const { user } = useAuth();
   const { accounts } = useAccounts();
   const { cards, isLoading, error, setError, fetchCards, createCard, toggleLock, deleteCard } = useCards();
   const [accountId, setAccountId] = useState('');
@@ -137,6 +139,7 @@ export default function CardsPage() {
                 onToggleLock={handleToggle}
                 onDelete={handleDelete}
                 isLoading={isLoading}
+                avatarUrl={user?.avatarUrl}
               />
             ))
           )}

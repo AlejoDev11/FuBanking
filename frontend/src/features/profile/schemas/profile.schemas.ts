@@ -26,7 +26,7 @@ export { parseDateLocal };
 // ─── Schema principal ─────────────────────────────────────────────────────────
 export const updateProfileSchema = z.object({
   firstName: z
-    .string({ required_error: 'El primer nombre es requerido' })
+    .string()
     .min(2, 'El primer nombre debe tener al menos 2 caracteres')
     .max(NAME_MAX_LENGTH, 'El primer nombre no puede superar los 100 caracteres')
     .regex(/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s\-']+$/, 'Solo se permiten letras, espacios, guiones y apóstrofes')
@@ -40,7 +40,7 @@ export const updateProfileSchema = z.object({
     .nullable()
     .optional(),
   lastName: z
-    .string({ required_error: 'El primer apellido es requerido' })
+    .string()
     .min(2, 'El primer apellido debe tener al menos 2 caracteres')
     .max(NAME_MAX_LENGTH, 'El primer apellido no puede superar los 100 caracteres')
     .regex(/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s\-']+$/, 'Solo se permiten letras, espacios, guiones y apóstrofes')

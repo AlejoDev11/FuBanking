@@ -12,9 +12,10 @@ interface VirtualCardProps {
   onToggleLock: (cardId: string) => void;
   onDelete?: (cardId: string) => void;
   isLoading: boolean;
+  avatarUrl?: string | null;
 }
 
-export function VirtualCard({ card, accountType = 'AHORROS', onToggleLock, onDelete = () => {}, isLoading }: VirtualCardProps) {
+export function VirtualCard({ card, accountType = 'AHORROS', onToggleLock, onDelete = () => {}, isLoading, avatarUrl }: VirtualCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
   const [showSensitiveData, setShowSensitiveData] = useState(false);
   const [sensitiveData, setSensitiveData] = useState<{ cardNumber: string; cvv: string } | null>(null);
@@ -126,12 +127,21 @@ export function VirtualCard({ card, accountType = 'AHORROS', onToggleLock, onDel
           <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-tr from-white/0 via-white/10 to-white/0 transform -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] pointer-events-none" />
           
           <div className="flex items-start justify-between relative z-10">
-            <div>
-              <p className="text-xs uppercase tracking-widest text-white/60 font-semibold flex items-center gap-1">
-                <Zap size={14} className={isBlocked ? "text-zinc-500" : "text-yellow-400"} />
-                FuBanking Virtual
-              </p>
-              <p className="mt-8 text-xl font-bold tracking-wide">{card.cardHolderName}</p>
+            <div className="flex items-center gap-3">
+              {avatarUrl && (
+                <img
+                  src={avatarUrl}
+                  alt=""
+                  className="h-9 w-9 rounded-full object-cover border border-white/30"
+                />
+              )}
+              <div>
+                <p className="text-xs uppercase tracking-widest text-white/60 font-semibold flex items-center gap-1">
+                  <Zap size={14} className={isBlocked ? "text-zinc-500" : "text-yellow-400"} />
+                  FuBanking Virtual
+                </p>
+                <p className="mt-8 text-xl font-bold tracking-wide">{card.cardHolderName}</p>
+              </div>
             </div>
             <CreditCard className="text-white/70" size={28} />
           </div>

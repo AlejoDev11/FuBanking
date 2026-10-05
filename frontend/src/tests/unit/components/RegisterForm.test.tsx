@@ -24,14 +24,14 @@ vi.mock('next/link', () => ({
 }));
 
 function fillValid() {
-  fireEvent.change(screen.getByLabelText('Primer nombre'), { target: { value: 'Ana' } });
-  fireEvent.change(screen.getByLabelText('Primer apellido'), { target: { value: 'Garcia' } });
-  fireEvent.change(screen.getByLabelText('Fecha de nacimiento'), { target: { value: '1995-06-15' } });
-  fireEvent.change(screen.getByLabelText('Correo electrónico'), { target: { value: 'ana@example.com' } });
-  fireEvent.change(screen.getByLabelText('Documento'), { target: { value: '1234567890' } });
-  fireEvent.change(screen.getByLabelText('Ingreso mensual'), { target: { value: '1800000' } });
-  fireEvent.change(screen.getByLabelText('Contraseña'), { target: { value: 'Segura123' } });
-  fireEvent.change(screen.getByLabelText('Confirmar contraseña'), { target: { value: 'Segura123' } });
+  fireEvent.change(screen.getByLabelText(/Primer nombre/), { target: { value: 'Ana' } });
+  fireEvent.change(screen.getByLabelText(/Primer apellido/), { target: { value: 'Garcia' } });
+  fireEvent.change(screen.getByLabelText(/Fecha de nacimiento/), { target: { value: '1995-06-15' } });
+  fireEvent.change(screen.getByLabelText(/Correo electrónico/), { target: { value: 'ana@example.com' } });
+  fireEvent.change(screen.getByLabelText(/Documento/), { target: { value: '1234567890' } });
+  fireEvent.change(screen.getByLabelText(/Ingreso mensual/), { target: { value: '1800000' } });
+  fireEvent.change(screen.getByLabelText(/^Contraseña/), { target: { value: 'Segura123' } });
+  fireEvent.change(screen.getByLabelText(/Confirmar contraseña/), { target: { value: 'Segura123' } });
 }
 
 describe('RegisterForm', () => {
@@ -54,7 +54,7 @@ describe('RegisterForm', () => {
     fillValid();
     fireEvent.submit(container.querySelector('form')!);
 
-    await screen.findByText('Primer nombre');
+    await screen.findByText(/Primer nombre/);
     expect(mockHandleRegister).toHaveBeenCalledWith(
       expect.objectContaining({ email: 'ana@example.com', firstName: 'Ana' }),
     );
@@ -72,13 +72,13 @@ describe('RegisterForm', () => {
   it('should toggle both password visibilities', () => {
     render(<RegisterForm />);
 
-    const password = screen.getByLabelText('Contraseña') as HTMLInputElement;
-    const confirm = screen.getByLabelText('Confirmar contraseña') as HTMLInputElement;
+    const password = screen.getByLabelText(/^Contraseña/) as HTMLInputElement;
+    const confirm = screen.getByLabelText(/Confirmar contraseña/) as HTMLInputElement;
 
     fireEvent.click(password.closest('div.relative')!.querySelector('button')!);
     fireEvent.click(confirm.closest('div.relative')!.querySelector('button')!);
 
-    expect((screen.getByLabelText('Contraseña') as HTMLInputElement).type).toBe('text');
-    expect((screen.getByLabelText('Confirmar contraseña') as HTMLInputElement).type).toBe('text');
+    expect((screen.getByLabelText(/^Contraseña/) as HTMLInputElement).type).toBe('text');
+    expect((screen.getByLabelText(/Confirmar contraseña/) as HTMLInputElement).type).toBe('text');
   });
 });

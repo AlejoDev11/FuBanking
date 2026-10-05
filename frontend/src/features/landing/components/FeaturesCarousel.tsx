@@ -45,7 +45,7 @@ const features = [
 
 export function FeaturesCarousel() {
   return (
-    <section className="py-24 px-6 bg-background">
+    <section className="py-24 px-6 bg-[#0a0a1a] text-white">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -54,10 +54,10 @@ export function FeaturesCarousel() {
           transition={{ duration: 0.6 }}
           className="text-center mb-14"
         >
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-white">
             Todo lo que necesitas en un solo lugar
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <p className="text-white/60 text-lg max-w-2xl mx-auto">
             Herramientas diseñadas para que tengas el control total de tu dinero.
           </p>
         </motion.div>
@@ -70,13 +70,13 @@ export function FeaturesCarousel() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="snap-center shrink-0 w-[280px] sm:w-[320px] bg-card border border-border rounded-2xl p-8 hover:shadow-lg hover:border-primary/20 transition-all duration-300 group"
+              className="snap-center shrink-0 w-[280px] sm:w-[320px] bg-white/[0.04] border border-white/10 rounded-2xl p-8 backdrop-blur-sm hover:shadow-[0_8px_30px_rgba(130,10,209,0.25)] hover:border-primary/30 transition-all duration-300 group"
             >
-              <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary/15 transition-colors">
+              <div className="w-14 h-14 rounded-xl bg-primary/15 flex items-center justify-center mb-6 group-hover:bg-primary/25 transition-colors">
                 <feature.icon className="w-7 h-7 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-              <p className="text-muted-foreground leading-relaxed">
+              <h3 className="text-xl font-semibold mb-3 text-white">{feature.title}</h3>
+              <p className="text-white/60 leading-relaxed">
                 {feature.description}
               </p>
             </motion.div>

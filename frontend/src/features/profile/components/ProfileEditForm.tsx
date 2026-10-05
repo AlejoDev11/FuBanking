@@ -9,6 +9,7 @@ import { PublicUser } from '@/features/auth/types/auth.types';
 import { Input } from '@/shared/components/ui/Input';
 import { Button } from '@/shared/components/ui/Button';
 import { Label } from '@/shared/components/ui/Label';
+import { AvatarPicker } from './AvatarPicker';
 import { Card, CardHeader, CardTitle, CardContent } from '@/shared/components/ui/Card';
 
 // ─── Constantes de longitud ───────────────────────────────────────────────────
@@ -28,6 +29,8 @@ export function ProfileEditForm({ user, onCancel, onSuccess }: ProfileEditFormPr
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<UpdateProfileInput>({
     resolver: zodResolver(updateProfileSchema),
@@ -42,6 +45,8 @@ export function ProfileEditForm({ user, onCancel, onSuccess }: ProfileEditFormPr
       newPassword: '',
     },
   });
+
+  const avatarUrl = watch('avatarUrl') ?? '';
 
   const onSubmit = (data: UpdateProfileInput) => {
     const payload: UpdateProfileInput = {};
@@ -126,6 +131,13 @@ export function ProfileEditForm({ user, onCancel, onSuccess }: ProfileEditFormPr
                 />
               </div>
             </div>
+
+            <AvatarPicker
+              value={avatarUrl}
+              onChange={(url) => setValue('avatarUrl', url, { shouldDirty: true, shouldValidate: true })}
+              error={errors.avatarUrl?.message}
+              userName={user.fullName}
+            />
 
             <div className="space-y-2">
               <Label htmlFor="phone">Teléfono</Label>
