@@ -4,6 +4,7 @@ import { IEmailService } from '../../interfaces/IEmailService';
 import { ITokenService } from '../../interfaces/ITokenService';
 import { IPasswordService } from '../../interfaces/IPasswordService';
 import { VerificationCode } from '../../../domain/entities/VerificationCode';
+import { env } from '../../../shared/config/env';
 
 /**
  * Caso de Uso: Generar y enviar código OTP de 2FA.
@@ -14,7 +15,11 @@ import { VerificationCode } from '../../../domain/entities/VerificationCode';
  * 3. Hashea el OTP con bcrypt antes de guardarlo.
  * 4. Persiste el código hasheado en la BD con expiración de 5 minutos.
  * 5. Envía el código en texto plano al correo.
- * 6. Genera y retorna un token temporal (válido 10 minutos).
+ * 6. Genera y retorna un token temporal (configurable via TWO_FACTOR_TOKEN_EXPIRES_IN).
+ *
+ * Seguridad:
+ * - rememberMe se incluye en el payload del temporaryToken para que VerifyTwoFactorCode
+ *   pueda aplicar la expiración correcta ('30d' vs '7d') sin confiar en el cliente.
  */
 export class GenerateTwoFactorCode {
   constructor(
@@ -27,6 +32,7 @@ export class GenerateTwoFactorCode {
   async execute(
     userId: string,
     email: string,
+    rememberMe?: boolean,
   ): Promise<{ temporaryToken: string; maskedEmail: string }> {
     await this.verificationCodeRepository.invalidateAllByUserId(userId);
 
@@ -44,8 +50,8 @@ export class GenerateTwoFactorCode {
     await this.emailService.sendTwoFactorCode(email, plainCode);
 
     const temporaryToken = this.tokenService.generate(
-      { userId, email },
-      { expiresIn: '20s' },
+      { userId, email, rememberMe },
+      { expiresIn: env.TWO_FACTOR_TOKEN_EXPIRES_IN },
     );
 
     const maskedEmail = this.maskEmail(email);

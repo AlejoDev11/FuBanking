@@ -65,6 +65,9 @@ export function AccountDetailModal({ account, isOpen, onClose, onAccountDeleted 
 
   return (
     <div
+      role="button"
+      tabIndex={0}
+      aria-label="Cerrar detalle de la cuenta"
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
     >
       {/* Backdrop */}
@@ -77,6 +80,8 @@ export function AccountDetailModal({ account, isOpen, onClose, onAccountDeleted 
 
       {/* Modal */}
       <div
+        role="dialog"
+        aria-modal="true"
         className="relative z-10 w-full max-w-md bg-[#1a1a2e] border border-white/10 rounded-2xl p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200"
       >
         {/* Header */}

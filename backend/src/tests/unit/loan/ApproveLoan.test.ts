@@ -173,7 +173,7 @@ describe('ApproveLoan', () => {
       let calls = 0;
       accountRepo.findByAccountNumber = async (n: string) => {
         calls += 1;
-        if (calls === 1) return existing;
+        if (calls === 1) return existing; // fuerza una colisión en el primer intento
         return realFind(n);
       };
 

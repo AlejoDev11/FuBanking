@@ -10,7 +10,7 @@ interface AuthContextType {
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (user: PublicUser, token: string) => void;
+  login: (user: PublicUser, token: string, rememberMe?: boolean) => void;
   logout: () => void;
   updateUser: (user: PublicUser) => void;
 }
@@ -20,7 +20,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { readonly children: ReactNode }) {
   const [user, setUser] = useState<PublicUser | null>(() => {
     try {
-      const storedUser = localStorage.getItem('user');
+      // "Recuérdame" guarda en localStorage; sin él, la sesión vive en sessionStorage.
+      const storedUser = localStorage.getItem('user') ?? sessionStorage.getItem('user');
       return storedUser ? (JSON.parse(storedUser) as PublicUser) : null;
     } catch {
       return null;
@@ -28,7 +29,7 @@ export function AuthProvider({ children }: { readonly children: ReactNode }) {
   });
   const [token, setToken] = useState<string | null>(() => {
     try {
-      return localStorage.getItem('token');
+      return localStorage.getItem('token') ?? sessionStorage.getItem('token');
     } catch {
       return null;
     }
@@ -36,12 +37,20 @@ export function AuthProvider({ children }: { readonly children: ReactNode }) {
   const [isLoading] = useState(false);
   const router = useRouter();
 
-  const login = useCallback((newUser: PublicUser, newToken: string) => {
+  const login = useCallback((newUser: PublicUser, newToken: string, rememberMe = false) => {
     setUser(newUser);
     setToken(newToken);
-    localStorage.setItem('token', newToken);
-    localStorage.setItem('user', JSON.stringify(newUser));
-    document.cookie = `token=${newToken}; path=/; max-age=604800; SameSite=Strict`;
+    
+    if (rememberMe) {
+      localStorage.setItem('token', newToken);
+      localStorage.setItem('user', JSON.stringify(newUser));
+      document.cookie = `token=${newToken}; path=/; max-age=2592000; SameSite=Strict`; // 30 days
+    } else {
+      sessionStorage.setItem('token', newToken);
+      sessionStorage.setItem('user', JSON.stringify(newUser));
+      document.cookie = `token=${newToken}; path=/; SameSite=Strict`; // Session cookie
+    }
+    
     router.push('/profile');
   }, [router]);
 
@@ -51,6 +60,8 @@ export function AuthProvider({ children }: { readonly children: ReactNode }) {
     setToken(null);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
     document.cookie = `token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
     router.push('/login');
   }, [router]);

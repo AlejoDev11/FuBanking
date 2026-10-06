@@ -28,24 +28,10 @@ export class ProfileController {
     }
   };
 
-  private normalizeBirthDate(birthDate: string | null | undefined): Date | null | undefined {
-    if (birthDate) {
-      return new Date(`${birthDate}T00:00:00`);
-    }
-    if (birthDate === null || birthDate === '') {
-      return null;
-    }
-    return undefined;
-  }
-
   updateMyProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const dto = updateProfileSchema.parse(req.body);
-      const updateDto = {
-        ...dto,
-        birthDate: this.normalizeBirthDate(dto.birthDate),
-      };
-      const result = await this.updateProfile.execute(req.user!.id, updateDto);
+      const result = await this.updateProfile.execute(req.user!.id, dto);
       sendSuccess(res, result, 'Perfil actualizado exitosamente');
     } catch (error) {
       next(error);

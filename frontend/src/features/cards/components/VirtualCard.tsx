@@ -185,6 +185,12 @@ export function VirtualCard({ card, accountType = 'AHORROS', onToggleLock, onDel
           transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
         }}
         onClick={() => setIsFlipped(!isFlipped)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setIsFlipped(!isFlipped);
+          }
+        }}
       >
         {/* Lado Frontal */}
         <div 

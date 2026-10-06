@@ -97,6 +97,8 @@ export function CreateAccountModal({ isOpen, onClose, onSuccess }: Readonly<Crea
       />
 
       <div
+        role="dialog"
+        aria-modal="true"
         className="relative z-10 w-full max-w-md bg-[#1a1a2e] border border-white/10 rounded-2xl p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200"
       >
         {/* Header */}
