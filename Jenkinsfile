@@ -21,6 +21,20 @@ pipeline {
       steps { checkout scm }
     }
 
+    stage('Resolve image tag') {
+      steps {
+        script {
+          // main -> release numérico (:BUILD_NUMBER + :latest).
+          // Cualquier otra rama (dev, features) -> :dev-BUILD_NUMBER (nunca pisa releases).
+          // Funciona en jobs single-pipeline (GIT_BRANCH=origin/dev) y multibranch (BRANCH_NAME).
+          def b = env.BRANCH_NAME ?: env.GIT_BRANCH ?: ''
+          env.IS_MAIN = (b == 'main' || b == 'origin/main' || b == 'master') ? 'true' : 'false'
+          env.IMAGE_TAG = (env.IS_MAIN == 'true') ? "${env.BUILD_NUMBER}" : "dev-${env.BUILD_NUMBER}"
+          echo "Rama detectada: '${b}' -> IMAGE_TAG=${env.IMAGE_TAG}"
+        }
+      }
+    }
+
     stage('Security: npm audit') {
       steps {
         dir('backend') {
@@ -116,7 +130,7 @@ GMAIL_PASS=ci-dummy
         withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DH_USER', passwordVariable: 'DH_PASS')]) {
           sh '''
             echo "$DH_PASS" | docker login -u "$DH_USER" --password-stdin
-            TAG="${BUILD_NUMBER}"
+            TAG="$IMAGE_TAG"
 
             docker build -t $BACKEND_IMG:$TAG ./backend
 
@@ -131,7 +145,7 @@ GMAIL_PASS=ci-dummy
     stage('Run with Docker (smoke test)') {
       steps {
         sh '''
-          TAG="${BUILD_NUMBER}"
+          TAG="$IMAGE_TAG"
           NET="ci-smoke-$TAG"
           BE="be-smoke-$TAG"
           FE="fe-smoke-$TAG"
@@ -167,13 +181,16 @@ GMAIL_PASS=ci-dummy
         withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DH_USER', passwordVariable: 'DH_PASS')]) {
           sh '''
             echo "$DH_PASS" | docker login -u "$DH_USER" --password-stdin
-            TAG="${BUILD_NUMBER}"
-            docker tag $BACKEND_IMG:$TAG $BACKEND_IMG:latest
+            TAG="$IMAGE_TAG"
             docker push $BACKEND_IMG:$TAG
-            docker push $BACKEND_IMG:latest
-            docker tag $FRONTEND_IMG:$TAG $FRONTEND_IMG:latest
             docker push $FRONTEND_IMG:$TAG
-            docker push $FRONTEND_IMG:latest
+            # :latest solo sale de main (dev nunca pisa el release).
+            if [ "$IS_MAIN" = "true" ]; then
+              docker tag $BACKEND_IMG:$TAG $BACKEND_IMG:latest
+              docker push $BACKEND_IMG:latest
+              docker tag $FRONTEND_IMG:$TAG $FRONTEND_IMG:latest
+              docker push $FRONTEND_IMG:latest
+            fi
           '''
         }
       }
@@ -183,7 +200,7 @@ GMAIL_PASS=ci-dummy
       steps {
         withCredentials([usernamePassword(credentialsId: 'github', usernameVariable: 'GH_USER', passwordVariable: 'GH_PASS')]) {
           sh '''
-            TAG="${BUILD_NUMBER}"
+            TAG="$IMAGE_TAG"
             rm -rf gitops-tmp && git clone -b $GITOPS_BRANCH "https://$GH_USER:$GH_PASS@github.com/andresparceromelo/FuBanking-gitops.git" gitops-tmp
             cd gitops-tmp
 
