@@ -13,7 +13,10 @@
     "test:loans": "vitest run src/tests/unit/loan src/tests/regression src/tests/security src/tests/performance",
     "test:regression": "vitest run src/tests/regression",
     "test:security": "vitest run src/tests/security",
-    "test:performance": "vitest run src/tests/performance"
+    "test:performance": "vitest run src/tests/performance",
+    "test:regression:bolsillos": "vitest run src/tests/regression/pocket src/tests/regression/account src/tests/unit/pocket src/tests/unit/account/DepositMoney.test.ts",
+    "test:performance:bolsillos": "vitest run src/tests/performance/pocket --reporter=verbose",
+    "test:security:bolsillos": "vitest run src/tests/security/pocket --reporter=verbose"
   },
   "keywords": [
     "bank",
