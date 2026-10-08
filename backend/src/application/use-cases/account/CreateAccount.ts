@@ -2,7 +2,7 @@ import { IAccountRepository } from '../../../domain/repositories/IAccountReposit
 import { Account, AccountType, AccountDetails } from '../../../domain/entities/Account';
 import { CreateAccountDto, CreateAccountResponseDto } from '../../dtos/account/account.dtos';
 import { AppError } from '../../../shared/errors/AppError';
-import { randomInt, randomUUID } from 'crypto';
+import { randomInt, randomUUID } from 'node:crypto';
 
 /**
  * Caso de Uso: Crear una cuenta bancaria.

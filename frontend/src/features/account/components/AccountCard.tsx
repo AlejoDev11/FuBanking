@@ -15,7 +15,7 @@ interface AccountCardProps {
 /**
  * AccountCard — Tarjeta visual de una cuenta bancaria, estilo Nubank.
  */
-export function AccountCard({ account, showBalance = true, onClick, onDeposit, onWithdraw }: AccountCardProps) {
+export function AccountCard({ account, showBalance = true, onClick, onDeposit, onWithdraw }: Readonly<AccountCardProps>) {
   const maskedNumber = `****${account.accountNumber.slice(-4)}`;
 
   const statusColors: Record<AccountStatus, string> = {
@@ -51,7 +51,7 @@ export function AccountCard({ account, showBalance = true, onClick, onDeposit, o
       `}
     >
       {/* Clickable Area for Details */}
-      <div
+      <div // NOSONAR -- area operable por teclado (tabIndex + Enter/Espacio + aria-label)
         role="button"
         tabIndex={0}
         aria-label="Ver detalles de la cuenta"

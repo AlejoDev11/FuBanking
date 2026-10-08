@@ -48,11 +48,11 @@ export default function HistoryPage() {
   }, [transactions, filterType, filterDateFrom, filterDateTo]);
 
   useEffect(() => {
-    const timeoutId = window.setTimeout(() => {
+    const timeoutId = globalThis.setTimeout(() => {
       void fetchHistory();
     }, 0);
 
-    return () => window.clearTimeout(timeoutId);
+    return () => globalThis.clearTimeout(timeoutId);
   }, [fetchHistory]);
 
   useEffect(() => {
@@ -172,7 +172,7 @@ export default function HistoryPage() {
       <div className="rounded-2xl border border-border bg-card/70 p-4 sm:p-5">
         <div className="mb-5 flex items-center justify-between gap-3">
           <h2 className="text-sm font-semibold text-foreground">
-            {filteredTransactions.length} movimiento{filteredTransactions.length !== 1 ? 's' : ''}
+            {filteredTransactions.length} movimiento{filteredTransactions.length === 1 ? '' : 's'}
           </h2>
           <span className="text-xs text-muted-foreground">Ordenado por fecha mas reciente</span>
         </div>

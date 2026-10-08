@@ -1,4 +1,4 @@
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 import { IAccountRepository } from '../../../domain/repositories/IAccountRepository';
 import { INotificationRepository } from '../../../domain/repositories/INotificationRepository';
 import { AppError } from '../../../shared/errors/AppError';

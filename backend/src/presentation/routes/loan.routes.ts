@@ -40,8 +40,10 @@ const controller = new LoanController(
 
 // Anti-abuso: la simulación es barata pero pública para autenticados;
 // la creación toca DB + notificaciones. Clave por usuario (con fallback a IP).
-const byUserOrIp = (prefix: string) => (req: { user?: { id: string }; ip?: string }) =>
-  `${prefix}:${req.user?.id ?? `ip:${req.ip ?? 'unknown'}`}`;
+const byUserOrIp = (prefix: string) => (req: { user?: { id: string }; ip?: string }) => {
+  const who = req.user?.id ?? `ip:${req.ip ?? 'unknown'}`;
+  return `${prefix}:${who}`;
+};
 export const simulateLimiter = createRateLimiter({ maxRequests: 30, windowMs: 60_000, keyExtractor: byUserOrIp('loan-simulate') });
 export const createLoanLimiter = createRateLimiter({ maxRequests: 10, windowMs: 60_000, keyExtractor: byUserOrIp('loan-create') });
 

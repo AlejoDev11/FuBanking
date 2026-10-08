@@ -1,4 +1,4 @@
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 import { IMoneyRequestRepository } from '../../../domain/repositories/IMoneyRequestRepository';
 import { IUserRepository } from '../../../domain/repositories/IUserRepository';
 import { INotificationRepository } from '../../../domain/repositories/INotificationRepository';
@@ -26,48 +26,10 @@ export class RespondMoneyRequest {
   ) {}
 
   async execute(dto: RespondMoneyRequestDto): Promise<MoneyRequest> {
-    const request = await this.moneyRequestRepository.findById(dto.requestId);
-    if (!request) {
-      throw new AppError('La solicitud no existe', 404, 'REQUEST_NOT_FOUND');
-    }
-
-    if (request.requestedUserId !== dto.userId) {
-      throw new AppError('No tienes permiso para responder a esta solicitud', 403, 'FORBIDDEN');
-    }
+    const request = await this.requireOwnedRequest(dto.requestId, dto.userId);
 
     if (dto.accept) {
-      if (!dto.accountId) {
-        throw new AppError('Se requiere una cuenta para realizar el pago', 400, 'ACCOUNT_REQUIRED');
-      }
-
-      const senderAccount = await this.accountRepository.findById(dto.accountId);
-      if (!senderAccount) {
-        throw new AppError('La cuenta de origen no existe', 404, 'SENDER_ACCOUNT_NOT_FOUND');
-      }
-      senderAccount.assertBelongsTo(dto.userId);
-      if (!senderAccount.isOperational()) {
-        throw new AppError('La cuenta no está activa', 400, 'ACCOUNT_INACTIVE');
-      }
-      if (senderAccount.balance < request.amount) {
-        throw new AppError('Saldo insuficiente para pagar el cobro', 400, 'INSUFFICIENT_FUNDS');
-      }
-
-      const receiverAccounts = await this.accountRepository.findByUserId(request.requesterUserId);
-      const receiverAccount = receiverAccounts.find(a => a.isOperational());
-      if (!receiverAccount) {
-        throw new AppError('El solicitante no tiene cuentas activas para recibir el pago', 400, 'RECEIVER_ACCOUNT_NOT_FOUND');
-      }
-
-      Transaction.validateDifferentAccounts(senderAccount.id, receiverAccount.id);
-
-      const referenceNumber = Transaction.generateReferenceNumber();
-      await this.transactionRepository.executeTransfer(
-        senderAccount.id,
-        receiverAccount.id,
-        request.amount,
-        `Pago de cobro: ${request.description ?? 'Sin concepto'}`,
-        referenceNumber
-      );
+      await this.payRequest(dto, request);
     }
 
     request.respond(dto.accept);
@@ -90,5 +52,53 @@ export class RespondMoneyRequest {
     }
 
     return updated;
+  }
+
+  private async requireOwnedRequest(requestId: string, userId: string): Promise<MoneyRequest> {
+    const request = await this.moneyRequestRepository.findById(requestId);
+    if (!request) {
+      throw new AppError('La solicitud no existe', 404, 'REQUEST_NOT_FOUND');
+    }
+
+    if (request.requestedUserId !== userId) {
+      throw new AppError('No tienes permiso para responder a esta solicitud', 403, 'FORBIDDEN');
+    }
+
+    return request;
+  }
+
+  private async payRequest(dto: RespondMoneyRequestDto, request: MoneyRequest): Promise<void> {
+    if (!dto.accountId) {
+      throw new AppError('Se requiere una cuenta para realizar el pago', 400, 'ACCOUNT_REQUIRED');
+    }
+
+    const senderAccount = await this.accountRepository.findById(dto.accountId);
+    if (!senderAccount) {
+      throw new AppError('La cuenta de origen no existe', 404, 'SENDER_ACCOUNT_NOT_FOUND');
+    }
+    senderAccount.assertBelongsTo(dto.userId);
+    if (!senderAccount.isOperational()) {
+      throw new AppError('La cuenta no está activa', 400, 'ACCOUNT_INACTIVE');
+    }
+    if (senderAccount.balance < request.amount) {
+      throw new AppError('Saldo insuficiente para pagar el cobro', 400, 'INSUFFICIENT_FUNDS');
+    }
+
+    const receiverAccounts = await this.accountRepository.findByUserId(request.requesterUserId);
+    const receiverAccount = receiverAccounts.find(a => a.isOperational());
+    if (!receiverAccount) {
+      throw new AppError('El solicitante no tiene cuentas activas para recibir el pago', 400, 'RECEIVER_ACCOUNT_NOT_FOUND');
+    }
+
+    Transaction.validateDifferentAccounts(senderAccount.id, receiverAccount.id);
+
+    const referenceNumber = Transaction.generateReferenceNumber();
+    await this.transactionRepository.executeTransfer(
+      senderAccount.id,
+      receiverAccount.id,
+      request.amount,
+      `Pago de cobro: ${request.description ?? 'Sin concepto'}`,
+      referenceNumber
+    );
   }
 }

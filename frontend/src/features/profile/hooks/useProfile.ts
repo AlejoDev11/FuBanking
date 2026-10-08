@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { profileService } from '../services/profile.service';
-import { PublicUser } from '@/features/auth/types/auth.types';
-import { AuthError } from '@/features/auth/types/auth.types';
+import { PublicUser, AuthError } from '@/features/auth/types/auth.types';
 
 export function useProfile() {
   const [profile, setProfile] = useState<PublicUser | null>(null);

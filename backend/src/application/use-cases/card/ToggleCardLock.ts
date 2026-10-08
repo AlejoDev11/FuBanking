@@ -1,4 +1,4 @@
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 import { IVirtualCardRepository } from '../../../domain/repositories/IVirtualCardRepository';
 import { INotificationRepository } from '../../../domain/repositories/INotificationRepository';
 import { PublicVirtualCard, CardStatus } from '../../../domain/entities/VirtualCard';

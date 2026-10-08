@@ -6,14 +6,14 @@ import { z } from 'zod';
 
 export const createTransferSchema = z.object({
   senderAccountId: z
-    .string({ message: 'La cuenta de origen es requerida' })
+    .string('La cuenta de origen es requerida')
     .uuid('El ID de la cuenta de origen no es valido'),
   receiverAccountNumber: z
-    .string({ message: 'El numero de cuenta del destinatario es requerido' })
+    .string('El numero de cuenta del destinatario es requerido')
     .min(1, 'El numero de cuenta del destinatario es requerido')
     .trim(),
   amount: z
-    .number({ message: 'El monto debe ser un numero valido' })
+    .number('El monto debe ser un numero valido')
     .positive('El monto debe ser mayor a cero')
     .finite('El monto debe ser un numero valido'),
   description: z

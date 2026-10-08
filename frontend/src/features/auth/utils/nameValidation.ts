@@ -36,7 +36,7 @@ export function isValidName(value: string | undefined): boolean {
     return false;
   }
 
-  // Rechazar: ninguna vocal en todo el nombre.
+  // Rechazar: ninguna vocal en el nombre completo.
   if (!VOWELS.test(trimmed)) {
     return false;
   }

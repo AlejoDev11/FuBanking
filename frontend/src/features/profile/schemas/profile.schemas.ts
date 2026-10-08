@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { isValidName } from '@/features/auth/utils/nameValidation';
-import { parseDateLocal } from '@/shared/utils/dateUtils';
+export { parseDateLocal } from '@/shared/utils/dateUtils';
 import { PASSWORD_MAX_LENGTH } from '@/features/auth/schemas/auth.schemas';
 
 /**
@@ -20,8 +20,6 @@ import { PASSWORD_MAX_LENGTH } from '@/features/auth/schemas/auth.schemas';
 const NAME_MAX_LENGTH = 100;
 const NAME_INVALID_MSG =
   'El nombre no puede contener 3 o más caracteres iguales consecutivos ni carecer de vocales';
-
-export { parseDateLocal };
 
 // ─── Schema principal ─────────────────────────────────────────────────────────
 export const updateProfileSchema = z.object({
@@ -61,7 +59,7 @@ export const updateProfileSchema = z.object({
     .or(z.literal(''))
     .nullable()
     .optional(),
-  avatarUrl: z.string().url('URL de avatar inválida').or(z.literal('')).nullable().optional(),
+  avatarUrl: z.url('URL de avatar inválida').or(z.literal('')).nullable().optional(),
   monthlyIncome: z.number().positive('El ingreso mensual debe ser mayor a cero').nullable().optional(),
   // ─── Cambio de contraseña (opcional, defecto #5) ──────────────────────────
   // Si el usuario desea cambiar su contraseña, debe respetar el límite máximo.

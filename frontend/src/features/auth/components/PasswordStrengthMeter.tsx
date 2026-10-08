@@ -28,7 +28,7 @@ export function evaluatePasswordCriteria(password: string): PasswordCriteria {
     hasMinLength: password.length >= PASSWORD_MIN_LENGTH,
     hasUppercase: /[A-Z]/.test(password),
     hasLowercase: /[a-z]/.test(password),
-    hasNumber: /[0-9]/.test(password),
+    hasNumber: /\d/.test(password),
     hasSymbol: /[^a-zA-Z0-9]/.test(password),
   };
 }
@@ -89,7 +89,7 @@ export interface PasswordStrengthMeterProps {
  * específicos sobre los criterios aún no cumplidos.
  * Se renderiza vacío si la contraseña está en blanco.
  */
-export function PasswordStrengthMeter({ password }: PasswordStrengthMeterProps) {
+export function PasswordStrengthMeter({ password }: Readonly<PasswordStrengthMeterProps>) {
   if (!password) return null;
 
   const criteria = evaluatePasswordCriteria(password);

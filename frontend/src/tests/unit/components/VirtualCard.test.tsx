@@ -144,4 +144,26 @@ describe('VirtualCard', () => {
 
     expect(screen.getByText('Ver numero y CVV').closest('button')).toBeDisabled();
   });
+
+  it('should call onDelete with the card id', () => {
+    // Arrange
+    let deleted = '';
+    render(<VirtualCard card={card()} onToggleLock={() => {}} onDelete={(id) => { deleted = id; }} isLoading={false} />);
+    // Act
+    fireEvent.click(screen.getByText('Eliminar'));
+    // Assert
+    expect(deleted).toBe('card-1');
+  });
+
+  it('should flip the card with Enter and Space keys', () => {
+    // Arrange
+    render(<VirtualCard card={card()} onToggleLock={() => {}} isLoading={false} />);
+    const flipper = screen.getByLabelText('Girar tarjeta');
+    // Act + Assert (Enter)
+    fireEvent.keyDown(flipper, { key: 'Enter' });
+    expect(flipper).toHaveStyle({ transform: 'rotateY(180deg)' });
+    // Act + Assert (Space)
+    fireEvent.keyDown(flipper, { key: ' ' });
+    expect(flipper).toHaveStyle({ transform: 'rotateY(0deg)' });
+  });
 });

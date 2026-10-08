@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useMemo, useState, useEffect, ReactNode } from 'react';
 import { PublicUser } from '@/features/auth/types/auth.types';
 import { useRouter } from 'next/navigation';
 import { authService } from '@/features/auth/services/auth.service';
@@ -17,7 +17,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
   const [user, setUser] = useState<PublicUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -73,7 +73,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, isAuthenticated: !!token, isLoading, login, logout, updateUser }}>
+    <AuthContext.Provider value={useMemo(
+      () => ({ user, token, isAuthenticated: !!token, isLoading, login, logout, updateUser }),
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- login/logout/updateUser estables por closure de setters
+      [user, token, isLoading],
+    )}>
       {children}
     </AuthContext.Provider>
   );

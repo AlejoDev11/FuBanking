@@ -1,4 +1,5 @@
 'use client';
+import type { SubmitEvent } from 'react';
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useTwoFactor } from '../hooks/useTwoFactor';
@@ -10,6 +11,7 @@ export function TwoFactorVerifyForm() {
   const router = useRouter();
   const { handleVerify, handleResend, isLoading, isResending, error, resendSuccess } = useTwoFactor();
   const [code, setCode] = useState<string[]>(new Array(6).fill(''));
+  const OTP_SLOTS = [0, 1, 2, 3, 4, 5];
   const [maskedEmail, setMaskedEmail] = useState<string>('');
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -72,7 +74,7 @@ export function TwoFactorVerifyForm() {
     }
   };
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = (e: SubmitEvent) => {
     e.preventDefault();
     const fullCode = code.join('');
     if (fullCode.length === 6) {
@@ -107,16 +109,16 @@ export function TwoFactorVerifyForm() {
 
       <form onSubmit={onSubmit} className="space-y-6">
         <div className="flex justify-between gap-2">
-          {code.map((value, index) => (
+          {OTP_SLOTS.map((slot) => (
             <input
-              key={index}
-              ref={el => { inputRefs.current[index] = el; }}
+              key={`otp-slot-${slot}`}
+              ref={el => { inputRefs.current[slot] = el; }}
               type="text"
               inputMode="numeric"
               maxLength={1}
-              value={value}
-              onChange={(e) => handleChange(index, e.target.value)}
-              onKeyDown={(e) => handleKeyDown(index, e)}
+              value={code[slot] ?? ''}
+              onChange={(e) => handleChange(slot, e.target.value)}
+              onKeyDown={(e) => handleKeyDown(slot, e)}
               onPaste={handlePaste}
               disabled={isLoading}
               className="w-12 h-14 text-center text-xl font-semibold bg-background border border-input rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all disabled:opacity-50"

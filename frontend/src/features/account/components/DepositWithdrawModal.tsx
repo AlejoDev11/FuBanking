@@ -1,4 +1,5 @@
 'use client';
+import type { SubmitEvent } from 'react';
 
 import React, { useState } from 'react';
 import { X, ArrowUpRight, ArrowDownLeft, AlertCircle } from 'lucide-react';
@@ -14,7 +15,14 @@ interface DepositWithdrawModalProps {
   onSuccess: () => void;
 }
 
-export function DepositWithdrawModal({ account, type, isOpen, onClose, onSuccess }: DepositWithdrawModalProps) {
+/** Etiqueta del botón sin ternario anidado (S3358). */
+function getSubmitLabel(isLoading: boolean, isDeposit: boolean): string {
+  if (isLoading) return 'Procesando...';
+  if (isDeposit) return 'Abonar Saldo';
+  return 'Confirmar Retiro';
+}
+
+export function DepositWithdrawModal({ account, type, isOpen, onClose, onSuccess }: Readonly<DepositWithdrawModalProps>) {
   const toast = useToast();
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
@@ -25,7 +33,9 @@ export function DepositWithdrawModal({ account, type, isOpen, onClose, onSuccess
 
   const isDeposit = type === 'deposit';
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const submitLabel = getSubmitLabel(isLoading, isDeposit);
+
+  const handleSubmit = async (e: SubmitEvent) => {
     e.preventDefault();
     setError(null);
 
@@ -147,7 +157,7 @@ export function DepositWithdrawModal({ account, type, isOpen, onClose, onSuccess
                   : 'bg-rose-600 hover:bg-rose-500 shadow-rose-900/20'
               } disabled:opacity-50`}
             >
-              {isLoading ? 'Procesando...' : isDeposit ? 'Abonar Saldo' : 'Confirmar Retiro'}
+              {submitLabel}
             </button>
           </div>
         </form>

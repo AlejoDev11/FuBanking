@@ -52,10 +52,10 @@ export function AuthProofPanel() {
 
   useEffect(() => {
     if (paused || reduceMotion) return;
-    const id = window.setInterval(() => {
+    const id = globalThis.setInterval(() => {
       setIndex((prev) => (prev + 1) % TESTIMONIALS.length);
     }, 6000);
-    return () => window.clearInterval(id);
+    return () => globalThis.clearInterval(id);
   }, [paused, reduceMotion]);
 
   const current = TESTIMONIALS[index];

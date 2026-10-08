@@ -5,7 +5,7 @@ import { ITokenService } from '../../interfaces/ITokenService';
 import { ResetPasswordDto } from '../../dtos/auth/auth.dtos';
 import { AppError } from '../../../shared/errors/AppError';
 import { AuthError } from '../../../shared/errors/AuthError';
-import { hashToken } from '../../../infrastructure/repositories/SupabaseResetTokenRepository';
+import { resolveValidResetToken } from './resetTokenValidation';
 
 /**
  * Caso de Uso: Restablecer contraseña.
@@ -34,40 +34,12 @@ export class ResetPassword {
       throw new AppError('Las contraseñas no coinciden', 400, 'PASSWORDS_DONT_MATCH');
     }
 
-    let payload;
-    try {
-      payload = this.tokenService.verify(dto.token);
-    } catch (error) {
-      throw new AuthError('El enlace de recuperación es inválido o ha expirado', 'TOKEN_INVALID');
-    }
+    const { email, tokenHash } = await resolveValidResetToken(
+      this.tokenService,
+      this.resetTokenRepository,
+      dto.token,
+    );
 
-    if (payload.type !== 'reset') {
-      throw new AuthError('El enlace de recuperación es inválido', 'TOKEN_INVALID');
-    }
-
-    // Verifica el estado del token en la base de datos
-    const tokenHash = hashToken(dto.token);
-    const tokenRecord = await this.resetTokenRepository.findByTokenHash(tokenHash);
-
-    if (!tokenRecord) {
-      throw new AuthError('El enlace de recuperación es inválido', 'TOKEN_INVALID');
-    }
-
-    if (tokenRecord.used) {
-      throw new AuthError(
-        'Este enlace ya fue utilizado. Por favor solicita un nuevo enlace de recuperación.',
-        'TOKEN_ALREADY_USED',
-      );
-    }
-
-    if (tokenRecord.expiresAt < new Date()) {
-      throw new AuthError(
-        'Este enlace ha expirado. Por favor solicita un nuevo enlace de recuperación.',
-        'TOKEN_EXPIRED',
-      );
-    }
-
-    const email = payload.email;
     const user = await this.userRepository.findByEmail(email);
     if (!user) {
       throw new AuthError('Usuario no encontrado', 'USER_NOT_FOUND');

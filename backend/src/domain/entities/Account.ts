@@ -87,9 +87,9 @@ export class Account {
   private readonly _userId: string;
   private readonly _accountNumber: string;
   private readonly _accountType: AccountType;
-  private _balance: number;
+  private readonly _balance: number;
   private _status: AccountStatus;
-  private _details: AccountDetails | null;
+  private readonly _details: AccountDetails | null;
   private readonly _createdAt: Date;
 
   constructor(props: AccountProps) {

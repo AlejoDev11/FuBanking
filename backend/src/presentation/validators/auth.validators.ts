@@ -28,7 +28,7 @@ const passwordSchema = z
   .max(PASSWORD_MAX_LENGTH, `La contraseña no puede superar los ${PASSWORD_MAX_LENGTH} caracteres`)
   .regex(/[A-Z]/, 'La contraseña debe contener al menos una letra mayúscula')
   .regex(/[a-z]/, 'La contraseña debe contener al menos una letra minúscula')
-  .regex(/[0-9]/, 'La contraseña debe contener al menos un número');
+  .regex(/\d/, 'La contraseña debe contener al menos un número');
 
 // ─── Schema de registro ───────────────────────────────────────────────────────
 export const registerSchema = z
@@ -74,8 +74,7 @@ export const registerSchema = z
         }
         return age >= 18;
       }, 'Debes ser mayor de 18 años para registrarte'),
-    email: z.string()
-      .email('Correo electrónico inválido')
+    email: z.email('Correo electrónico inválido')
       .max(254, 'El correo no puede superar los 254 caracteres')
       .toLowerCase()
       .trim(),
@@ -114,7 +113,7 @@ export const loginSchema = z.object({
 
 // ─── Schemas de recuperación de contraseña ───────────────────────────────────
 export const requestPasswordResetSchema = z.object({
-  email: z.string().email('Correo electrónico inválido').toLowerCase().trim(),
+  email: z.email('Correo electrónico inválido').toLowerCase().trim(),
 });
 
 export const resetPasswordSchema = z

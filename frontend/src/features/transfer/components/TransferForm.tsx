@@ -1,4 +1,5 @@
 'use client';
+import type { SubmitEvent } from 'react';
 
 import React, { useMemo, useState } from 'react';
 import { AlertCircle, ArrowRight, AtSign, Landmark, Search, Send, UserCheck } from 'lucide-react';
@@ -53,7 +54,7 @@ export function TransferForm() {
     setReceiverAccountNumber(recipient.accountNumberFull);
   };
 
-  const handleSubmit = async (event: React.FormEvent) => {
+  const handleSubmit = async (event: SubmitEvent) => {
     event.preventDefault();
     setError(null);
 

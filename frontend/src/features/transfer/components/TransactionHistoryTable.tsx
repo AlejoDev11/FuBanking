@@ -23,7 +23,7 @@ const STATUS_CLASSES: Record<string, string> = {
   CANCELADA: 'bg-zinc-500/15 text-zinc-600 dark:text-zinc-400',
 };
 
-export function TransactionHistoryTable({ transactions }: TransactionHistoryTableProps) {
+export function TransactionHistoryTable({ transactions }: Readonly<TransactionHistoryTableProps>) {
   if (transactions.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -94,9 +94,9 @@ export function TransactionHistoryTable({ transactions }: TransactionHistoryTabl
             <div className="col-start-2 text-left sm:col-start-auto sm:text-right">
               <p className="text-xs text-muted-foreground font-semibold">Saldo resultante</p>
               <p className="text-sm font-bold text-foreground">
-                {tx.resultingBalance !== undefined 
-                  ? new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(tx.resultingBalance)
-                  : 'No disp.'}
+                {tx.resultingBalance === undefined
+                  ? 'No disp.'
+                  : new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(tx.resultingBalance)}
               </p>
             </div>
           </div>

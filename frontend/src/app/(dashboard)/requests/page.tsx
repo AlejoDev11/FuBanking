@@ -1,4 +1,5 @@
 'use client';
+import type { SubmitEvent } from 'react';
 
 import React, { useEffect, useState } from 'react';
 import { HandCoins, Send, CheckCircle2, XCircle, Clock } from 'lucide-react';
@@ -23,7 +24,7 @@ export default function RequestsPage() {
     void fetchRequests();
   }, [fetchRequests]);
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const handleCreate = async (e: SubmitEvent) => {
     e.preventDefault();
     const amountNum = Number.parseFloat(amount);
     if (!email || Number.isNaN(amountNum) || amountNum <= 0) {

@@ -25,10 +25,10 @@ export default function CardsPage() {
   }, [fetchCards]);
 
   useEffect(() => {
-    const timeoutId = window.setTimeout(() => {
+    const timeoutId = globalThis.setTimeout(() => {
       void loadCards();
     }, 0);
-    return () => window.clearTimeout(timeoutId);
+    return () => globalThis.clearTimeout(timeoutId);
   }, [loadCards]);
 
   const handleCreate = async () => {

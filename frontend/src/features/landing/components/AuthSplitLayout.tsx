@@ -25,7 +25,7 @@ function activeStepFor(pathname: string): number {
   return 0;
 }
 
-export function AuthSplitLayout({ children }: AuthSplitLayoutProps) {
+export function AuthSplitLayout({ children }: Readonly<AuthSplitLayoutProps>) {
   const pathname = usePathname();
   const activeStep = activeStepFor(pathname);
   const isExtended = pathname.includes('/register');

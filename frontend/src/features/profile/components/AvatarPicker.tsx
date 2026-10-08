@@ -25,7 +25,7 @@ interface AvatarPickerProps {
   userName: string;
 }
 
-export function AvatarPicker({ value, onChange, error, userName }: AvatarPickerProps) {
+export function AvatarPicker({ value, onChange, error, userName }: Readonly<AvatarPickerProps>) {
   const isCustom = value !== '' && !AVATAR_PRESETS.includes(value);
 
   return (

@@ -1,5 +1,4 @@
-import crypto from 'crypto';
-import { randomUUID } from 'crypto';
+import { randomInt, randomUUID } from 'node:crypto';
 import { IVerificationCodeRepository } from '../../../domain/repositories/IVerificationCodeRepository';
 import { IEmailService } from '../../interfaces/IEmailService';
 import { ITokenService } from '../../interfaces/ITokenService';
@@ -37,7 +36,7 @@ export class GenerateTwoFactorCode {
   ): Promise<{ temporaryToken: string; maskedEmail: string }> {
     await this.verificationCodeRepository.invalidateAllByUserId(userId);
 
-    const plainCode = crypto.randomInt(100000, 999999).toString();
+    const plainCode = randomInt(100000, 999999).toString();
 
     const { hashCode } = await this.hashOtp(plainCode);
 

@@ -27,7 +27,7 @@ export function createAdminMiddleware(
   return async function adminMiddleware(req: Request, res: Response, next: NextFunction): Promise<void> {
   const authHeader = req.headers['authorization'];
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  if (!authHeader?.startsWith('Bearer ')) {
     sendError(res, 'Se requiere autenticación', 'UNAUTHORIZED', 401);
     return;
   }

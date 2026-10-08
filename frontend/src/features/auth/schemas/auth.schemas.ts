@@ -20,7 +20,7 @@ export const passwordSchema = z
   .max(PASSWORD_MAX_LENGTH, `La contraseña no puede superar los ${PASSWORD_MAX_LENGTH} caracteres`)
   .regex(/[A-Z]/, 'Debe contener al menos una mayúscula')
   .regex(/[a-z]/, 'Debe contener al menos una minúscula')
-  .regex(/[0-9]/, 'Debe contener al menos un número');
+  .regex(/\d/, 'Debe contener al menos un número');
 
 // ─── Schema de login ──────────────────────────────────────────────────────────
 export const loginSchema = z.object({
@@ -64,8 +64,7 @@ export const registerSchema = z.object({
       (date) => parseDateLocal(date) <= new Date(),
       'La fecha no puede ser en el futuro',
     ),
-  email: z.string()
-    .email('Correo electrónico inválido')
+  email: z.email('Correo electrónico inválido')
     .max(254, 'El correo no puede superar los 254 caracteres')
     .toLowerCase()
     .trim(),
@@ -86,7 +85,7 @@ export const registerSchema = z.object({
 
 // ─── Schemas de recuperación de contraseña ───────────────────────────────────
 export const requestPasswordResetSchema = z.object({
-  email: z.string().email('Correo electrónico inválido').toLowerCase().trim(),
+  email: z.email('Correo electrónico inválido').toLowerCase().trim(),
 });
 
 export const resetPasswordSchema = z.object({

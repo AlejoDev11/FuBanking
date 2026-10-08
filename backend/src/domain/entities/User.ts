@@ -95,7 +95,7 @@ export class User {
   private _passwordHash: string;
   private _isActive: boolean;
   private _twoFactorEnabled: boolean;
-  private _role: string;
+  private readonly _role: string;
   private readonly _createdAt: Date;
   private _updatedAt: Date;
 

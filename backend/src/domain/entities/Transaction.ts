@@ -119,7 +119,7 @@ export class Transaction {
    * Formato: TRX-XXXXXXXX (8 caracteres hexadecimales en mayúsculas).
    */
   static generateReferenceNumber(): string {
-    const hex = randomInt(0, 0x1_0000_0000)
+    const hex = randomInt(0, 0x10000000)
       .toString(16)
       .toUpperCase()
       .padStart(8, '0');

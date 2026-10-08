@@ -43,7 +43,7 @@ export class ProfileController {
       if (!this.uploadDocument) {
         throw new Error('Subida de documento no disponible');
       }
-      const file = req.file as Express.Multer.File | undefined;
+      const file = req.file;
       if (!file) {
         throw new Error('No se recibió ningún archivo');
       }

@@ -43,7 +43,7 @@ export function isValidEmail(email: string): boolean {
 
   // El TLD (parte después del último punto) debe tener al menos 2 caracteres
   const domainParts = domain.split('.');
-  const tld = domainParts[domainParts.length - 1];
+  const tld = domainParts.at(-1);
   if (!tld || tld.length < 2) {
     return false;
   }

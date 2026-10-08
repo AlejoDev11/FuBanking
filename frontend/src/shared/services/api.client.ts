@@ -11,7 +11,7 @@ export const apiClient = axios.create({
 
 apiClient.interceptors.request.use(
   (config) => {
-    if (typeof window !== 'undefined') {
+    if (globalThis.window !== undefined) {
       const token = localStorage.getItem('token');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -30,7 +30,12 @@ apiClient.interceptors.response.use(
   },
   (error) => {
     if (error.response && error.response.data && error.response.data.error) {
-      return Promise.reject(error.response.data.error);
+      const apiError = error.response.data.error as { code?: string; message?: string };
+      return Promise.reject(
+        Object.assign(new Error(apiError.message ?? 'Error de la API'), {
+          code: apiError.code ?? 'API_ERROR',
+        }),
+      );
     }
     const networkError = new Error('No se pudo conectar al servidor.');
     (networkError as Error & { code: string }).code = 'NETWORK_ERROR';

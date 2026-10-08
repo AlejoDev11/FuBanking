@@ -23,10 +23,10 @@ export class GetTransfer {
     }
 
     const userAccounts = await this.accountRepository.findByUserId(dto.userId);
-    const userAccountIds = userAccounts.map((a) => a.id);
+    const userAccountIds = new Set(userAccounts.map((a) => a.id));
     const isInvolved =
-      userAccountIds.includes(transaction.senderAccountId) ||
-      userAccountIds.includes(transaction.receiverAccountId);
+      userAccountIds.has(transaction.senderAccountId) ||
+      userAccountIds.has(transaction.receiverAccountId);
 
     if (!isInvolved) {
       throw new AppError('No tienes acceso a esta transacción', 403, 'FORBIDDEN');

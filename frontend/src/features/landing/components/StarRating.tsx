@@ -7,7 +7,7 @@ interface StarRatingProps {
   max?: number;
 }
 
-export function StarRating({ rating, max = 5 }: StarRatingProps) {
+export function StarRating({ rating, max = 5 }: Readonly<StarRatingProps>) {
   return (
     <div className="flex gap-0.5">
       {Array.from({ length: max }, (_, i) => (

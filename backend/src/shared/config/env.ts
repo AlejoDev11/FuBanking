@@ -24,13 +24,13 @@ const envSchema = z.object({
   /** Duración de la ventana de rate limiting en milisegundos. */
   RESEND_RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(600_000),
 
-  SUPABASE_URL: z.string().url('SUPABASE_URL must be a valid URL'),
+  SUPABASE_URL: z.url('SUPABASE_URL must be a valid URL'),
   SUPABASE_ANON_KEY: z.string().min(1, 'SUPABASE_ANON_KEY is required'),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1, 'SUPABASE_SERVICE_ROLE_KEY is required'),
 
   CLIENT_URL: z.string().default('http://localhost:3000'),
 
-  GMAIL_USSER: z.string().email('GMAIL_USSER must be a valid email'),
+  GMAIL_USSER: z.email('GMAIL_USSER must be a valid email'),
   GMAIL_PASS: z.string().min(1, 'GMAIL_PASS is required'),
 });
 
@@ -38,7 +38,7 @@ const parsed = envSchema.safeParse(process.env);
 
 if (!parsed.success) {
   console.error('❌ Invalid environment variables:');
-  console.error(parsed.error.flatten().fieldErrors);
+  console.error(parsed.error.issues);
   process.exit(1);
 }
 

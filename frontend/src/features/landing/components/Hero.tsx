@@ -58,7 +58,7 @@ export function Hero() {
           </div>
           <div className="hidden items-center gap-2 text-xs text-white/45 sm:flex">
             <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-            Todo seguro y en orden
+            {'Todo seguro y en orden'}
           </div>
         </motion.header>
 
@@ -71,7 +71,7 @@ export function Hero() {
               className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-3.5 py-2 text-[11px] font-medium tracking-wide text-white/70 shadow-[0_8px_30px_rgba(0,0,0,0.18)] backdrop-blur-xl"
             >
               <span aria-hidden="true" className="text-primary">●</span>
-              Nuevo — Tarjetas virtuales disponibles
+              {'Nuevo — Tarjetas virtuales disponibles'}
             </motion.div>
             <motion.h1
               initial="hidden"

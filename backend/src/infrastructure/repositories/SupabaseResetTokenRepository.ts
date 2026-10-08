@@ -1,4 +1,4 @@
-import { createHash } from 'crypto';
+import { createHash } from 'node:crypto';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { IResetTokenRepository, ResetTokenRecord } from '../../domain/repositories/IResetTokenRepository';
 import { AppError } from '../../shared/errors/AppError';

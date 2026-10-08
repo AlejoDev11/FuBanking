@@ -68,7 +68,7 @@ export class SupabaseUserRepository implements IUserRepository {
       birthDate: new Date(`${row.birth_date}T00:00:00`),
       phone: row.phone,
       avatarUrl: row.avatar_url,
-      monthlyIncome: row.monthly_income !== null ? Number(row.monthly_income) : null,
+      monthlyIncome: row.monthly_income === null ? null : Number(row.monthly_income),
       documentVerified: row.document_verified ?? false,
       documentVerifiedAt: row.document_verified_at ? new Date(row.document_verified_at) : null,
       passwordHash: row.password,

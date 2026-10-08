@@ -11,12 +11,14 @@ vi.mock('@/features/cards/services/card.service', () => ({
     createCard: vi.fn(),
     toggleLock: vi.fn(),
     revealDetails: vi.fn(),
+    deleteCard: vi.fn(),
   },
 }));
 
 const getMyCards = cardService.getMyCards as unknown as ReturnType<typeof vi.fn>;
 const createCard = cardService.createCard as unknown as ReturnType<typeof vi.fn>;
 const toggleLock = cardService.toggleLock as unknown as ReturnType<typeof vi.fn>;
+const deleteCard = cardService.deleteCard as unknown as ReturnType<typeof vi.fn>;
 
 function card(id: string, status: VirtualCard['status'] = 'ACTIVA'): VirtualCard {
   return {
@@ -145,6 +147,42 @@ describe('useCards', () => {
 
       expect(returned).toBeNull();
       assert(result.current.error).toBeEqual('No se pudo actualizar la tarjeta.');
+    });
+  });
+
+  describe('deleteCard', () => {
+    it('should remove the deleted card', async () => {
+      // Arrange
+      const before = [card('card-1'), card('card-2')];
+      getMyCards.mockResolvedValue(before);
+      deleteCard.mockResolvedValue(card('card-1'));
+      const { result } = renderHook(() => useCards());
+      // Act
+      await act(async () => {
+        await result.current.fetchCards();
+      });
+      let returned: unknown = 'pending';
+      await act(async () => {
+        returned = await result.current.deleteCard('card-1');
+      });
+      // Assert
+      expect(deleteCard).toHaveBeenCalledWith('card-1');
+      expect(result.current.cards).toEqual([card('card-2')]);
+      expect(returned).toEqual(card('card-1'));
+    });
+
+    it('should fall back on failure', async () => {
+      // Arrange
+      deleteCard.mockRejectedValue('boom');
+      const { result } = renderHook(() => useCards());
+      // Act
+      let returned: unknown = 'pending';
+      await act(async () => {
+        returned = await result.current.deleteCard('card-1');
+      });
+      // Assert
+      expect(returned).toBeNull();
+      expect(result.current.error).toBe('No se pudo eliminar la tarjeta.');
     });
   });
 });

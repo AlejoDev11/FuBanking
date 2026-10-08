@@ -1,4 +1,4 @@
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 import { INotificationRepository } from '../../../domain/repositories/INotificationRepository';
 import { Notification, NotificationType } from '../../../domain/entities/Notification';
 

@@ -31,11 +31,7 @@ export class VerifyTwoFactorCode {
   async execute(dto: VerifyTwoFactorDto): Promise<VerifyTwoFactorResponseDto> {
     let payload: { userId: string; email: string; rememberMe?: boolean };
     try {
-      payload = this.tokenService.verify(dto.temporaryToken) as {
-        userId: string;
-        email: string;
-        rememberMe?: boolean;
-      };
+      payload = this.tokenService.verify(dto.temporaryToken);
     } catch (err: unknown) {
       const isExpired =
         err instanceof Error && err.message.toLowerCase().includes('expired');

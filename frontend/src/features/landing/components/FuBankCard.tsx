@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState } from 'react';
 import type { KeyboardEvent, MouseEvent } from 'react';
 import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from 'framer-motion';
+import type { MotionValue } from 'framer-motion';
 import { User } from 'lucide-react';
 import Image from 'next/image';
 
@@ -27,8 +28,8 @@ function UserPlaceholder() {
 function playFlipChime() {
   try {
     const Ctor =
-      window.AudioContext ??
-      (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      globalThis.AudioContext ??
+      (globalThis as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
     if (!Ctor) return;
     const ctx = new Ctor();
     if (ctx.state === 'suspended') void ctx.resume();
@@ -51,13 +52,24 @@ function playFlipChime() {
   }
 }
 
+/** Y de inclinación sin ternario anidado (S3358). */
+function getTiltY(
+  isFlipped: boolean,
+  reduceMotion: boolean | null,
+  tilt: MotionValue<number>,
+): number | MotionValue<number> {
+  if (isFlipped) return 180;
+  if (reduceMotion) return 0;
+  return tilt;
+}
+
 export function FuBankCard({
   holder = 'Miembro FuBank',
   accountLabel = 'Cuenta digital',
   accountNumber = 'FUB-004250',
   avatarUrl,
   avatarAlt = `Foto de ${holder}`,
-}: FuBankCardProps) {
+}: Readonly<FuBankCardProps>) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [isFlipped, setIsFlipped] = useState(false);
   const [imgOk, setImgOk] = useState(true);
@@ -121,7 +133,7 @@ export function FuBankCard({
         animate={{ rotateY: isFlipped ? 180 : 0 }}
         style={{
           rotateX: reduceMotion ? 0 : rotateX,
-          rotateY: isFlipped ? 180 : reduceMotion ? 0 : rotateY,
+          rotateY: getTiltY(isFlipped, reduceMotion, rotateY),
           transformStyle: 'preserve-3d',
         }}
         transition={{ duration: flipDuration, ease: [0.4, 0, 0.2, 1] }}

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { isValidName } from '../../shared/utils/nameValidation';
-import { parseDateLocal } from '../../shared/utils/dateUtils';
+export { parseDateLocal } from '../../shared/utils/dateUtils';
 
 /**
  * Schemas de validación Zod para los endpoints de perfil.
@@ -60,7 +60,7 @@ export const updateProfileSchema = z
       .or(z.literal(''))
       .nullable()
       .optional(),
-    avatarUrl: z.string().url('URL de avatar inválida').or(z.literal('')).nullable().optional(),
+    avatarUrl: z.url('URL de avatar inválida').or(z.literal('')).nullable().optional(),
     monthlyIncome: z.number().positive('El ingreso mensual debe ser mayor a cero').nullable().optional(),
   })
   .refine(
@@ -83,4 +83,3 @@ export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
  * Se mantiene aquí como referencia de la lógica de negocio,
  * aunque birthDate ya no es editable en este endpoint.
  */
-export { parseDateLocal };

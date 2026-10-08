@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 
 type Theme = 'light' | 'dark';
@@ -18,16 +18,16 @@ const ThemeContext = createContext<ThemeContextValue>({
 const STORAGE_KEY = 'fubank-theme';
 
 function resolveInitialTheme(): Theme {
-  if (typeof window === 'undefined') return 'dark';
-  const stored = window.localStorage.getItem(STORAGE_KEY);
+  if (globalThis.window === undefined) return 'dark';
+  const stored = globalThis.localStorage.getItem(STORAGE_KEY);
   if (stored === 'light' || stored === 'dark') return stored;
-  if (window.matchMedia?.('(prefers-color-scheme: light)').matches) return 'light';
+  if (globalThis.matchMedia?.('(prefers-color-scheme: light)').matches) return 'light';
   return 'dark';
 }
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
+export function ThemeProvider({ children }: Readonly<{ children: ReactNode }>) {
   const [theme, setTheme] = useState<Theme>(() =>
-    typeof window === 'undefined' ? 'dark' : resolveInitialTheme()
+    globalThis.window === undefined ? 'dark' : resolveInitialTheme()
   );
 
   useEffect(() => {
@@ -39,14 +39,18 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const root = document.documentElement;
     root.classList.toggle('dark', theme === 'dark');
     root.style.colorScheme = theme;
-    window.localStorage.setItem(STORAGE_KEY, theme);
+    globalThis.localStorage.setItem(STORAGE_KEY, theme);
   }, [theme]);
 
   const toggle = useCallback(() => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
   }, []);
 
-  return <ThemeContext.Provider value={{ theme, toggle }}>{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider value={useMemo(() => ({ theme, toggle }), [theme, toggle])}>
+      {children}
+    </ThemeContext.Provider>
+  );
 }
 
 export function useTheme() {
