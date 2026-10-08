@@ -9,6 +9,8 @@
 
 ---
 
+> **Actualización (2026-10-08):** el refactor de seguridad corrigió **D-02** y **D-08** (hallazgos SEC-03 y SEC-04 de `pruebas-security-bolsillos.md`). Sus pruebas RG-CR-D02 y RG-DE-D08 pasaron de `it.fails` a pruebas normales y la suite queda en **195 aprobadas + 3 `it.fails`** (D-01/D-03, D-04 y D-05). Las cifras de la sección 7 corresponden a la medición original.
+
 ## 1. Objetivo
 
 1. Construir una **suite de regresión automatizada** para **seis funcionalidades** —las cinco del
@@ -191,7 +193,7 @@ expect(spyNotif.savedNotifications[0])
 
 ## 5. Catálogo de casos de regresión
 
-**94 casos:** 89 reglas vigentes + 5 defectos conocidos (`it.fails`).
+**94 casos:** 91 reglas vigentes + 3 defectos conocidos (`it.fails`). D-02 y D-08 ya están corregidos.
 
 ### 5.1 Crear — `regression/pocket/crear.regression.test.ts` (21)
 
@@ -215,7 +217,7 @@ expect(spyNotif.savedNotifications[0])
 | RG-CR-16 | Cuenta inexistente | 404 `ACCOUNT_NOT_FOUND` |
 | RG-CR-17 | Cuenta bloqueada | 400 `ACCOUNT_NOT_OPERATIONAL`, estado intacto |
 | RG-CR-18 | Supera el disponible por $1 | 400 `INSUFFICIENT_AVAILABLE_BALANCE`, sin notificación |
-| RG-CR-D02 | **[D-02]** Monto booleano | *Esperado* 400 · hoy 201 con bolsillo de $1 |
+| RG-CR-D02 | **[D-02, corregido]** Monto booleano | 400 `VALIDATION_ERROR` (antes: 201 con bolsillo de $1) |
 | RG-CR-D03 | **[D-01/D-03]** Nombre de solo espacios | *Esperado* 400 · hoy 201 con nombre vacío |
 | RG-CR-D05 | **[D-05]** Bolsillo que cabe en el disponible | *Esperado* 201 · hoy 400 |
 
@@ -313,7 +315,7 @@ expect(spyNotif.savedNotifications[0])
 | RG-DE-13 | Cuenta inexistente | 404 `ACCOUNT_NOT_FOUND` |
 | RG-DE-14 | Cuenta bloqueada | 400 `ACCOUNT_INACTIVE`, intacta |
 | RG-DE-15 | **Integración con Bolsillos** | un bolsillo de 400.000 se rechaza; tras depositar 100.000, se crea |
-| RG-DE-D08 | **[D-08]** Monto booleano | *Esperado* 400 · hoy 200 y deposita $1 |
+| RG-DE-D08 | **[D-08, corregido]** Monto booleano | 400 `INVALID_AMOUNT` (antes: 200 y depositaba $1) |
 
 ### 5.7 Ciclo de vida — `regression/pocket/ciclo-de-vida.regression.test.ts` (2)
 
@@ -331,10 +333,10 @@ expect(spyNotif.savedNotifications[0])
 | Defecto | Descripción | Prueba | Regla que afirma | Comportamiento actual |
 |---|---|---|---|---|
 | D-01 / D-03 | Nombre de solo espacios pasa el validador y la entidad no valida el nombre al construir | RG-CR-D03 | 400 | 201, bolsillo con nombre `""` |
-| D-02 | `z.coerce.number()` convierte `true` en `1` al crear un bolsillo | RG-CR-D02 | 400 | 201, bolsillo de $1 |
+| D-02 | `z.coerce.number()` convierte `true` en `1` al crear un bolsillo | RG-CR-D02 | 400 | ✅ Corregido (SEC-03); antes 201, bolsillo de $1 |
 | D-04 | `amount` se trata distinto al crear (`coerce`) y al actualizar (`number`) | RG-AC-D04 | 200 | 400 `VALIDATION_ERROR` |
 | D-05 | Al crear un bolsillo, lo apartado se cuenta dos veces | RG-CR-D05 | 201 | 400 `INSUFFICIENT_AVAILABLE_BALANCE` |
-| **D-08** | El controlador del depósito hace `Number(amount)`: `true` se convierte en `1` | RG-DE-D08 | 400 | 200, deposita $1 |
+| **D-08** | El controlador del depósito hace `Number(amount)`: `true` se convierte en `1` | RG-DE-D08 | 400 | ✅ Corregido (SEC-04); antes 200, depositaba $1 |
 
 Cada `it.fails` se ejecutó como prueba normal para confirmar que falla **justo en la aserción del
 defecto** (`expected 201 to equal 400`, `expected 400 to equal 201`, `expected 400 to equal 200`,

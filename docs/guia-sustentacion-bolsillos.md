@@ -9,6 +9,8 @@
 
 ---
 
+> **Actualización (2026-10-08):** se añadieron pruebas de seguridad (ver `pruebas-security-bolsillos.md`) y su refactor corrigió D-02 y D-08. La regresión queda en **195 aprobadas + 3 defectos conocidos**; las cifras de la demo ya están actualizadas. La comparación antes/después de la sección 6 es la medición original.
+
 ## 1. Qué hice, en 30 segundos
 
 1. Elegí **seis funcionalidades**: crear, consultar, actualizar, eliminar y transferir bolsillos, más
@@ -60,7 +62,7 @@
 | 0–1 | Las 6 funcionalidades y por qué el depósito es la sexta (nadie más la tenía; amplía el saldo que se aparta en bolsillos). | Tabla 2.1 del documento técnico. |
 | 1–3 | **Fluent assertions**: qué son, por qué Chai BDD, ejemplo antes/después. | `CreatePocket.test.ts`, `DepositMoney.test.ts`. |
 | 3–5 | **Suite de regresión**: nivel API, qué es real y qué es fake, escenario, qué verifica cada caso. | `createPocketTestApp.ts`, `scenario.ts`, `depositar.regression.test.ts`. |
-| 5–6 | Ejecutar: **193 aprobadas + 5 defectos conocidos**. | `npm run test:regression:bolsillos`. |
+| 5–6 | Ejecutar: **195 aprobadas + 3 defectos conocidos**. | `npm run test:regression:bolsillos`. |
 | 6–8 | **Demo en vivo: cambio → rojo → arreglo → verde**. | Sección 5. |
 | 8–9 | **Antes vs después**: 198/198 iguales. | Documento técnico §7. |
 | 9–10 | **Pipeline**: dónde entran mis pruebas, SonarQube y Docker. | Jenkins. |
@@ -74,7 +76,7 @@
 ```bash
 cd backend
 npm run test:regression:bolsillos
-# Tests  193 passed | 5 expected fail (198)
+# Tests  195 passed | 3 expected fail (198)
 ```
 
 **Paso 2 — introducir un error** en `backend/src/application/use-cases/pocket/DeletePocket.ts`:
@@ -93,11 +95,11 @@ await this.accountRepository.updateBalance(account.id, account.balance - pocketA
 × RG-EL-02 · borra el bolsillo y devuelve su monto al saldo disponible  (regresión API)
 × RG-EL-06 · un segundo DELETE responde 404 y no devuelve el dinero dos veces
 × RG-FL-01 · crear → consultar → actualizar → transferir → eliminar conserva el total
-Tests  4 failed | 189 passed | 5 expected fail (198)
+Tests  4 failed | 191 passed | 3 expected fail (198)
 ```
 
 **Paso 4 — revertir** (`git checkout -- src/application/use-cases/pocket/DeletePocket.ts`) y volver a
-ejecutar: **193 passed | 5 expected fail**.
+ejecutar: **195 passed | 3 expected fail**.
 
 **Alternativa con la sexta funcionalidad:** en `DepositMoney.ts`, comentar
 `account.assertBelongsTo(dto.userId);`. Fallan **2 pruebas**: la unitaria de FORBIDDEN y RG-DE-12,
