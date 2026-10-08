@@ -70,12 +70,12 @@ describe('SEC-AUTH · Solo un token de acceso válido permite operar', () => {
       expect(res.status).to.equal(op.okStatus);
     });
 
-    // Vulnerabilidad confirmada (it.fails): hoy ambos tokens operan como acceso.
-    it.fails('[SEC-01] rechaza el token temporal de 2FA (emitido antes de validar el código OTP)', async () => {
+    // SEC-01 y SEC-02 corregidos: authMiddleware solo acepta tokens de acceso (isAccessToken).
+    it('[SEC-01] rechaza el token temporal de 2FA (emitido antes de validar el código OTP)', async () => {
       await expectRejectedWithoutSideEffects(op, `Bearer ${await twoFactorTemporaryToken()}`, 'TOKEN_INVALID');
     });
 
-    it.fails('[SEC-02] rechaza el token de recuperación de contraseña (enlace del correo)', async () => {
+    it('[SEC-02] rechaza el token de recuperación de contraseña (enlace del correo)', async () => {
       await expectRejectedWithoutSideEffects(op, `Bearer ${await passwordResetToken()}`, 'TOKEN_INVALID');
     });
   });
@@ -104,7 +104,7 @@ describe('SEC-AUTH · adminMiddleware aplica la misma regla', () => {
     expect(res.status).to.equal(200);
   });
 
-  it.fails('[SEC-01] rechaza el token temporal de 2FA de un administrador', async () => {
+  it('[SEC-01] rechaza el token temporal de 2FA de un administrador', async () => {
     // Act
     const res = await request(adminApp()).get('/admin').set('Authorization', `Bearer ${await twoFactorTemporaryToken()}`);
 
@@ -113,7 +113,7 @@ describe('SEC-AUTH · adminMiddleware aplica la misma regla', () => {
     expect(res.body).to.have.nested.property('error.code', 'TOKEN_INVALID');
   });
 
-  it.fails('[SEC-02] rechaza el token de recuperación de contraseña de un administrador', async () => {
+  it('[SEC-02] rechaza el token de recuperación de contraseña de un administrador', async () => {
     // Act
     const res = await request(adminApp()).get('/admin').set('Authorization', `Bearer ${await passwordResetToken()}`);
 

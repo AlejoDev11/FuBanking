@@ -42,21 +42,23 @@ const VALID_AMOUNTS: Array<[string, unknown, number]> = [
 /**
  * Montos que la política rechaza.
  * [descripción, valor, hallazgo abierto al CREAR, hallazgo abierto al DEPOSITAR]
- * Un hallazgo abierto marca la prueba con it.fails: hoy el sistema acepta ese
+ * Un hallazgo abierto marca la prueba con it.fails: el sistema acepta ese
  * valor (lo convierte a la fuerza) y la regla de seguridad no se cumple.
+ * SEC-03 y SEC-04 se corrigieron con parseStrictAmount / strictAmount
+ * (presentation/validators/amount.validators.ts): ya no queda ninguno abierto.
  */
 const INVALID_AMOUNTS: Array<[string, unknown, string | null, string | null]> = [
-  ['booleano true', true, 'SEC-03', 'SEC-04'],
-  ['booleano false', false, 'SEC-03', null],
-  ['null', null, 'SEC-03', null],
-  ['lista vacía', [], 'SEC-03', null],
-  ['lista con un número', [1_500], 'SEC-03', 'SEC-04'],
+  ['booleano true', true, null, null],
+  ['booleano false', false, null, null],
+  ['null', null, null, null],
+  ['lista vacía', [], null, null],
+  ['lista con un número', [1_500], null, null],
   ['objeto', { value: 1_500 }, null, null],
-  ['texto vacío', '', 'SEC-03', null],
-  ['texto de espacios', '   ', 'SEC-03', null],
+  ['texto vacío', '', null, null],
+  ['texto de espacios', '   ', null, null],
   ['texto no numérico', 'abc', null, null],
-  ['hexadecimal', '0x10', 'SEC-03', 'SEC-04'],
-  ['notación científica', '1e3', 'SEC-03', 'SEC-04'],
+  ['hexadecimal', '0x10', null, null],
+  ['notación científica', '1e3', null, null],
   ['negativo', -1, null, null],
 ];
 

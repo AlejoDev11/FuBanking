@@ -192,12 +192,12 @@ describe('Regresión · Depositar dinero (POST /api/v1/accounts/:id/deposit)', (
     });
   });
 
-  describe('Defectos conocidos (it.fails)', () => {
-    it.fails('RG-DE-D08 · [D-08] rechaza un monto booleano en vez de depositar $1', async () => {
+  describe('Defectos corregidos', () => {
+    it('RG-DE-D08 · [D-08, corregido] rechaza un monto booleano en vez de depositar $1', async () => {
       // Act
       const res = await deposit(CUENTA, { amount: true });
 
-      // Assert — hoy responde 200: el controlador hace Number(true) = 1.
+      // Assert — corregido con parseStrictAmount (SEC-04); antes Number(true) = 1 depositaba $1.
       expect(res.status).to.equal(400);
       expect(res.body).to.deep.equal(ERR.DEPOSIT_INVALID_AMOUNT);
     });

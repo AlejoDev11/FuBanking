@@ -235,12 +235,12 @@ describe('Regresión · Crear bolsillo (POST /api/v1/pockets)', () => {
     });
   });
 
-  describe('Defectos conocidos (it.fails)', () => {
-    it.fails('RG-CR-D02 · [D-02] rechaza un monto booleano en vez de convertirlo en $1', async () => {
+  describe('Defectos conocidos (it.fails) y corregidos', () => {
+    it('RG-CR-D02 · [D-02, corregido] rechaza un monto booleano en vez de convertirlo en $1', async () => {
       // Act
       const res = await create({ accountId: CUENTA, name: 'Bool', amount: true });
 
-      // Assert — hoy responde 201 y crea un bolsillo de $1.
+      // Assert — corregido con el monto estricto (SEC-03); antes respondía 201 con un bolsillo de $1.
       expect(res.status).to.equal(400);
       expect(res.body).to.have.nested.property('error.code', 'VALIDATION_ERROR');
     });
