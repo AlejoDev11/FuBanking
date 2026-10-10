@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Pruebas E2E de Bolsillos y Depósito (Serenity/JS)
 
 Pruebas de aceptación de caja negra sobre FuBanking **en ejecución**, con el
@@ -106,3 +107,45 @@ funcional:
   `sessionStorage` y `api.client.ts` solo lo leía de `localStorage`, por lo que
   no cargaban cuentas ni bolsillos. Está corregido en `dev` (`getAuthToken`).
 - Documento técnico completo: `docs/pruebas-e2e-bolsillos.md`.
+
+---
+
+# Pruebas E2E — Patrón Screenplay (Vitest)
+
+## Estructura
+
+```
+e2e/
+├── screenplay/
+│   ├── actors/          # Actores que interactúan con el sistema
+│   ├── abilities/       # Habilidades (capacidades) de los actores
+│   ├── tasks/           # Tareas de alto nivel (acciones del negocio)
+│   ├── questions/       # Preguntas que el actor puede hacer al sistema
+│   └── interactions/    # Interacciones de bajo nivel con la UI/API
+├── tests/
+│   └── login/           # Escenarios E2E del módulo de login
+├── fixtures/            # Datos de prueba y helpers compartidos
+├── setup.ts             # Configuración global de vitest para E2E
+└── vitest.config.e2e.ts # Configuración aislada de vitest para E2E
+```
+
+## Patrón Screenplay
+
+El patrón Screenplay modela las pruebas centradas en **actores** que usan
+**habilidades** para realizar **tareas** y verificar resultados con **preguntas**.
+
+### Componentes
+
+| Concepto     | Rol                                                        |
+| ------------ | ---------------------------------------------------------- |
+| **Actor**    | Representa un usuario que interactúa con el sistema        |
+| **Ability**  | Capacidad que se le otorga al actor (navegar, llamar APIs) |
+| **Task**     | Acción de negocio de alto nivel (hacer login, registrarse) |
+| **Question** | Consulta sobre el estado actual (¿qué muestra la página?)  |
+
+### Ejecución
+
+```bash
+# Desde la raíz del proyecto
+npm run test:e2e:vitest
+```
