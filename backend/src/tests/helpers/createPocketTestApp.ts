@@ -1,4 +1,5 @@
 import express, { Application, Request, Response, Router } from 'express';
+import { PocketController } from '../../presentation/controllers/PocketController';
 import { CreatePocket } from '../../application/use-cases/pocket/CreatePocket';
 import { GetAccountPockets } from '../../application/use-cases/pocket/GetAccountPockets';
 import { UpdatePocket } from '../../application/use-cases/pocket/UpdatePocket';
@@ -10,7 +11,6 @@ import { GetAccountDetails } from '../../application/use-cases/account/GetAccoun
 import { DepositMoney } from '../../application/use-cases/account/DepositMoney';
 import { WithdrawMoney } from '../../application/use-cases/account/WithdrawMoney';
 import { CloseAccount } from '../../application/use-cases/account/CloseAccount';
-import { PocketController } from '../../presentation/controllers/PocketController';
 import { AccountController } from '../../presentation/controllers/AccountController';
 import { authMiddleware } from '../../presentation/middlewares/authMiddleware';
 import { errorHandler } from '../../presentation/middlewares/errorHandler';
@@ -18,30 +18,84 @@ import { JwtTokenService } from '../../infrastructure/services/JwtTokenService';
 import { InMemoryAccountRepository } from '../fakes/InMemoryAccountRepository';
 import { InMemoryPocketRepository } from '../fakes/InMemoryPocketRepository';
 import { InMemoryNotificationRepository } from '../fakes/InMemoryNotificationRepository';
+import { InMemoryUserRepo, createTestUser } from '../fakes/loan.in-memory-repos';
+import { Account, AccountType, AccountStatus } from '../../domain/entities/Account';
+import { randomUUID } from 'node:crypto';
 
 export interface PocketTestDeps {
   accountRepository: InMemoryAccountRepository;
   pocketRepository: InMemoryPocketRepository;
   notificationRepository: InMemoryNotificationRepository;
+  // Aliases for compatibility
+  accountRepo: InMemoryAccountRepository;
+  pocketRepo: InMemoryPocketRepository;
+  notifRepo: InMemoryNotificationRepository;
+  userRepo: InMemoryUserRepo;
+  userToken: string;
+  userId: string;
+  accountId: string;
+  otherToken: string;
+  otherUserId: string;
+  otherAccountId: string;
 }
 
 export interface PocketTestApp {
   app: Application;
   deps: PocketTestDeps;
-  /** Header Authorization con un JWT real firmado para el usuario dado. */
   bearerFor(userId: string): string;
 }
 
-/**
- * App Express del módulo Bolsillos para pruebas de API (mismo patrón que
- * createTestApp). Todo es real — authMiddleware, validadores, PocketController,
- * casos de uso y errorHandler — salvo la persistencia, que va en memoria.
- */
 export function createPocketTestApp(): PocketTestApp {
   const accountRepository = new InMemoryAccountRepository();
   const pocketRepository = new InMemoryPocketRepository();
   const notificationRepository = new InMemoryNotificationRepository();
-  const deps: PocketTestDeps = { accountRepository, pocketRepository, notificationRepository };
+
+  const user = createTestUser({ email: 'pocket.user@test.com', document: '1111111111' });
+  const otherUser = createTestUser({ email: 'other.pocket@test.com', document: '2222222222' });
+
+  const account = new Account({
+    id: randomUUID(),
+    userId: user.id,
+    accountNumber: 'ACC1000000001',
+    accountType: AccountType.AHORROS,
+    balance: 1_000_000,
+    status: AccountStatus.ACTIVA,
+    createdAt: new Date(),
+    details: null,
+  });
+  const otherAccount = new Account({
+    id: randomUUID(),
+    userId: otherUser.id,
+    accountNumber: 'ACC1000000002',
+    accountType: AccountType.AHORROS,
+    balance: 1_000_000,
+    status: AccountStatus.ACTIVA,
+    createdAt: new Date(),
+    details: null,
+  });
+
+  accountRepository.seed(account, otherAccount);
+
+  const userRepo = new InMemoryUserRepo([user, otherUser]);
+  const tokenService = new JwtTokenService();
+  const userToken = tokenService.generate({ userId: user.id, email: user.email.toString() });
+  const otherToken = tokenService.generate({ userId: otherUser.id, email: otherUser.email.toString() });
+
+  const deps: PocketTestDeps = {
+    accountRepository,
+    pocketRepository,
+    notificationRepository,
+    accountRepo: accountRepository,
+    pocketRepo: pocketRepository,
+    notifRepo: notificationRepository,
+    userRepo,
+    userToken,
+    userId: user.id,
+    accountId: account.id,
+    otherToken,
+    otherUserId: otherUser.id,
+    otherAccountId: otherAccount.id,
+  };
 
   const controller = new PocketController(
     new CreatePocket(accountRepository, pocketRepository, notificationRepository),
@@ -51,7 +105,6 @@ export function createPocketTestApp(): PocketTestApp {
     new TransferPocketBalance(accountRepository, pocketRepository, notificationRepository),
   );
 
-  // Mismo cableado que presentation/routes/pocket.routes.ts.
   const pocketRouter = Router();
   pocketRouter.post('/', authMiddleware, controller.create);
   pocketRouter.get('/account/:accountId', authMiddleware, controller.listByAccount);
@@ -59,9 +112,6 @@ export function createPocketTestApp(): PocketTestApp {
   pocketRouter.delete('/:pocketId', authMiddleware, controller.remove);
   pocketRouter.post('/transfer', authMiddleware, controller.transfer);
 
-  // Funcionalidad 6 — depósito (módulo Cuentas). Comparte los repositorios con
-  // Bolsillos para probar el flujo "depositar → apartar en un bolsillo".
-  // Mismo cableado que presentation/routes/account.routes.ts.
   const accountController = new AccountController(
     new CreateAccount(accountRepository),
     new GetUserAccounts(accountRepository),
@@ -82,7 +132,6 @@ export function createPocketTestApp(): PocketTestApp {
   });
   app.use(errorHandler);
 
-  const tokenService = new JwtTokenService();
   const bearerFor = (userId: string): string =>
     `Bearer ${tokenService.generate({ userId, email: `${userId}@fubank.test` })}`;
 

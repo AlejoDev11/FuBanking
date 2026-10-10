@@ -12,7 +12,8 @@
     "test:regression": "sh scripts/regression.sh",
     "test:regression:backend": "sh scripts/regression.sh backend",
     "test:regression:frontend": "sh scripts/regression.sh frontend",
-    "test:regression:loans": "sh scripts/regression.sh loans"
+    "test:regression:loans": "sh scripts/regression.sh loans",
+    "test:api": "npm --prefix backend run test:api"
   },
   "devDependencies": {
     "sonarqube-scanner": "^4.2.9"
