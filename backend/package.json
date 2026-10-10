@@ -13,7 +13,8 @@
     "test:loans": "vitest run src/tests/unit/loan src/tests/regression src/tests/security src/tests/performance",
     "test:regression": "vitest run src/tests/regression",
     "test:security": "vitest run src/tests/security",
-    "test:performance": "vitest run src/tests/performance"
+    "test:performance": "vitest run src/tests/performance",
+    "test:api": "vitest run src/tests/api"
   },
   "keywords": [
     "bank",
