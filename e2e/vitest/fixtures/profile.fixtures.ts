@@ -1,4 +1,4 @@
-import type { UpdateProfileInput } from '../../backend/src/presentation/validators/profile.validators';
+import type { UpdateProfileInput } from '../../../backend/src/presentation/validators/profile.validators';
 
 /**
  * Payloads de prueba para los escenarios de validación de campos

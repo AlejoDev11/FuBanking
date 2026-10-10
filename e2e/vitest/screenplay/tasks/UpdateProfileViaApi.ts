@@ -1,7 +1,7 @@
 import { Actor } from '../actors/Actor';
 import { Task } from './Task';
 import { CallApi } from '../abilities/CallApi';
-import type { UpdateProfileInput } from '../../../backend/src/presentation/validators/profile.validators';
+import type { UpdateProfileInput } from '../../../../backend/src/presentation/validators/profile.validators';
 
 /** Resultado almacenado tras intentar actualizar el perfil vía API. */
 export interface ProfileUpdateResult {

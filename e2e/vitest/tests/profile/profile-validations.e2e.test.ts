@@ -10,7 +10,7 @@ import {
   buildUniqueEmail,
 } from '../../fixtures/registration.fixtures';
 import { INVALID_PROFILE_CASES } from '../../fixtures/profile.fixtures';
-import type { UpdateProfileInput } from '../../../backend/src/presentation/validators/profile.validators';
+import type { UpdateProfileInput } from '../../../../backend/src/presentation/validators/profile.validators';
 
 /**
  * Pruebas E2E — Validaciones de campos en la edición de perfil
