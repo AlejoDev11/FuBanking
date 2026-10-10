@@ -101,6 +101,8 @@ funcional:
 - Si la tabla `pockets` no existe en Supabase, el backend guarda los bolsillos
   en memoria: viven mientras el proceso esté arriba. Las pruebas no se ven
   afectadas porque cada escenario crea los suyos.
-- El inicio de sesión marca **Recordarme**. Sin esa casilla el token queda en
-  `sessionStorage`, pero `api.client.ts` solo lo lee de `localStorage`, y la
-  aplicación no carga cuentas ni bolsillos (defecto encontrado por esta suite).
+- El inicio de sesión **no** marca "Recordarme", como un usuario por defecto.
+  Así los escenarios web vigilan el defecto E2E-01: el token quedaba en
+  `sessionStorage` y `api.client.ts` solo lo leía de `localStorage`, por lo que
+  no cargaban cuentas ni bolsillos. Está corregido en `dev` (`getAuthToken`).
+- Documento técnico completo: `docs/pruebas-e2e-bolsillos.md`.

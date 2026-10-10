@@ -29,7 +29,9 @@ BeforeAll(async () => {
     // navegador, abre su propio contexto de Playwright (sesión aislada).
     actors: Cast.where(actor => {
       actor.whoCan(
-        CallAnApi.at(environment.apiUrl),
+        // 30 s y no los 10 s por defecto: el backend escribe en Supabase y una
+        // respuesta lenta al preparar datos comprometía escenarios sin relación.
+        CallAnApi.using({ baseURL: environment.apiUrl, timeout: 30_000 }),
         TakeNotes.usingAnEmptyNotepad<ClientNotes>(),
       );
       if (browser) {
