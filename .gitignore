@@ -20,6 +20,7 @@ frontend/coverage/
 # Variables de entorno
 .env
 .env.local
+.env.e2e
 backend/.env
 
 # Logs
