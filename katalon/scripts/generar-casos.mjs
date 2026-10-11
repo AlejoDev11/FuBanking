@@ -39,6 +39,15 @@ const JS_USUARIO_ACTUAL =
 const JS_CERRAR_SESION =
   "localStorage.clear();sessionStorage.clear();document.cookie='token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';";
 
+/**
+ * El formulario de login (react-hook-form) reinicia sus campos al montarse, y si
+ * la hidratación falla React vuelve a crear la página: lo que se escriba antes se
+ * pierde. Tras borrar la sesión, `fubank-theme` solo reaparece cuando el
+ * ThemeProvider ya montó (su useEffect lo guarda), así que sirve de señal de
+ * "página lista para escribir".
+ */
+const JS_PAGINA_HIDRATADA = "window.localStorage.getItem('fubank-theme') !== null";
+
 /** Elimina por API los bolsillos que dejaron corridas anteriores (precondición: estado limpio). */
 const JS_LIMPIAR_BOLSILLOS =
   `(function(){var t=${JS_TOKEN};var api='${API}';`
@@ -72,6 +81,7 @@ function iniciarSesion(usuario) {
     c('runScript', JS_CERRAR_SESION),
     c('open', `${WEB}/login`),
     c('waitForElementPresent', 'id=email'),
+    c('waitForEval', JS_PAGINA_HIDRATADA, 'true'),
     c('type', 'id=email', usuario.email),
     c('type', 'id=password', usuario.password),
     c('click', 'css=form button[type="submit"]'),

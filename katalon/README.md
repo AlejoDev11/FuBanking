@@ -99,6 +99,14 @@ locales): **51 pasan y 1 falla a propósito**.
 
 ## Notas
 
+- **Error "Encountered a script tag while rendering React component" en el
+  login:** no lo causa Katalon, es un defecto del frontend. `ThemeProvider`
+  arranca en el navegador con el tema guardado o el del sistema, mientras el
+  servidor siempre renderiza `dark`. Si el navegador prefiere modo claro, el
+  botón de tema del login no coincide, la hidratación falla y React regenera la
+  página (de ahí el aviso del `<Script>` del layout). Los casos esperan a que la
+  página termine de montarse (`waitForEval` sobre `fubank-theme`) antes de
+  escribir el correo, porque lo escrito antes se pierde.
 - El backend limita el login a **10 intentos por minuto** por correo. Los casos
   solo inician sesión cuando cambian de usuario, pero si se reproducen muchos
   casos sueltos muy rápido puede aparecer el límite. En ese caso, esperar un
