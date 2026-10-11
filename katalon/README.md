@@ -90,15 +90,19 @@ de preparación es idempotente: si ya existen, solo repone el saldo.
 
 ## Resultado esperado
 
-Los 52 casos pasan contra `dev` (backend y frontend locales).
+Los 52 casos pasan contra `dev` (backend y frontend locales) en Katalon
+Recorder 7 sobre Chrome 154: **Passed 52, Failed 0** (2026-10-10).
 
 TC-110 (nombre de solo espacios) detectó el defecto **DEF-001** (D-01/D-03 en
 la documentación de pruebas): el frontend solo validaba `!name` y el backend
-aceptaba `'   '`, así que el bolsillo se creaba. La captura de esa falla en
-Katalon Recorder quedó como evidencia en
-`evidencias/TC110_falla_DEF-001_antes_del_arreglo.png`. Tras corregirlo
+aceptaba `'   '`, así que el bolsillo se creaba. Tras corregirlo
 (`CreatePocket` rechaza con `INVALID_POCKET_NAME` y `handleCreate` avisa
-"Falta información"), TC-110 verifica ese aviso y pasa.
+"Falta información"), TC-110 pasa.
+
+| Evidencia | Qué muestra |
+|---|---|
+| `evidencias/TC110_falla_DEF-001_antes_del_arreglo.png` | TC-110 en rojo: `assertElementNotPresent` encuentra el toast "Bolsillo creado" (`[error] true`) |
+| `evidencias/TC110_aprobado_despues_del_arreglo_52_de_52.png` | TC-110 en verde ("Test case passed") y el total de la corrida: Passed 52, Failed 0 |
 
 ## Notas
 
