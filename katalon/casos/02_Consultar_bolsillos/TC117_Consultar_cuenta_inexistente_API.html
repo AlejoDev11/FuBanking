@@ -10,7 +10,7 @@
 <tr><td>click</td><td>css=form button[type=&quot;submit&quot;]</td><td></td></tr>
 <tr><td>waitForElementPresent</td><td>css=button[title=&quot;Cerrar sesión&quot;]</td><td></td></tr>
 <tr><td>assertLocation</td><td>glob:*/profile</td><td></td></tr>
-<tr><td>endIf</td><td></td><td></td></tr>
+<tr><td>endIf</td><td><datalist></datalist></td><td></td></tr>
 <tr><td>echo</td><td>Paso 2: Consultar los bolsillos de esa cuenta</td><td></td></tr>
 <tr><td>storeEval</td><td>(function(){var x=new XMLHttpRequest();x.open(&#x27;GET&#x27;,&#x27;http://localhost:3001/api/v1/pockets/account/00000000-0000-4000-8000-000000000000&#x27;,false);x.setRequestHeader(&#x27;Authorization&#x27;,&#x27;Bearer &#x27;+(window.sessionStorage.getItem(&#x27;token&#x27;)||window.localStorage.getItem(&#x27;token&#x27;)));x.send();var c=&#x27;&#x27;;try{c=JSON.parse(x.responseText).error.code||&#x27;&#x27;}catch(e){}return x.status+&#x27; &#x27;+c;})()</td><td>respuesta</td></tr>
 <tr><td>echo</td><td>Respuesta de la API: ${respuesta}</td><td></td></tr>

@@ -10,7 +10,7 @@
 <tr><td>click</td><td>css=form button[type=&quot;submit&quot;]</td><td></td></tr>
 <tr><td>waitForElementPresent</td><td>css=button[title=&quot;Cerrar sesión&quot;]</td><td></td></tr>
 <tr><td>assertLocation</td><td>glob:*/profile</td><td></td></tr>
-<tr><td>endIf</td><td></td><td></td></tr>
+<tr><td>endIf</td><td><datalist></datalist></td><td></td></tr>
 <tr><td>storeEval</td><td>(function(){var t=(window.sessionStorage.getItem(&#x27;token&#x27;)||window.localStorage.getItem(&#x27;token&#x27;));var api=&#x27;http://localhost:3001/api/v1&#x27;;function pedir(m,u){var x=new XMLHttpRequest();x.open(m,api+u,false);x.setRequestHeader(&#x27;Authorization&#x27;,&#x27;Bearer &#x27;+t);x.send();return JSON.parse(x.responseText||&#x27;{}&#x27;);}var n=0;(pedir(&#x27;GET&#x27;,&#x27;/accounts/me&#x27;).data||[]).forEach(function(c){(pedir(&#x27;GET&#x27;,&#x27;/pockets/account/&#x27;+c.id).data||[]).forEach(function(p){pedir(&#x27;DELETE&#x27;,&#x27;/pockets/&#x27;+p.id);n++;});});return n;})()</td><td>bolsillosEliminados</td></tr>
 <tr><td>echo</td><td>Precondición: bolsillos de corridas anteriores eliminados = ${bolsillosEliminados}</td><td></td></tr>
 <tr><td>open</td><td>http://localhost:3000/accounts</td><td></td></tr>
@@ -75,7 +75,7 @@
 <tr><td>click</td><td>css=form button[type=&quot;submit&quot;]</td><td></td></tr>
 <tr><td>waitForElementPresent</td><td>css=button[title=&quot;Cerrar sesión&quot;]</td><td></td></tr>
 <tr><td>assertLocation</td><td>glob:*/profile</td><td></td></tr>
-<tr><td>endIf</td><td></td><td></td></tr>
+<tr><td>endIf</td><td><datalist></datalist></td><td></td></tr>
 <tr><td>storeEval</td><td>(function(){var t=(window.sessionStorage.getItem(&#x27;token&#x27;)||window.localStorage.getItem(&#x27;token&#x27;));var api=&#x27;http://localhost:3001/api/v1&#x27;;function pedir(m,u){var x=new XMLHttpRequest();x.open(m,api+u,false);x.setRequestHeader(&#x27;Authorization&#x27;,&#x27;Bearer &#x27;+t);x.send();return JSON.parse(x.responseText||&#x27;{}&#x27;);}var n=0;(pedir(&#x27;GET&#x27;,&#x27;/accounts/me&#x27;).data||[]).forEach(function(c){(pedir(&#x27;GET&#x27;,&#x27;/pockets/account/&#x27;+c.id).data||[]).forEach(function(p){pedir(&#x27;DELETE&#x27;,&#x27;/pockets/&#x27;+p.id);n++;});});return n;})()</td><td>bolsillosEliminados</td></tr>
 <tr><td>echo</td><td>Precondición: bolsillos de corridas anteriores eliminados = ${bolsillosEliminados}</td><td></td></tr>
 <tr><td>open</td><td>http://localhost:3000/accounts</td><td></td></tr>
@@ -141,7 +141,7 @@
 <tr><td>click</td><td>css=form button[type=&quot;submit&quot;]</td><td></td></tr>
 <tr><td>waitForElementPresent</td><td>css=button[title=&quot;Cerrar sesión&quot;]</td><td></td></tr>
 <tr><td>assertLocation</td><td>glob:*/profile</td><td></td></tr>
-<tr><td>endIf</td><td></td><td></td></tr>
+<tr><td>endIf</td><td><datalist></datalist></td><td></td></tr>
 <tr><td>storeEval</td><td>(function(){var t=(window.sessionStorage.getItem(&#x27;token&#x27;)||window.localStorage.getItem(&#x27;token&#x27;));var api=&#x27;http://localhost:3001/api/v1&#x27;;function pedir(m,u){var x=new XMLHttpRequest();x.open(m,api+u,false);x.setRequestHeader(&#x27;Authorization&#x27;,&#x27;Bearer &#x27;+t);x.send();return JSON.parse(x.responseText||&#x27;{}&#x27;);}var n=0;(pedir(&#x27;GET&#x27;,&#x27;/accounts/me&#x27;).data||[]).forEach(function(c){(pedir(&#x27;GET&#x27;,&#x27;/pockets/account/&#x27;+c.id).data||[]).forEach(function(p){pedir(&#x27;DELETE&#x27;,&#x27;/pockets/&#x27;+p.id);n++;});});return n;})()</td><td>bolsillosEliminados</td></tr>
 <tr><td>echo</td><td>Precondición: bolsillos de corridas anteriores eliminados = ${bolsillosEliminados}</td><td></td></tr>
 <tr><td>open</td><td>http://localhost:3000/accounts</td><td></td></tr>
@@ -213,7 +213,7 @@
 <tr><td>click</td><td>css=form button[type=&quot;submit&quot;]</td><td></td></tr>
 <tr><td>waitForElementPresent</td><td>css=button[title=&quot;Cerrar sesión&quot;]</td><td></td></tr>
 <tr><td>assertLocation</td><td>glob:*/profile</td><td></td></tr>
-<tr><td>endIf</td><td></td><td></td></tr>
+<tr><td>endIf</td><td><datalist></datalist></td><td></td></tr>
 <tr><td>storeEval</td><td>(function(){var t=(window.sessionStorage.getItem(&#x27;token&#x27;)||window.localStorage.getItem(&#x27;token&#x27;));var api=&#x27;http://localhost:3001/api/v1&#x27;;function pedir(m,u){var x=new XMLHttpRequest();x.open(m,api+u,false);x.setRequestHeader(&#x27;Authorization&#x27;,&#x27;Bearer &#x27;+t);x.send();return JSON.parse(x.responseText||&#x27;{}&#x27;);}var n=0;(pedir(&#x27;GET&#x27;,&#x27;/accounts/me&#x27;).data||[]).forEach(function(c){(pedir(&#x27;GET&#x27;,&#x27;/pockets/account/&#x27;+c.id).data||[]).forEach(function(p){pedir(&#x27;DELETE&#x27;,&#x27;/pockets/&#x27;+p.id);n++;});});return n;})()</td><td>bolsillosEliminados</td></tr>
 <tr><td>echo</td><td>Precondición: bolsillos de corridas anteriores eliminados = ${bolsillosEliminados}</td><td></td></tr>
 <tr><td>open</td><td>http://localhost:3000/accounts</td><td></td></tr>
@@ -284,7 +284,7 @@
 <tr><td>click</td><td>css=form button[type=&quot;submit&quot;]</td><td></td></tr>
 <tr><td>waitForElementPresent</td><td>css=button[title=&quot;Cerrar sesión&quot;]</td><td></td></tr>
 <tr><td>assertLocation</td><td>glob:*/profile</td><td></td></tr>
-<tr><td>endIf</td><td></td><td></td></tr>
+<tr><td>endIf</td><td><datalist></datalist></td><td></td></tr>
 <tr><td>storeEval</td><td>(function(){var t=(window.sessionStorage.getItem(&#x27;token&#x27;)||window.localStorage.getItem(&#x27;token&#x27;));var api=&#x27;http://localhost:3001/api/v1&#x27;;function pedir(m,u){var x=new XMLHttpRequest();x.open(m,api+u,false);x.setRequestHeader(&#x27;Authorization&#x27;,&#x27;Bearer &#x27;+t);x.send();return JSON.parse(x.responseText||&#x27;{}&#x27;);}var n=0;(pedir(&#x27;GET&#x27;,&#x27;/accounts/me&#x27;).data||[]).forEach(function(c){(pedir(&#x27;GET&#x27;,&#x27;/pockets/account/&#x27;+c.id).data||[]).forEach(function(p){pedir(&#x27;DELETE&#x27;,&#x27;/pockets/&#x27;+p.id);n++;});});return n;})()</td><td>bolsillosEliminados</td></tr>
 <tr><td>echo</td><td>Precondición: bolsillos de corridas anteriores eliminados = ${bolsillosEliminados}</td><td></td></tr>
 <tr><td>open</td><td>http://localhost:3000/accounts</td><td></td></tr>
@@ -349,7 +349,7 @@
 <tr><td>click</td><td>css=form button[type=&quot;submit&quot;]</td><td></td></tr>
 <tr><td>waitForElementPresent</td><td>css=button[title=&quot;Cerrar sesión&quot;]</td><td></td></tr>
 <tr><td>assertLocation</td><td>glob:*/profile</td><td></td></tr>
-<tr><td>endIf</td><td></td><td></td></tr>
+<tr><td>endIf</td><td><datalist></datalist></td><td></td></tr>
 <tr><td>storeEval</td><td>(function(){var t=(window.sessionStorage.getItem(&#x27;token&#x27;)||window.localStorage.getItem(&#x27;token&#x27;));var api=&#x27;http://localhost:3001/api/v1&#x27;;function pedir(m,u){var x=new XMLHttpRequest();x.open(m,api+u,false);x.setRequestHeader(&#x27;Authorization&#x27;,&#x27;Bearer &#x27;+t);x.send();return JSON.parse(x.responseText||&#x27;{}&#x27;);}var n=0;(pedir(&#x27;GET&#x27;,&#x27;/accounts/me&#x27;).data||[]).forEach(function(c){(pedir(&#x27;GET&#x27;,&#x27;/pockets/account/&#x27;+c.id).data||[]).forEach(function(p){pedir(&#x27;DELETE&#x27;,&#x27;/pockets/&#x27;+p.id);n++;});});return n;})()</td><td>bolsillosEliminados</td></tr>
 <tr><td>echo</td><td>Precondición: bolsillos de corridas anteriores eliminados = ${bolsillosEliminados}</td><td></td></tr>
 <tr><td>open</td><td>http://localhost:3000/accounts</td><td></td></tr>
@@ -414,7 +414,7 @@
 <tr><td>click</td><td>css=form button[type=&quot;submit&quot;]</td><td></td></tr>
 <tr><td>waitForElementPresent</td><td>css=button[title=&quot;Cerrar sesión&quot;]</td><td></td></tr>
 <tr><td>assertLocation</td><td>glob:*/profile</td><td></td></tr>
-<tr><td>endIf</td><td></td><td></td></tr>
+<tr><td>endIf</td><td><datalist></datalist></td><td></td></tr>
 <tr><td>storeEval</td><td>(function(){var t=(window.sessionStorage.getItem(&#x27;token&#x27;)||window.localStorage.getItem(&#x27;token&#x27;));var api=&#x27;http://localhost:3001/api/v1&#x27;;function pedir(m,u){var x=new XMLHttpRequest();x.open(m,api+u,false);x.setRequestHeader(&#x27;Authorization&#x27;,&#x27;Bearer &#x27;+t);x.send();return JSON.parse(x.responseText||&#x27;{}&#x27;);}var n=0;(pedir(&#x27;GET&#x27;,&#x27;/accounts/me&#x27;).data||[]).forEach(function(c){(pedir(&#x27;GET&#x27;,&#x27;/pockets/account/&#x27;+c.id).data||[]).forEach(function(p){pedir(&#x27;DELETE&#x27;,&#x27;/pockets/&#x27;+p.id);n++;});});return n;})()</td><td>bolsillosEliminados</td></tr>
 <tr><td>echo</td><td>Precondición: bolsillos de corridas anteriores eliminados = ${bolsillosEliminados}</td><td></td></tr>
 <tr><td>open</td><td>http://localhost:3000/accounts</td><td></td></tr>
@@ -469,7 +469,7 @@
 <tr><td>click</td><td>css=form button[type=&quot;submit&quot;]</td><td></td></tr>
 <tr><td>waitForElementPresent</td><td>css=button[title=&quot;Cerrar sesión&quot;]</td><td></td></tr>
 <tr><td>assertLocation</td><td>glob:*/profile</td><td></td></tr>
-<tr><td>endIf</td><td></td><td></td></tr>
+<tr><td>endIf</td><td><datalist></datalist></td><td></td></tr>
 <tr><td>storeEval</td><td>(function(){var t=(window.sessionStorage.getItem(&#x27;token&#x27;)||window.localStorage.getItem(&#x27;token&#x27;));var api=&#x27;http://localhost:3001/api/v1&#x27;;function pedir(m,u){var x=new XMLHttpRequest();x.open(m,api+u,false);x.setRequestHeader(&#x27;Authorization&#x27;,&#x27;Bearer &#x27;+t);x.send();return JSON.parse(x.responseText||&#x27;{}&#x27;);}var n=0;(pedir(&#x27;GET&#x27;,&#x27;/accounts/me&#x27;).data||[]).forEach(function(c){(pedir(&#x27;GET&#x27;,&#x27;/pockets/account/&#x27;+c.id).data||[]).forEach(function(p){pedir(&#x27;DELETE&#x27;,&#x27;/pockets/&#x27;+p.id);n++;});});return n;})()</td><td>bolsillosEliminados</td></tr>
 <tr><td>echo</td><td>Precondición: bolsillos de corridas anteriores eliminados = ${bolsillosEliminados}</td><td></td></tr>
 <tr><td>open</td><td>http://localhost:3000/accounts</td><td></td></tr>

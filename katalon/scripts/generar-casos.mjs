@@ -827,9 +827,16 @@ const funcionalidades = [
 const escapar = (texto) =>
   texto.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;');
 
+/**
+ * Katalon Recorder lee el target con `td.childNodes[0].data`: una celda vacía
+ * (`<td></td>`) rompe la importación con "Incorrect format". Para un target
+ * vacío (p. ej. `endIf`) se escribe lo mismo que exporta Katalon: `<datalist></datalist>`.
+ */
+const celdaTarget = (target) => (target === '' ? '<datalist></datalist>' : escapar(target));
+
 const tabla = (caso) =>
   `<table cellpadding="1" cellspacing="1" border="1"><thead><tr><td rowspan="1" colspan="3">${escapar(caso.nombre)}</td></tr></thead><tbody>`
-  + caso.filas.map(([cmd, target, value]) => `<tr><td>${escapar(cmd)}</td><td>${escapar(target)}</td><td>${escapar(value)}</td></tr>`).join('\n')
+  + caso.filas.map(([cmd, target, value]) => `<tr><td>${escapar(cmd)}</td><td>${celdaTarget(target)}</td><td>${escapar(value)}</td></tr>`).join('\n')
   + '</tbody></table>';
 
 const documento = (titulo, casos) =>
