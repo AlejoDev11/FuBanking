@@ -7,11 +7,11 @@
     "clean": "node scripts/clean.js",
     "typecheck": "tsc --noEmit",
     "test": "npm run clean && cucumber-js",
-    "test:smoke": "npm test -- --tags @smoke",
-    "test:web": "npm test -- --tags @web",
-    "test:api": "cross-env SERENITY_API_ONLY=true npm test -- --tags @api",
-    "test:bolsillos": "npm test -- --tags @bolsillos",
-    "test:deposito": "npm test -- --tags @deposito",
+    "test:smoke": "npm test -- --tags \"@smoke\"",
+    "test:web": "npm test -- --tags \"@web\"",
+    "test:api": "cross-env SERENITY_API_ONLY=true npm test -- --tags \"@api\"",
+    "test:bolsillos": "npm test -- --tags \"@bolsillos\"",
+    "test:deposito": "npm test -- --tags \"@deposito\"",
     "test:report": "html-reporter serve --dir reports/serenity-js --port 8080 --open"
   },
   "engines": {

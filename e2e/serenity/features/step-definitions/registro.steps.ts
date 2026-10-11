@@ -6,7 +6,8 @@ import { clientNotes } from '../../test/support/ClientNotes';
 /**
  * Steps para el módulo de Registro.
  *
- * Los steps Then de estado HTTP se reutilizan desde cliente.steps.ts.
+ * Los steps Then de estado HTTP y token de sesión se reutilizan
+ * desde cliente.steps.ts y login.steps.ts.
  */
 
 When('un nuevo usuario se registra con datos válidos', async () => {

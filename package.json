@@ -15,6 +15,8 @@
     "test:regression:loans": "sh scripts/regression.sh loans",
     "test:api": "npm --prefix backend run test:api",
     "test:e2e:serenity": "npm --prefix e2e/serenity test",
+    "test:e2e:serenity:report": "npm --prefix e2e/serenity run test:report",
+    "test:report": "npm --prefix e2e/serenity run test:report",
     "test:e2e:vitest": "vitest run --config e2e/vitest/vitest.config.e2e.mts",
     "test:e2e:seed": "node e2e/serenity/scripts/seed-users.mjs",
     "test:e2e:clean": "node backend/scripts/clean-e2e-users.mjs"

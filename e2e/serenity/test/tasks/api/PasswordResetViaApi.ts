@@ -1,41 +1,54 @@
-import { Interaction, Task } from '@serenity-js/core';
-import { CallAnApi } from '@serenity-js/rest';
+import { q, Question, Task } from '@serenity-js/core';
+import { GetRequest, PostRequest, Send } from '@serenity-js/rest';
+
 import { clientNotes } from '../../support/ClientNotes';
 
 /**
  * PasswordResetViaApi: flujo completo de restablecimiento de contraseña.
+ *
+ * Todas las interacciones usan `Send.a(...)` para que Serenity/JS registre
+ * la petición HTTP completa (cabeceras, payload, código de respuesta) en el
+ * reporte HTML.
  */
 export const PasswordResetViaApi = {
+  /**
+   * Solicita el restablecimiento con el email del actor que ya inició sesión.
+   * El email se lee dinámicamente desde las notas del actor.
+   */
   requestWithOwnEmail: () =>
     Task.where('#actor solicita restablecer la contraseña con su email',
-      Interaction.where('#actor envía POST auth/forgot-password', async actor => {
-        const api = CallAnApi.as(actor);
-        const email = await actor.answer(clientNotes().get('email'));
-        await api.request({ method: 'POST', url: 'auth/forgot-password', data: { email } });
-      }),
+      Send.a(PostRequest.to('auth/forgot-password').with(
+        Question.fromObject({ email: clientNotes().get('email') }),
+      )),
     ),
 
+  /**
+   * Solicita el restablecimiento con un email arbitrario (puede no existir).
+   */
   requestWithEmail: (email: string) =>
     Task.where(`#actor solicita restablecer la contraseña del email ${ email }`,
-      Interaction.where('#actor envía POST auth/forgot-password', async actor => {
-        const api = CallAnApi.as(actor);
-        await api.request({ method: 'POST', url: 'auth/forgot-password', data: { email } });
-      }),
+      Send.a(PostRequest.to('auth/forgot-password').with({ email })),
     ),
 
+  /**
+   * Verifica si un token de restablecimiento es válido.
+   * GET auth/verify-reset-token?token=<token>
+   */
   verifyToken: (token: string) =>
     Task.where(`#actor verifica el token de restablecimiento "${ token }"`,
-      Interaction.where('#actor envía GET auth/reset-password/verify', async actor => {
-        const api = CallAnApi.as(actor);
-        await api.request({ method: 'GET', url: `auth/reset-password/verify?token=${ token }` });
-      }),
+      Send.a(GetRequest.to(q`auth/verify-reset-token?token=${ token }`)),
     ),
 
-  resetWithToken: (token: string, newPassword: string) =>
-    Task.where(`#actor restablece la contraseña con token inválido`,
-      Interaction.where('#actor envía POST auth/reset-password', async actor => {
-        const api = CallAnApi.as(actor);
-        await api.request({ method: 'POST', url: 'auth/reset-password', data: { token, newPassword } });
-      }),
+  /**
+   * Intenta establecer una nueva contraseña usando un token de restablecimiento.
+   * POST auth/reset-password { token, newPassword, confirmPassword }
+   */
+  resetWithToken: (token: string, newPassword: string, confirmPassword?: string) =>
+    Task.where(`#actor restablece la contraseña con token "${ token }"`,
+      Send.a(PostRequest.to('auth/reset-password').with({
+        token,
+        newPassword,
+        confirmPassword: confirmPassword ?? newPassword,
+      })),
     ),
 };

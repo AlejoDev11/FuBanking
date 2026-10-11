@@ -5,11 +5,15 @@ Requisito: Registro de Usuarios
   Como persona interesada
   Quiero poder registrarme como nuevo cliente
 
+  # ─── Flujo exitoso ──────────────────────────────────────────────────────────
+
   @api @registro
   Escenario: Registro exitoso de nuevo usuario
     Cuando un nuevo usuario se registra con datos válidos
     Entonces la respuesta HTTP tiene estado 201
     Y la respuesta contiene un token de sesión
+
+  # ─── Validaciones de datos ──────────────────────────────────────────────────
 
   @api @registro @validaciones
   Escenario: Registro con email ya existente
