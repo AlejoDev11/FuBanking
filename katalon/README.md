@@ -99,6 +99,14 @@ locales): **51 pasan y 1 falla a propósito**.
 
 ## Notas
 
+- **Cada `type` va seguido de un `runScript`.** Katalon Recorder 7 tiene un
+  fallo conocido con React: el texto se ve en el campo, pero React no recibe el
+  `onChange`, así que el formulario se envía vacío (en el login, la sesión
+  nunca se abre). El `runScript` vuelve a poner el mismo valor con el setter
+  nativo, desincroniza el `_valueTracker` de React y dispara `input`. Se inserta
+  como `<script>` para correr en el contexto de la página. Si tu versión de
+  Katalon ya escribe bien, no cambia nada. Ver
+  [foro de Katalon](https://forum.katalon.com/t/newest-katalon-7-1-0-does-not-work-with-react-form-hooks/169892).
 - **Error "Encountered a script tag while rendering React component" en el
   login:** no lo causaba Katalon, era un defecto del frontend, ya corregido en
   `ThemeProvider.tsx`. El tema arrancaba en el navegador con el valor guardado o

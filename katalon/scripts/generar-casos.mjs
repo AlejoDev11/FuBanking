@@ -70,6 +70,31 @@ function jsPeticion(metodo, ruta, { autorizacion = 'sesion', cuerpo } = {}) {
     + "var c='';try{c=JSON.parse(x.responseText).error.code||''}catch(e){}return x.status+' '+c;})()";
 }
 
+/**
+ * Katalon Recorder 7 escribe el texto pero React no se entera (no dispara
+ * onChange): el formulario se envía vacío. Es un fallo conocido del Recorder
+ * con React. Tras cada `type`, este script vuelve a poner el valor con el setter
+ * nativo, desincroniza el `_valueTracker` con el que React compara y dispara
+ * `input`, así React registra el cambio. Si `type` ya funcionó, no cambia nada.
+ * El código se inserta como <script> para que corra en el contexto de la página
+ * (donde vive React) aunque el Recorder ejecute runScript en un mundo aislado.
+ */
+function jsSincronizarConReact(id, valor) {
+  const literal = `'${String(valor).replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
+  const codigo = `(function(){var el=document.getElementById('${id}');var v=${literal};`
+    + "var t=el._valueTracker;if(t){t.setValue(v===''?' ':'');}"
+    + "Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el),'value').set.call(el,v);"
+    + "el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));})();";
+  return `var s=document.createElement('script');s.textContent=${JSON.stringify(codigo)};`
+    + '(document.head||document.documentElement).appendChild(s);s.remove();';
+}
+
+/** Escribe en un campo por id: `type` + sincronización con React (ver arriba). */
+const escribir = (id, valor) => [
+  c('type', `id=${id}`, valor),
+  c('runScript', jsSincronizarConReact(id, valor)),
+];
+
 /** Convierte un texto con formato de moneda ("$ 1.000.000") a número. */
 const aNumero = (variable) => `Number('\${${variable}}'.replace(/[^0-9-]/g,''))`;
 
@@ -82,8 +107,8 @@ function iniciarSesion(usuario) {
     c('open', `${WEB}/login`),
     c('waitForElementPresent', 'id=email'),
     c('waitForEval', JS_PAGINA_HIDRATADA, 'true'),
-    c('type', 'id=email', usuario.email),
-    c('type', 'id=password', usuario.password),
+    ...escribir('email', usuario.email),
+    ...escribir('password', usuario.password),
     c('click', 'css=form button[type="submit"]'),
     c('waitForElementPresent', 'css=button[title="Cerrar sesión"]'),
     c('assertLocation', 'glob:*/profile'),
@@ -120,8 +145,8 @@ const abrirBolsillos = () => [
 ];
 
 const crearBolsillo = (nombre, monto) => [
-  c('type', 'id=pocket-name', nombre),
-  c('type', 'id=pocket-amount', monto),
+  ...escribir('pocket-name', nombre),
+  ...escribir('pocket-amount', monto),
   c('click', 'css=[data-testid="create-pocket-button"]'),
 ];
 
@@ -157,8 +182,8 @@ function editarBolsillo(nombre, { nuevoNombre, nuevoMonto } = {}) {
     c('click', `${xTarjeta(nombre)}//*[@data-testid='edit-pocket-button']`),
     c('waitForElementPresent', 'id=edit-pocket-amount'),
   ];
-  if (nuevoNombre !== undefined) filas.push(c('type', 'id=edit-pocket-name', nuevoNombre));
-  if (nuevoMonto !== undefined) filas.push(c('type', 'id=edit-pocket-amount', nuevoMonto));
+  if (nuevoNombre !== undefined) filas.push(...escribir('edit-pocket-name', nuevoNombre));
+  if (nuevoMonto !== undefined) filas.push(...escribir('edit-pocket-amount', nuevoMonto));
   filas.push(c('click', 'css=[data-testid="save-pocket-button"]'));
   return filas;
 }
@@ -227,8 +252,8 @@ const abrirDeposito = () => [
 ];
 
 function depositar(monto, descripcion) {
-  const filas = [...abrirDeposito(), c('type', 'id=dw-amount', monto)];
-  if (descripcion !== undefined) filas.push(c('type', 'id=dw-description', descripcion));
+  const filas = [...abrirDeposito(), ...escribir('dw-amount', monto)];
+  if (descripcion !== undefined) filas.push(...escribir('dw-description', descripcion));
   filas.push(c('click', 'css=[data-testid="dw-submit"]'));
   return filas;
 }
@@ -810,7 +835,7 @@ const funcionalidades = [
         ...inicioDeposito(),
         paso("Paso 2: Escribir 30000 y presionar 'Cancelar'"),
         ...abrirDeposito(),
-        c('type', 'id=dw-amount', 30000),
+        ...escribir('dw-amount', 30000),
         c('click', "xpath=//form[.//input[@id='dw-amount']]//button[normalize-space(.)='Cancelar']"),
         paso('Paso 3: Verificar que la ventana se cierra y el saldo no cambia'),
         c('waitForElementNotPresent', 'id=dw-amount'),
@@ -821,7 +846,7 @@ const funcionalidades = [
         ...inicioDeposito(),
         paso('Paso 2: Escribir 30000 y cerrar la ventana con la X'),
         ...abrirDeposito(),
-        c('type', 'id=dw-amount', 30000),
+        ...escribir('dw-amount', 30000),
         c('click', "xpath=//div[contains(@class,'justify-between')][.//h3[contains(.,'Agregar Dinero')]]/button"),
         paso('Paso 3: Verificar que la ventana se cierra y el saldo no cambia'),
         c('waitForElementNotPresent', 'id=dw-amount'),
