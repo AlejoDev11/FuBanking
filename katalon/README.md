@@ -90,12 +90,15 @@ de preparación es idempotente: si ya existen, solo repone el saldo.
 
 ## Resultado esperado
 
-Se validó la ejecución de los 52 casos contra `dev` (backend y frontend
-locales): **51 pasan y 1 falla a propósito**.
+Los 52 casos pasan contra `dev` (backend y frontend locales).
 
-| Caso | Estado | Motivo |
-|---|---|---|
-| TC-110 Nombre solo espacios | Falla | Defecto **DEF-001**: el frontend solo valida `!name` y el backend acepta `'   '`, así que el bolsillo se crea. El caso espera el rechazo. |
+TC-110 (nombre de solo espacios) detectó el defecto **DEF-001** (D-01/D-03 en
+la documentación de pruebas): el frontend solo validaba `!name` y el backend
+aceptaba `'   '`, así que el bolsillo se creaba. La captura de esa falla en
+Katalon Recorder quedó como evidencia en
+`evidencias/TC110_falla_DEF-001_antes_del_arreglo.png`. Tras corregirlo
+(`CreatePocket` rechaza con `INVALID_POCKET_NAME` y `handleCreate` avisa
+"Falta información"), TC-110 verifica ese aviso y pasa.
 
 ## Notas
 

@@ -33,7 +33,8 @@
 <tr><td>type</td><td>id=pocket-amount</td><td>100</td></tr>
 <tr><td>runScript</td><td>var s=document.createElement(&#x27;script&#x27;);s.textContent=&quot;(function(){var el=document.getElementById(&#x27;pocket-amount&#x27;);var v=&#x27;100&#x27;;var t=el._valueTracker;if(t){t.setValue(v===&#x27;&#x27;?&#x27; &#x27;:&#x27;&#x27;);}Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el),&#x27;value&#x27;).set.call(el,v);el.dispatchEvent(new Event(&#x27;input&#x27;,{bubbles:true}));el.dispatchEvent(new Event(&#x27;change&#x27;,{bubbles:true}));})();&quot;;(document.head||document.documentElement).appendChild(s);s.remove();</td><td></td></tr>
 <tr><td>click</td><td>css=[data-testid=&quot;create-pocket-button&quot;]</td><td></td></tr>
-<tr><td>echo</td><td>Paso 3: Verificar que el bolsillo NO se cree (DEF-001 si falla)</td><td></td></tr>
-<tr><td>pause</td><td>2500</td><td></td></tr>
+<tr><td>echo</td><td>Paso 3: Verificar el rechazo y que el bolsillo NO se cree (DEF-001)</td><td></td></tr>
+<tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Falta información&#x27;]/following-sibling::p[contains(.,&#x27;Selecciona una cuenta y escribe el nombre del bolsillo.&#x27;)]</td><td></td></tr>
+<tr><td>assertText</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Falta información&#x27;]</td><td>exact:Falta información</td></tr>
 <tr><td>assertElementNotPresent</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Bolsillo creado&#x27;]</td><td></td></tr>
 <tr><td>assertElementNotPresent</td><td>css=[data-testid=&quot;pocket-card&quot;]</td><td></td></tr></tbody></table></body></html>
