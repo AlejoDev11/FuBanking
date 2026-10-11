@@ -33,7 +33,6 @@
 <tr><td>click</td><td>css=[data-testid=&quot;create-pocket-button&quot;]</td><td></td></tr>
 <tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Bolsillo creado&#x27;]</td><td></td></tr>
 <tr><td>assertText</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Bolsillo creado&#x27;]</td><td>exact:Bolsillo creado</td></tr>
-<tr><td>click</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Bolsillo creado&#x27;]/ancestor::div[contains(@class,&#x27;pointer-events-auto&#x27;)][1]//button[@aria-label=&#x27;Cerrar notificacion&#x27;]</td><td></td></tr>
 <tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;pocket-card&#x27;][.//*[@data-testid=&#x27;pocket-card-name&#x27; and normalize-space(.)=&#x27;Vacaciones&#x27;]]</td><td></td></tr>
 <tr><td>storeText</td><td>xpath=//*[@data-testid=&#x27;pocket-card&#x27;][.//*[@data-testid=&#x27;pocket-card-name&#x27; and normalize-space(.)=&#x27;Vacaciones&#x27;]]//*[@data-testid=&#x27;pocket-card-amount&#x27;]</td><td>montoTexto</td></tr>
 <tr><td>storeEval</td><td>Number(&#x27;${montoTexto}&#x27;.replace(/[^0-9-]/g,&#x27;&#x27;))</td><td>montoBolsillo</td></tr>
@@ -56,10 +55,8 @@
 <tr><td>runScript</td><td>var s=document.createElement(&#x27;script&#x27;);s.textContent=&quot;(function(){var el=document.getElementById(&#x27;edit-pocket-name&#x27;);var v=&#x27;Vacaciones 2026&#x27;;var t=el._valueTracker;if(t){t.setValue(v===&#x27;&#x27;?&#x27; &#x27;:&#x27;&#x27;);}Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el),&#x27;value&#x27;).set.call(el,v);el.dispatchEvent(new Event(&#x27;input&#x27;,{bubbles:true}));el.dispatchEvent(new Event(&#x27;change&#x27;,{bubbles:true}));})();&quot;;(document.head||document.documentElement).appendChild(s);s.remove();</td><td></td></tr>
 <tr><td>click</td><td>css=[data-testid=&quot;save-pocket-button&quot;]</td><td></td></tr>
 <tr><td>echo</td><td>Paso 3: Verificar el nuevo nombre con el mismo monto y saldo</td><td></td></tr>
-<tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Bolsillo actualizado&#x27;]</td><td></td></tr>
+<tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Bolsillo actualizado&#x27;]/following-sibling::p[contains(.,&#x27;Los cambios quedaron guardados.&#x27;)]</td><td></td></tr>
 <tr><td>assertText</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Bolsillo actualizado&#x27;]</td><td>exact:Bolsillo actualizado</td></tr>
-<tr><td>assertText</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Bolsillo actualizado&#x27;]/following-sibling::p</td><td>glob:*Los cambios quedaron guardados.*</td></tr>
-<tr><td>click</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Bolsillo actualizado&#x27;]/ancestor::div[contains(@class,&#x27;pointer-events-auto&#x27;)][1]//button[@aria-label=&#x27;Cerrar notificacion&#x27;]</td><td></td></tr>
 <tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;pocket-card&#x27;][.//*[@data-testid=&#x27;pocket-card-name&#x27; and normalize-space(.)=&#x27;Vacaciones 2026&#x27;]]</td><td></td></tr>
 <tr><td>storeText</td><td>xpath=//*[@data-testid=&#x27;pocket-card&#x27;][.//*[@data-testid=&#x27;pocket-card-name&#x27; and normalize-space(.)=&#x27;Vacaciones 2026&#x27;]]//*[@data-testid=&#x27;pocket-card-amount&#x27;]</td><td>montoTexto</td></tr>
 <tr><td>storeEval</td><td>Number(&#x27;${montoTexto}&#x27;.replace(/[^0-9-]/g,&#x27;&#x27;))</td><td>montoBolsillo</td></tr>

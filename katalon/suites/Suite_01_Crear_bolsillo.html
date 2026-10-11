@@ -33,10 +33,8 @@
 <tr><td>runScript</td><td>var s=document.createElement(&#x27;script&#x27;);s.textContent=&quot;(function(){var el=document.getElementById(&#x27;pocket-amount&#x27;);var v=&#x27;300&#x27;;var t=el._valueTracker;if(t){t.setValue(v===&#x27;&#x27;?&#x27; &#x27;:&#x27;&#x27;);}Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el),&#x27;value&#x27;).set.call(el,v);el.dispatchEvent(new Event(&#x27;input&#x27;,{bubbles:true}));el.dispatchEvent(new Event(&#x27;change&#x27;,{bubbles:true}));})();&quot;;(document.head||document.documentElement).appendChild(s);s.remove();</td><td></td></tr>
 <tr><td>click</td><td>css=[data-testid=&quot;create-pocket-button&quot;]</td><td></td></tr>
 <tr><td>echo</td><td>Paso 3: Verificar creacion y saldo</td><td></td></tr>
-<tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Bolsillo creado&#x27;]</td><td></td></tr>
+<tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Bolsillo creado&#x27;]/following-sibling::p[contains(.,&#x27;Tu ahorro quedó organizado correctamente.&#x27;)]</td><td></td></tr>
 <tr><td>assertText</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Bolsillo creado&#x27;]</td><td>exact:Bolsillo creado</td></tr>
-<tr><td>assertText</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Bolsillo creado&#x27;]/following-sibling::p</td><td>glob:*Tu ahorro quedó organizado correctamente.*</td></tr>
-<tr><td>click</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Bolsillo creado&#x27;]/ancestor::div[contains(@class,&#x27;pointer-events-auto&#x27;)][1]//button[@aria-label=&#x27;Cerrar notificacion&#x27;]</td><td></td></tr>
 <tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;pocket-card&#x27;][.//*[@data-testid=&#x27;pocket-card-name&#x27; and normalize-space(.)=&#x27;Vacaciones&#x27;]]</td><td></td></tr>
 <tr><td>storeText</td><td>xpath=//*[@data-testid=&#x27;pocket-card&#x27;][.//*[@data-testid=&#x27;pocket-card-name&#x27; and normalize-space(.)=&#x27;Vacaciones&#x27;]]//*[@data-testid=&#x27;pocket-card-amount&#x27;]</td><td>montoTexto</td></tr>
 <tr><td>storeEval</td><td>Number(&#x27;${montoTexto}&#x27;.replace(/[^0-9-]/g,&#x27;&#x27;))</td><td>montoBolsillo</td></tr>
@@ -84,7 +82,6 @@
 <tr><td>echo</td><td>Paso 3: Verificar creacion y saldo sin cambios</td><td></td></tr>
 <tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Bolsillo creado&#x27;]</td><td></td></tr>
 <tr><td>assertText</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Bolsillo creado&#x27;]</td><td>exact:Bolsillo creado</td></tr>
-<tr><td>click</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Bolsillo creado&#x27;]/ancestor::div[contains(@class,&#x27;pointer-events-auto&#x27;)][1]//button[@aria-label=&#x27;Cerrar notificacion&#x27;]</td><td></td></tr>
 <tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;pocket-card&#x27;][.//*[@data-testid=&#x27;pocket-card-name&#x27; and normalize-space(.)=&#x27;Meta sin fondo&#x27;]]</td><td></td></tr>
 <tr><td>storeText</td><td>xpath=//*[@data-testid=&#x27;pocket-card&#x27;][.//*[@data-testid=&#x27;pocket-card-name&#x27; and normalize-space(.)=&#x27;Meta sin fondo&#x27;]]//*[@data-testid=&#x27;pocket-card-amount&#x27;]</td><td>montoTexto</td></tr>
 <tr><td>storeEval</td><td>Number(&#x27;${montoTexto}&#x27;.replace(/[^0-9-]/g,&#x27;&#x27;))</td><td>montoBolsillo</td></tr>
@@ -132,7 +129,6 @@
 <tr><td>echo</td><td>Paso 3: Verificar creacion y saldo en 0</td><td></td></tr>
 <tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Bolsillo creado&#x27;]</td><td></td></tr>
 <tr><td>assertText</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Bolsillo creado&#x27;]</td><td>exact:Bolsillo creado</td></tr>
-<tr><td>click</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Bolsillo creado&#x27;]/ancestor::div[contains(@class,&#x27;pointer-events-auto&#x27;)][1]//button[@aria-label=&#x27;Cerrar notificacion&#x27;]</td><td></td></tr>
 <tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;pocket-card&#x27;][.//*[@data-testid=&#x27;pocket-card-name&#x27; and normalize-space(.)=&#x27;Reserva total&#x27;]]</td><td></td></tr>
 <tr><td>storeText</td><td>xpath=//*[@data-testid=&#x27;pocket-card&#x27;][.//*[@data-testid=&#x27;pocket-card-name&#x27; and normalize-space(.)=&#x27;Reserva total&#x27;]]//*[@data-testid=&#x27;pocket-card-amount&#x27;]</td><td>montoTexto</td></tr>
 <tr><td>storeEval</td><td>Number(&#x27;${montoTexto}&#x27;.replace(/[^0-9-]/g,&#x27;&#x27;))</td><td>montoBolsillo</td></tr>
@@ -180,7 +176,6 @@
 <tr><td>echo</td><td>Paso 3: Verificar creacion con el nombre completo</td><td></td></tr>
 <tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Bolsillo creado&#x27;]</td><td></td></tr>
 <tr><td>assertText</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Bolsillo creado&#x27;]</td><td>exact:Bolsillo creado</td></tr>
-<tr><td>click</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Bolsillo creado&#x27;]/ancestor::div[contains(@class,&#x27;pointer-events-auto&#x27;)][1]//button[@aria-label=&#x27;Cerrar notificacion&#x27;]</td><td></td></tr>
 <tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;pocket-card&#x27;][.//*[@data-testid=&#x27;pocket-card-name&#x27; and normalize-space(.)=&#x27;Bolsillo largo xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&#x27;]]</td><td></td></tr>
 <tr><td>assertText</td><td>xpath=//*[@data-testid=&#x27;pocket-card&#x27;][.//*[@data-testid=&#x27;pocket-card-name&#x27; and normalize-space(.)=&#x27;Bolsillo largo xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&#x27;]]//*[@data-testid=&#x27;pocket-card-name&#x27;]</td><td>exact:Bolsillo largo xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</td></tr></tbody></table>
 <table cellpadding="1" cellspacing="1" border="1"><thead><tr><td rowspan="1" colspan="3">TC105_Crear_genera_notificacion</td></tr></thead><tbody><tr><td>echo</td><td>Paso 1: Iniciar sesion y abrir Bolsillos</td><td></td></tr>
@@ -220,7 +215,6 @@
 <tr><td>click</td><td>css=[data-testid=&quot;create-pocket-button&quot;]</td><td></td></tr>
 <tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Bolsillo creado&#x27;]</td><td></td></tr>
 <tr><td>assertText</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Bolsillo creado&#x27;]</td><td>exact:Bolsillo creado</td></tr>
-<tr><td>click</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Bolsillo creado&#x27;]/ancestor::div[contains(@class,&#x27;pointer-events-auto&#x27;)][1]//button[@aria-label=&#x27;Cerrar notificacion&#x27;]</td><td></td></tr>
 <tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;pocket-card&#x27;][.//*[@data-testid=&#x27;pocket-card-name&#x27; and normalize-space(.)=&#x27;${nombreBolsillo}&#x27;]]</td><td></td></tr>
 <tr><td>echo</td><td>Paso 3: Verificar la notificacion en /notifications</td><td></td></tr>
 <tr><td>open</td><td>http://localhost:3000/notifications</td><td></td></tr>
@@ -262,10 +256,8 @@
 <tr><td>runScript</td><td>var s=document.createElement(&#x27;script&#x27;);s.textContent=&quot;(function(){var el=document.getElementById(&#x27;pocket-amount&#x27;);var v=&#x27;-1&#x27;;var t=el._valueTracker;if(t){t.setValue(v===&#x27;&#x27;?&#x27; &#x27;:&#x27;&#x27;);}Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el),&#x27;value&#x27;).set.call(el,v);el.dispatchEvent(new Event(&#x27;input&#x27;,{bubbles:true}));el.dispatchEvent(new Event(&#x27;change&#x27;,{bubbles:true}));})();&quot;;(document.head||document.documentElement).appendChild(s);s.remove();</td><td></td></tr>
 <tr><td>click</td><td>css=[data-testid=&quot;create-pocket-button&quot;]</td><td></td></tr>
 <tr><td>echo</td><td>Paso 3: Verificar rechazo y saldo sin cambios</td><td></td></tr>
-<tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;No fue posible crear el bolsillo&#x27;]</td><td></td></tr>
+<tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;No fue posible crear el bolsillo&#x27;]/following-sibling::p[contains(.,&#x27;Error de validación&#x27;)]</td><td></td></tr>
 <tr><td>assertText</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;No fue posible crear el bolsillo&#x27;]</td><td>exact:No fue posible crear el bolsillo</td></tr>
-<tr><td>assertText</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;No fue posible crear el bolsillo&#x27;]/following-sibling::p</td><td>glob:*Error de validación*</td></tr>
-<tr><td>click</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;No fue posible crear el bolsillo&#x27;]/ancestor::div[contains(@class,&#x27;pointer-events-auto&#x27;)][1]//button[@aria-label=&#x27;Cerrar notificacion&#x27;]</td><td></td></tr>
 <tr><td>assertElementNotPresent</td><td>xpath=//*[@data-testid=&#x27;pocket-card&#x27;][.//*[@data-testid=&#x27;pocket-card-name&#x27; and normalize-space(.)=&#x27;Negativo&#x27;]]</td><td></td></tr>
 <tr><td>open</td><td>http://localhost:3000/accounts</td><td></td></tr>
 <tr><td>waitForElementPresent</td><td>css=[data-testid=&quot;account-balance&quot;]</td><td></td></tr>
@@ -309,10 +301,8 @@
 <tr><td>runScript</td><td>var s=document.createElement(&#x27;script&#x27;);s.textContent=&quot;(function(){var el=document.getElementById(&#x27;pocket-amount&#x27;);var v=&#x27;${montoExcedido}&#x27;;var t=el._valueTracker;if(t){t.setValue(v===&#x27;&#x27;?&#x27; &#x27;:&#x27;&#x27;);}Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el),&#x27;value&#x27;).set.call(el,v);el.dispatchEvent(new Event(&#x27;input&#x27;,{bubbles:true}));el.dispatchEvent(new Event(&#x27;change&#x27;,{bubbles:true}));})();&quot;;(document.head||document.documentElement).appendChild(s);s.remove();</td><td></td></tr>
 <tr><td>click</td><td>css=[data-testid=&quot;create-pocket-button&quot;]</td><td></td></tr>
 <tr><td>echo</td><td>Paso 3: Verificar rechazo y saldo sin cambios</td><td></td></tr>
-<tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;No fue posible crear el bolsillo&#x27;]</td><td></td></tr>
+<tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;No fue posible crear el bolsillo&#x27;]/following-sibling::p[contains(.,&#x27;No tienes saldo disponible suficiente para crear este bolsillo&#x27;)]</td><td></td></tr>
 <tr><td>assertText</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;No fue posible crear el bolsillo&#x27;]</td><td>exact:No fue posible crear el bolsillo</td></tr>
-<tr><td>assertText</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;No fue posible crear el bolsillo&#x27;]/following-sibling::p</td><td>glob:*No tienes saldo disponible suficiente para crear este bolsillo*</td></tr>
-<tr><td>click</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;No fue posible crear el bolsillo&#x27;]/ancestor::div[contains(@class,&#x27;pointer-events-auto&#x27;)][1]//button[@aria-label=&#x27;Cerrar notificacion&#x27;]</td><td></td></tr>
 <tr><td>assertElementNotPresent</td><td>xpath=//*[@data-testid=&#x27;pocket-card&#x27;][.//*[@data-testid=&#x27;pocket-card-name&#x27; and normalize-space(.)=&#x27;Excede&#x27;]]</td><td></td></tr>
 <tr><td>open</td><td>http://localhost:3000/accounts</td><td></td></tr>
 <tr><td>waitForElementPresent</td><td>css=[data-testid=&quot;account-balance&quot;]</td><td></td></tr>
@@ -356,7 +346,6 @@
 <tr><td>click</td><td>css=[data-testid=&quot;create-pocket-button&quot;]</td><td></td></tr>
 <tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Bolsillo creado&#x27;]</td><td></td></tr>
 <tr><td>assertText</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Bolsillo creado&#x27;]</td><td>exact:Bolsillo creado</td></tr>
-<tr><td>click</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Bolsillo creado&#x27;]/ancestor::div[contains(@class,&#x27;pointer-events-auto&#x27;)][1]//button[@aria-label=&#x27;Cerrar notificacion&#x27;]</td><td></td></tr>
 <tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;pocket-card&#x27;][.//*[@data-testid=&#x27;pocket-card-name&#x27; and normalize-space(.)=&#x27;Primero&#x27;]]</td><td></td></tr>
 <tr><td>storeText</td><td>xpath=//*[@data-testid=&#x27;pocket-card&#x27;][.//*[@data-testid=&#x27;pocket-card-name&#x27; and normalize-space(.)=&#x27;Primero&#x27;]]//*[@data-testid=&#x27;pocket-card-amount&#x27;]</td><td>montoTexto</td></tr>
 <tr><td>storeEval</td><td>Number(&#x27;${montoTexto}&#x27;.replace(/[^0-9-]/g,&#x27;&#x27;))</td><td>montoBolsillo</td></tr>
@@ -379,10 +368,8 @@
 <tr><td>runScript</td><td>var s=document.createElement(&#x27;script&#x27;);s.textContent=&quot;(function(){var el=document.getElementById(&#x27;pocket-amount&#x27;);var v=&#x27;${montoExcedido}&#x27;;var t=el._valueTracker;if(t){t.setValue(v===&#x27;&#x27;?&#x27; &#x27;:&#x27;&#x27;);}Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el),&#x27;value&#x27;).set.call(el,v);el.dispatchEvent(new Event(&#x27;input&#x27;,{bubbles:true}));el.dispatchEvent(new Event(&#x27;change&#x27;,{bubbles:true}));})();&quot;;(document.head||document.documentElement).appendChild(s);s.remove();</td><td></td></tr>
 <tr><td>click</td><td>css=[data-testid=&quot;create-pocket-button&quot;]</td><td></td></tr>
 <tr><td>echo</td><td>Paso 3: Verificar rechazo</td><td></td></tr>
-<tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;No fue posible crear el bolsillo&#x27;]</td><td></td></tr>
+<tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;No fue posible crear el bolsillo&#x27;]/following-sibling::p[contains(.,&#x27;No tienes saldo disponible suficiente para crear este bolsillo&#x27;)]</td><td></td></tr>
 <tr><td>assertText</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;No fue posible crear el bolsillo&#x27;]</td><td>exact:No fue posible crear el bolsillo</td></tr>
-<tr><td>assertText</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;No fue posible crear el bolsillo&#x27;]/following-sibling::p</td><td>glob:*No tienes saldo disponible suficiente para crear este bolsillo*</td></tr>
-<tr><td>click</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;No fue posible crear el bolsillo&#x27;]/ancestor::div[contains(@class,&#x27;pointer-events-auto&#x27;)][1]//button[@aria-label=&#x27;Cerrar notificacion&#x27;]</td><td></td></tr>
 <tr><td>assertElementNotPresent</td><td>xpath=//*[@data-testid=&#x27;pocket-card&#x27;][.//*[@data-testid=&#x27;pocket-card-name&#x27; and normalize-space(.)=&#x27;Segundo&#x27;]]</td><td></td></tr>
 <tr><td>assertElementPresent</td><td>xpath=//*[@data-testid=&#x27;pocket-card&#x27;][.//*[@data-testid=&#x27;pocket-card-name&#x27; and normalize-space(.)=&#x27;Primero&#x27;]]</td><td></td></tr></tbody></table>
 <table cellpadding="1" cellspacing="1" border="1"><thead><tr><td rowspan="1" colspan="3">TC109_Crear_nombre_vacio</td></tr></thead><tbody><tr><td>echo</td><td>Paso 1: Iniciar sesion y abrir Bolsillos</td><td></td></tr>
@@ -420,10 +407,8 @@
 <tr><td>runScript</td><td>var s=document.createElement(&#x27;script&#x27;);s.textContent=&quot;(function(){var el=document.getElementById(&#x27;pocket-amount&#x27;);var v=&#x27;100&#x27;;var t=el._valueTracker;if(t){t.setValue(v===&#x27;&#x27;?&#x27; &#x27;:&#x27;&#x27;);}Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el),&#x27;value&#x27;).set.call(el,v);el.dispatchEvent(new Event(&#x27;input&#x27;,{bubbles:true}));el.dispatchEvent(new Event(&#x27;change&#x27;,{bubbles:true}));})();&quot;;(document.head||document.documentElement).appendChild(s);s.remove();</td><td></td></tr>
 <tr><td>click</td><td>css=[data-testid=&quot;create-pocket-button&quot;]</td><td></td></tr>
 <tr><td>echo</td><td>Paso 3: Verificar rechazo</td><td></td></tr>
-<tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Falta información&#x27;]</td><td></td></tr>
+<tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Falta información&#x27;]/following-sibling::p[contains(.,&#x27;Selecciona una cuenta y escribe el nombre del bolsillo.&#x27;)]</td><td></td></tr>
 <tr><td>assertText</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Falta información&#x27;]</td><td>exact:Falta información</td></tr>
-<tr><td>assertText</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Falta información&#x27;]/following-sibling::p</td><td>glob:*Selecciona una cuenta y escribe el nombre del bolsillo.*</td></tr>
-<tr><td>click</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Falta información&#x27;]/ancestor::div[contains(@class,&#x27;pointer-events-auto&#x27;)][1]//button[@aria-label=&#x27;Cerrar notificacion&#x27;]</td><td></td></tr>
 <tr><td>assertElementNotPresent</td><td>css=[data-testid=&quot;pocket-card&quot;]</td><td></td></tr></tbody></table>
 <table cellpadding="1" cellspacing="1" border="1"><thead><tr><td rowspan="1" colspan="3">TC110_Crear_nombre_solo_espacios</td></tr></thead><tbody><tr><td>echo</td><td>Paso 1: Iniciar sesion y abrir Bolsillos</td><td></td></tr>
 <tr><td>open</td><td>http://localhost:3000/</td><td></td></tr>
@@ -499,8 +484,6 @@
 <tr><td>runScript</td><td>var s=document.createElement(&#x27;script&#x27;);s.textContent=&quot;(function(){var el=document.getElementById(&#x27;pocket-amount&#x27;);var v=&#x27;0&#x27;;var t=el._valueTracker;if(t){t.setValue(v===&#x27;&#x27;?&#x27; &#x27;:&#x27;&#x27;);}Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el),&#x27;value&#x27;).set.call(el,v);el.dispatchEvent(new Event(&#x27;input&#x27;,{bubbles:true}));el.dispatchEvent(new Event(&#x27;change&#x27;,{bubbles:true}));})();&quot;;(document.head||document.documentElement).appendChild(s);s.remove();</td><td></td></tr>
 <tr><td>click</td><td>css=[data-testid=&quot;create-pocket-button&quot;]</td><td></td></tr>
 <tr><td>echo</td><td>Paso 3: Verificar rechazo</td><td></td></tr>
-<tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;No fue posible crear el bolsillo&#x27;]</td><td></td></tr>
+<tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;No fue posible crear el bolsillo&#x27;]/following-sibling::p[contains(.,&#x27;Error de validación&#x27;)]</td><td></td></tr>
 <tr><td>assertText</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;No fue posible crear el bolsillo&#x27;]</td><td>exact:No fue posible crear el bolsillo</td></tr>
-<tr><td>assertText</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;No fue posible crear el bolsillo&#x27;]/following-sibling::p</td><td>glob:*Error de validación*</td></tr>
-<tr><td>click</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;No fue posible crear el bolsillo&#x27;]/ancestor::div[contains(@class,&#x27;pointer-events-auto&#x27;)][1]//button[@aria-label=&#x27;Cerrar notificacion&#x27;]</td><td></td></tr>
 <tr><td>assertElementNotPresent</td><td>css=[data-testid=&quot;pocket-card&quot;]</td><td></td></tr></tbody></table></body></html>

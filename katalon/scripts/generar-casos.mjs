@@ -152,17 +152,19 @@ const crearBolsillo = (nombre, monto) => [
 
 const xToast = (titulo) => `xpath=//*[@data-testid='toast-title' and normalize-space(.)='${titulo}']`;
 
-/** Espera el toast, valida título y descripción y lo cierra para no confundir el siguiente paso. */
+/**
+ * Valida el toast (título y, si se indica, descripción). El toast se cierra solo
+ * a los 4 s, así que la espera ya exige título + descripción y solo queda una
+ * aserción después: Katalon es lento y no alcanza a hacer más pasos sobre él.
+ */
 function toast(titulo, descripcion) {
-  const filas = [
-    c('waitForElementPresent', xToast(titulo)),
+  const xEsperado = descripcion
+    ? `${xToast(titulo)}/following-sibling::p[contains(.,'${descripcion}')]`
+    : xToast(titulo);
+  return [
+    c('waitForElementPresent', xEsperado),
     c('assertText', xToast(titulo), `exact:${titulo}`),
   ];
-  if (descripcion) {
-    filas.push(c('assertText', `${xToast(titulo)}/following-sibling::p`, `glob:*${descripcion}*`));
-  }
-  filas.push(c('click', `${xToast(titulo)}/ancestor::div[contains(@class,'pointer-events-auto')][1]//button[@aria-label='Cerrar notificacion']`));
-  return filas;
 }
 
 const xTarjeta = (nombre) =>

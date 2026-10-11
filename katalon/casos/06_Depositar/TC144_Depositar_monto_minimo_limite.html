@@ -28,10 +28,8 @@
 <tr><td>runScript</td><td>var s=document.createElement(&#x27;script&#x27;);s.textContent=&quot;(function(){var el=document.getElementById(&#x27;dw-amount&#x27;);var v=&#x27;1&#x27;;var t=el._valueTracker;if(t){t.setValue(v===&#x27;&#x27;?&#x27; &#x27;:&#x27;&#x27;);}Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el),&#x27;value&#x27;).set.call(el,v);el.dispatchEvent(new Event(&#x27;input&#x27;,{bubbles:true}));el.dispatchEvent(new Event(&#x27;change&#x27;,{bubbles:true}));})();&quot;;(document.head||document.documentElement).appendChild(s);s.remove();</td><td></td></tr>
 <tr><td>click</td><td>css=[data-testid=&quot;dw-submit&quot;]</td><td></td></tr>
 <tr><td>echo</td><td>Paso 3: Verificar deposito y saldo</td><td></td></tr>
-<tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Deposito realizado&#x27;]</td><td></td></tr>
+<tr><td>waitForElementPresent</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Deposito realizado&#x27;]/following-sibling::p[contains(.,&#x27;actualizada correctamente.&#x27;)]</td><td></td></tr>
 <tr><td>assertText</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Deposito realizado&#x27;]</td><td>exact:Deposito realizado</td></tr>
-<tr><td>assertText</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Deposito realizado&#x27;]/following-sibling::p</td><td>glob:*actualizada correctamente.*</td></tr>
-<tr><td>click</td><td>xpath=//*[@data-testid=&#x27;toast-title&#x27; and normalize-space(.)=&#x27;Deposito realizado&#x27;]/ancestor::div[contains(@class,&#x27;pointer-events-auto&#x27;)][1]//button[@aria-label=&#x27;Cerrar notificacion&#x27;]</td><td></td></tr>
 <tr><td>waitForElementNotPresent</td><td>id=dw-amount</td><td></td></tr>
 <tr><td>open</td><td>http://localhost:3000/accounts</td><td></td></tr>
 <tr><td>waitForElementPresent</td><td>css=[data-testid=&quot;account-balance&quot;]</td><td></td></tr>
