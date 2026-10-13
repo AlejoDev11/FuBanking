@@ -36,6 +36,16 @@ describe('cardService', () => {
     expect(result).toEqual(card);
   });
 
+  it('should POST /cards with accountId and password when provided', async () => {
+    const card = { id: 'card-2', status: 'ACTIVA' };
+    post.mockResolvedValue({ data: card });
+
+    const result = await cardService.createCard('acc-1', 'Segura123!');
+
+    expect(post).toHaveBeenCalledWith('/cards', { accountId: 'acc-1', password: 'Segura123!' });
+    expect(result).toEqual(card);
+  });
+
   it('should PATCH /cards/:id/toggle-lock', async () => {
     const card = { id: 'card-1', status: 'BLOQUEADA' };
     patch.mockResolvedValue({ data: card });

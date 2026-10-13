@@ -16,6 +16,8 @@ import {
 } from '../fakes/loan.in-memory-repos';
 import { InMemoryVirtualCardRepo, createTestAccount } from '../unit/card/in-memory-repos';
 
+import { FakePasswordService } from '../fakes/FakePasswordService';
+
 export interface CardTestDeps {
   cardRepo: InMemoryVirtualCardRepo;
   accountRepo: InMemoryAccountRepo;
@@ -27,11 +29,17 @@ export interface CardTestDeps {
   otherToken: string;
   otherUserId: string;
   otherAccountId: string;
+  validPassword?: string;
 }
 
-export function createCardTestApp(): { app: Application; deps: CardTestDeps } {
+export function createCardTestApp(options?: { withPasswordService?: boolean }): { app: Application; deps: CardTestDeps } {
   const user = createTestUser({ email: 'card.user@test.com', document: '1111111111' });
   const otherUser = createTestUser({ email: 'other.card@test.com', document: '2222222222' });
+
+  if (options?.withPasswordService) {
+    user.updatePasswordHash('hashed_Segura123!');
+    otherUser.updatePasswordHash('hashed_Segura123!');
+  }
 
   const account = createTestAccount(user.id);
   const otherAccount = createTestAccount(otherUser.id);
@@ -43,9 +51,10 @@ export function createCardTestApp(): { app: Application; deps: CardTestDeps } {
 
   const userRepo = new InMemoryUserRepo([user, otherUser]);
   const notifRepo = new InMemoryNotificationRepo();
+  const passwordService = options?.withPasswordService ? new FakePasswordService() : undefined;
 
   const controller = new CardController(
-    new CreateVirtualCard(cardRepo, accountRepo, userRepo, notifRepo),
+    new CreateVirtualCard(cardRepo, accountRepo, userRepo, notifRepo, passwordService),
     new GetUserCards(cardRepo),
     new ToggleCardLock(cardRepo, notifRepo),
     new RevealVirtualCardDetails(cardRepo),
@@ -75,6 +84,7 @@ export function createCardTestApp(): { app: Application; deps: CardTestDeps } {
       otherToken: tokens.generate({ userId: otherUser.id, email: otherUser.email.toString() }),
       otherUserId: otherUser.id,
       otherAccountId: otherAccount.id,
+      validPassword: 'Segura123!',
     },
   };
 }

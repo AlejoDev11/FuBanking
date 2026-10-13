@@ -115,6 +115,18 @@ describe('useCards', () => {
 
       assert(result.current.error).toBeEqual('No se pudo crear la tarjeta.');
     });
+
+    it('should forward password to cardService.createCard when provided', async () => {
+      const created = card('new-1');
+      createCard.mockResolvedValue(created);
+      const { result } = renderHook(() => useCards());
+
+      await act(async () => {
+        await result.current.createCard('acc-1', 'Segura123!');
+      });
+
+      expect(createCard).toHaveBeenCalledWith('acc-1', 'Segura123!');
+    });
   });
 
   describe('toggleLock', () => {
