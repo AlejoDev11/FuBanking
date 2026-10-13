@@ -14,8 +14,8 @@
  *   10 → proceso   finally: setLoading(false)
  */
 
-import { handleTransfer } from '../../features/pockets/handlers/pocket.handlers';
-import { pocketService } from '../../features/pockets/services/pocket.service';
+import { handleTransfer } from '@/features/pockets/handlers/pocket.handlers';
+import { pocketService } from '@/features/pockets/services/pocket.service';
 import {
   Escenario,
   UUID_INEXISTENTE,
@@ -23,8 +23,8 @@ import {
   crearBolsilloReal,
   registradorToast,
   registradorValor,
-} from './support/entorno';
-import { camino, verificar, verificarIgual } from './support/runner';
+} from '../support/entorno';
+import { camino, verificar, verificarIgual } from '../support/runner';
 
 const FUNCIONALIDAD = 'Transferir entre bolsillos';
 const HANDLER = 'handleTransfer';

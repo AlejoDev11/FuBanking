@@ -13,15 +13,18 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const isAuthRoute = pathname === '/login' || pathname === '/register' || pathname === '/forgot-password' || pathname.startsWith('/reset-password');
+  const isAuthRoute = pathname === '/login' || pathname === '/register' || pathname === '/forgot-password' || pathname.startsWith('/reset-password') || pathname === '/logout';
   
   // Si intenta acceder a una ruta protegida y no tiene token, redirigir a /login
   if (!isAuthRoute && !token && pathname !== '/') {
     return NextResponse.redirect(new URL('/login', request.url));
   }
   
-  // Si intenta acceder a login/register y YA tiene token, redirigir a /profile
+  // Si intenta acceder a login/register y YA tiene token, redirigir a /profile (excepto /logout que debe limpiar sesión)
   if (isAuthRoute && token) {
+    if (pathname === '/logout') {
+      return NextResponse.next();
+    }
     return NextResponse.redirect(new URL('/profile', request.url));
   }
   

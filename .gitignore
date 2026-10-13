@@ -33,3 +33,5 @@ FUBANKING_HANDOFF.md
 coverage/
 backend/coverage/
 frontend/coverage/
+e2e-serenity/reports/
+e2e-serenity/target/

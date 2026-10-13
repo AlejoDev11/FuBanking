@@ -14,9 +14,9 @@
  *   10 → proceso   finally: setLoading(false)
  */
 
-import { handleSaveEdit } from '../../features/pockets/handlers/pocket.handlers';
-import { pocketService } from '../../features/pockets/services/pocket.service';
-import type { PocketItem } from '../../features/pockets/services/pocket.service';
+import { handleSaveEdit } from '@/features/pockets/handlers/pocket.handlers';
+import { pocketService } from '@/features/pockets/services/pocket.service';
+import type { PocketItem } from '@/features/pockets/services/pocket.service';
 import {
   Escenario,
   UUID_INEXISTENTE,
@@ -25,8 +25,8 @@ import {
   registradorLista,
   registradorToast,
   registradorValor,
-} from './support/entorno';
-import { camino, verificar, verificarIgual } from './support/runner';
+} from '../support/entorno';
+import { camino, verificar, verificarIgual } from '../support/runner';
 
 const FUNCIONALIDAD = 'Actualizar bolsillo';
 const HANDLER = 'handleSaveEdit';

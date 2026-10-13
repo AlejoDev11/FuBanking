@@ -16,8 +16,8 @@
  *   9 → proceso   finally: setLoading(false)
  */
 
-import { handleCreate } from '../../features/pockets/handlers/pocket.handlers';
-import { pocketService } from '../../features/pockets/services/pocket.service';
+import { handleCreate } from '@/features/pockets/handlers/pocket.handlers';
+import { pocketService } from '@/features/pockets/services/pocket.service';
 import {
   Escenario,
   UUID_INEXISTENTE,
@@ -25,8 +25,8 @@ import {
   registradorLista,
   registradorToast,
   registradorValor,
-} from './support/entorno';
-import { camino, verificar, verificarIgual } from './support/runner';
+} from '../support/entorno';
+import { camino, verificar, verificarIgual } from '../support/runner';
 
 const FUNCIONALIDAD = 'Crear bolsillo';
 const HANDLER = 'handleCreate';

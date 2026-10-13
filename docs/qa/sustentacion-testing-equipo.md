@@ -23,10 +23,14 @@ Se comprobó la integración HTTP montando la app Express con repositorios en me
 - `POST /api/v1/loans/` (duplicado): El sistema rechaza la solicitud (400 `LOAN_ALREADY_PENDING`) ya que un usuario solo puede tener un crédito pendiente a la vez.
 - `PATCH /api/v1/loans/admin/:id/approve` y `reject`: Retorna 200 y el crédito transiciona su estado correctamente.
 
-### c. Performance Testing (`performance/`)
-Inspirado en el ejemplo educativo del profesor (validación algorítmica sin DB).
-- `loan.performance.test.ts`: Test CPU-bound de amortización francesa. Se ejecuta un bucle de N repeticiones (N=5), se toma la **mediana** calculada vía `performance.now()`, y se valida que cumpla el presupuesto (`expect(median).toBeLessThan(500)`), además de garantizar la correcta regresión numérica (`toBeCloseTo`).
-- **Pruebas de Carga**: Dispone de `scripts/performance/loans-load.js` (k6, 20VUs) para validar latencias bajo estrés.
+### c. Performance Testing (`performance/`) — Enfoque Híbrido
+- **Nivel 1 (Evaluación académica y CI / Sin herramientas externas)**:
+  - `loan.performance.test.ts` implementado 100% en Vitest. Contiene:
+    1. Test CPU-bound de amortización francesa: bucle de 5 repeticiones con `performance.now()`, validando **mediana < 500ms** y regresión numérica (`toBeCloseTo`).
+    2. Test de latencia de endpoints HTTP (`POST /simulate` y `GET /me`) en memoria: **mediana < 100ms**.
+    3. Test de concurrencia nativo sin k6: ráfaga de 20 peticiones simultáneas vía `Promise.all` + `supertest`, comprobando **100% éxito (status 200)** y **p95 < 500ms**.
+- **Nivel 2 (Grado Producción / Carga Concurrente con Grafana k6)**:
+  - Para pruebas de carga distribuidas de grado industrial, se mantiene `scripts/performance/loans-load.js` (20 Virtual Users durante 30s con SLO p95 < 500ms) ejecutable con `npm run test:load:k6` o Docker.
 
 ### d. Security Testing (`security/`)
 Aseguramiento de rutas, autorizaciones e input de usuario.
@@ -79,16 +83,19 @@ npm --prefix backend run test:regression
 # 3. Seguridad HTTP (Aislamiento, RBAC, 400, Rate limits)
 npm --prefix backend run test:security
 
-# 4. Performance educativo (Presupuesto algorítmico / CPU-bound)
-npm --prefix backend run test:performance
+# 4. Performance Nivel 1 (Presupuesto algorítmico y concurrencia sin k6, 100% Vitest)
+npm run test:performance
 
-# 5. Suite completa de créditos (Trazabilidad total)
+# 5. Performance Nivel 2 (Carga de producción con Grafana k6 - opcional)
+npm run test:load:k6
+
+# 6. Suite completa de créditos (Trazabilidad total)
 npm --prefix backend run test:loans
 
-# 6. Ejecutar la suite absoluta del frontend unificada por módulos
+# 7. Ejecutar la suite absoluta del frontend unificada por módulos
 npm run test:frontend
 
-# 7. Ejecutar la suite absoluta del backend (Asegurar que no hay regresiones cruzadas)
+# 8. Ejecutar la suite absoluta del backend (Asegurar que no hay regresiones cruzadas)
 npm run test:backend
 ```
 
