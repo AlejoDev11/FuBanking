@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Pruebas E2E de Bolsillos y Depósito (Serenity/JS)
 
 Pruebas de aceptación de caja negra sobre FuBanking **en ejecución**, con el
@@ -14,9 +13,9 @@ Stack: Serenity/JS 3.48 + Cucumber 13 + Playwright 1.63 + TypeScript.
 | Componente | Responsabilidad | Ubicación |
 |---|---|---|
 | Actor y abilities | `CallAnApi`, `TakeNotes` y `BrowseTheWebWithPlaywright` | `features/support/serenity.config.ts` |
-| Features | Comportamiento en Gherkin, una carpeta por capacidad | `features/{bolsillos,deposito,recorrido}/` |
+| Features | Comportamiento en Gherkin, una carpeta por capacidad | `features/{creditos,bolsillos,deposito,recorrido}/` |
 | Step definitions | Conectan Gherkin con Screenplay, sin selectores | `features/step-definitions/` |
-| Tasks | Objetivos de negocio (API y pantalla) | `test/tasks/{api,web}/` |
+| Tasks | Objetivos de negocio (API y pantalla) | `test/tasks/{creditos,api,web}/` |
 | Questions | Lo que el actor consulta para verificar | `test/questions/` |
 | Lean Page Objects | Selectores (`id` y `data-testid`) | `test/ui/` |
 | Soporte | URLs, datos únicos, notas y credenciales | `test/support/` |
@@ -61,7 +60,7 @@ npx playwright install chromium
 | `npm run test:api` | Solo `@api`, sin abrir navegador |
 | `npm run test:web` | Solo `@web` (Playwright) |
 | `npm run test:smoke` | Conjunto rápido `@smoke` |
-| `npm run test:bolsillos` / `test:deposito` | Una capacidad |
+| `npm run test:creditos` / `test:bolsillos` / `test:deposito` | Una capacidad específica |
 | `npm test -- --tags @seguridad` | Escenarios de autorización y type juggling |
 | `npm test -- --name "Mover dinero"` | Un escenario por nombre |
 | `npm run typecheck` | Solo valida TypeScript |

@@ -6,12 +6,12 @@ import { isVisible, Text } from '@serenity-js/web';
 import { appBaseUrl } from '../../test/support/appServer';
 import { LoansPage } from '../../test/ui/LoansPage';
 import { AdminLoansPage } from '../../test/ui/AdminLoansPage';
-import { OpenFuBanking } from '../../test/tasks/OpenFuBanking';
-import { NavigateToLoans } from '../../test/tasks/NavigateToLoans';
-import { NavigateToAdminLoans } from '../../test/tasks/NavigateToAdminLoans';
-import { SimulateLoan } from '../../test/tasks/SimulateLoan';
-import { SubmitLoanApplication } from '../../test/tasks/SubmitLoanApplication';
-import { ApproveLoanApplication } from '../../test/tasks/ApproveLoanApplication';
+import { OpenFuBanking } from '../../test/tasks/creditos/OpenFuBanking';
+import { NavigateToLoans } from '../../test/tasks/creditos/NavigateToLoans';
+import { NavigateToAdminLoans } from '../../test/tasks/creditos/NavigateToAdminLoans';
+import { SimulateLoan } from '../../test/tasks/creditos/SimulateLoan';
+import { SubmitLoanApplication } from '../../test/tasks/creditos/SubmitLoanApplication';
+import { ApproveLoanApplication } from '../../test/tasks/creditos/ApproveLoanApplication';
 import { LoanQuestions } from '../../test/questions/LoanQuestions';
 
 Given('que {actor} abre la plataforma FuBanking', async (actor: Actor) => {

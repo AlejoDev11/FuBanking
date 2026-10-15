@@ -1,6 +1,6 @@
 import { Task } from '@serenity-js/core';
 import { Clear, Click, Enter } from '@serenity-js/web';
-import { LoansPage } from '../ui/LoansPage';
+import { LoansPage } from '../../ui/LoansPage';
 
 export const SimulateLoan = {
   withParameters: (amount: string, installments: string, annualRate: string) =>

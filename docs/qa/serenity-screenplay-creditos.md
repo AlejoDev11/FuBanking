@@ -38,7 +38,7 @@ flowchart TD
 
 ### Componentes de la Arquitectura en FuBanking
 
-| Concepto Screenplay | Implementación en `e2e-serenity/` | Propósito |
+| Concepto Screenplay | Implementación en `e2e/serenity/` | Propósito |
 |---|---|---|
 | **Actor Cliente** | **`Gabriel`** (`actorCalled('Gabriel')` y pronombres `él / ella`) | Representa al cliente financiero que simula y solicita créditos. |
 | **Actor Admin** | **`Andresito`** (`actorCalled('Andresito')`) | Representa al funcionario bancario con rol administrador que audita y gestiona créditos. |

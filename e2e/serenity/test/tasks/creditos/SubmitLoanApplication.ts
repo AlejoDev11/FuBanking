@@ -1,6 +1,6 @@
 import { Task } from '@serenity-js/core';
 import { Click } from '@serenity-js/web';
-import { LoansPage } from '../ui/LoansPage';
+import { LoansPage } from '../../ui/LoansPage';
 
 export const SubmitLoanApplication = {
   now: () =>

@@ -9,6 +9,6 @@ defineParameterType({
 
 defineParameterType({
   name: 'pronoun',
-  regexp: /él|ella/,
+  regexp: /él|ella|ellos|ellas/,
   transformer: () => actorInTheSpotlight(),
 });

@@ -1,6 +1,6 @@
 import { Task, Wait } from '@serenity-js/core';
 import { isVisible, Navigate } from '@serenity-js/web';
-import { AdminLoansPage } from '../ui/AdminLoansPage';
+import { AdminLoansPage } from '../../ui/AdminLoansPage';
 
 export class NavigateToAdminLoans {
   static at(baseUrl: string) {

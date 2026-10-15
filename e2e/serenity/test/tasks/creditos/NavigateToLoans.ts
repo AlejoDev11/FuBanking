@@ -1,6 +1,6 @@
 import { Duration, Task, Wait } from '@serenity-js/core';
 import { isVisible, Navigate } from '@serenity-js/web';
-import { LoansPage } from '../ui/LoansPage';
+import { LoansPage } from '../../ui/LoansPage';
 
 export const NavigateToLoans = {
   at: (baseUrl: string) =>

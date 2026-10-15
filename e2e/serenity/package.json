@@ -12,6 +12,8 @@
     "test:api": "cross-env SERENITY_API_ONLY=true npm test -- --tags \"@api\"",
     "test:bolsillos": "npm test -- --tags \"@bolsillos\"",
     "test:deposito": "npm test -- --tags \"@deposito\"",
+    "test:creditos": "npm test -- --tags \"@loans\"",
+    "test:loans": "npm test -- --tags \"@loans\"",
     "test:report": "html-reporter serve --dir reports/serenity-js --port 8080 --open"
   },
   "engines": {

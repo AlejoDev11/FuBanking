@@ -7,8 +7,8 @@ FuBanking/
   backend/src/{app.ts,server.ts,presentation,application,domain,infrastructure,shared,tests/}
   frontend/src/{app/(auth)+(dashboard),features/<mod>/,shared/}
   mcp-server/src/index.ts      # MCP solo-lectura (ver docs/mcp.md)
-  e2e/                         # Serenity/JS + Cucumber + Playwright (Bolsillos y Depósito, ver e2e/README.md)
-  katalon/                     # Katalon Recorder (Selenese HTML) para Bolsillos y Depósito, ver katalon/README.md
+  e2e/                         # Serenity/JS (Screenplay + Playwright + Cucumber) y Vitest (ver e2e/README.md)
+  katalon/                     # Katalon Recorder (Selenese HTML) para Créditos, Bolsillos y Depósito (ver katalon/README.md)
   frontend/middleware.ts  Jenkinsfile  ci/  scripts/  docs/
   package.json  sonar-project.properties
 ```

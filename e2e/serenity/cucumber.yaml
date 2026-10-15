@@ -8,3 +8,4 @@ default:
     - '@serenity-js/cucumber'
   paths:
     - features/**/*.feature
+  publishQuiet: true

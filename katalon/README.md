@@ -23,24 +23,33 @@ La suite opera con dos actores con roles diferenciados según el principio de Co
 
 ```txt
 katalon/
-├── Suite_Creditos_FuBanking.html                    # Suite Master HTML oficial (tablas Selenese TC00 a TC12)
-├── FuBanking_Creditos_KatalonRecorder_Suite.json       # Suite Master nativa en formato JSON
+├── suites/
+│   ├── Suite_01_Crear_bolsillo.html
+│   ├── Suite_02_Consultar_bolsillos.html
+│   ├── Suite_03_Editar_bolsillo.html
+│   ├── Suite_04_Eliminar_bolsillo.html
+│   ├── Suite_05_Transferir.html
+│   ├── Suite_06_Depositar.html
+│   ├── Suite_07_Creditos.html                          # Suite Master HTML oficial de Créditos (TC00 a TC12)
+│   └── Suite_07_Creditos.json                          # Suite Master nativa en formato JSON
 │
-├── TC00_Iniciar_Sesion.html                         # Login base y validación de redirección a /profile
-├── TC01_Simulacion_Exitosa_Estandar.html            # Positivo: Simulación estándar ($5,000, 12 meses, 18% EA)
-├── TC02_Simulacion_Valores_Frontera_Limites.html    # BVA: Valores límite mínimo ($100) y máximo ($25M) en tiempo real
-├── TC03_Validacion_Monto_Cuotas_En_Cero.html        # Negativo: Validación ante montos y plazos en cero (defensivo)
-├── TC04_Validacion_Tasa_Interes_Extrema.html        # Robustez: Simulación con tasa 0% EA sin división por cero
-├── TC05_Verificar_Requisitos_Perfil_Elegibilidad.html # Reglas de Negocio: Checklist de 4 requisitos (Doc, Edad, Ingreso, Historial)
-├── TC06_Solicitar_Credito_Usuario.html              # Transaccional: Gabriel simula y envía solicitud de crédito
-│
-├── TC07_Admin_Iniciar_Sesion_Y_Acceso.html          # RBAC Admin: Login de administrador y acceso a /admin/loans
-├── TC08_Admin_Filtros_Y_Actualizacion.html          # Auditoría: Filtros (Todos, Pendientes, Aprobados, Rechazados) y Refresh
-├── TC09_Admin_Inspeccion_Detalle_Solicitud.html     # Análisis de Riesgo: Tarjeta de detalle, datos financieros e indicadores
-├── TC10_Admin_Aprobar_Credito_Usuario.html          # Golden Path: Administrador aprueba solicitud pendiente
-├── TC11_Admin_Rechazar_Credito_Alternativo.html     # Alternativo: Administrador rechaza solicitud de crédito
-│
-└── TC12_Ciclo_Completo_End_To_End.html              # Lifecycle E2E: Gabriel solicita -> Admin aprueba -> Gabriel confirma
+├── casos/
+│   ├── 01_Crear_bolsillo/ ...
+│   ├── 06_Depositar/ ...
+│   └── 07_Creditos/
+│       ├── TC00_Iniciar_Sesion.html                    # Login base y validación de redirección a /profile
+│       ├── TC01_Simulacion_Exitosa_Estandar.html       # Positivo: Simulación estándar ($5,000, 12 meses, 18% EA)
+│       ├── TC02_Simulacion_Valores_Frontera_Limites.html # BVA: Valores límite mínimo ($100) y máximo ($25M)
+│       ├── TC03_Validacion_Monto_Cuotas_En_Cero.html   # Negativo: Validación ante montos y plazos en cero
+│       ├── TC04_Validacion_Tasa_Interes_Extrema.html   # Robustez: Simulación con tasa 0% EA sin división por cero
+│       ├── TC05_Verificar_Requisitos_Perfil_Elegibilidad.html # Reglas de Negocio: Checklist de requisitos
+│       ├── TC06_Solicitar_Credito_Usuario.html         # Transaccional: Gabriel simula y envía solicitud
+│       ├── TC07_Admin_Iniciar_Sesion_Y_Acceso.html     # RBAC Admin: Login admin y acceso a /admin/loans
+│       ├── TC08_Admin_Filtros_Y_Actualizacion.html     # Auditoría: Filtros de estado y Refresh
+│       ├── TC09_Admin_Inspeccion_Detalle_Solicitud.html # Análisis de Riesgo: Inspección de solicitud
+│       ├── TC10_Admin_Aprobar_Credito_Usuario.html     # Golden Path: Administrador aprueba solicitud
+│       ├── TC11_Admin_Rechazar_Credito_Alternativo.html # Alternativo: Administrador rechaza solicitud
+│       └── TC12_Ciclo_Completo_End_To_End.html         # Lifecycle E2E: Gabriel solicita -> Admin aprueba
 ```
 
 ---

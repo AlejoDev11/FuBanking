@@ -1,6 +1,6 @@
 import { Task } from '@serenity-js/core';
 import { Click } from '@serenity-js/web';
-import { AdminLoansPage } from '../ui/AdminLoansPage';
+import { AdminLoansPage } from '../../ui/AdminLoansPage';
 
 export class ApproveLoanApplication {
   static now() {
