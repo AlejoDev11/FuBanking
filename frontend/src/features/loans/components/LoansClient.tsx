@@ -158,9 +158,9 @@ export function LoansClient() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 md:grid-cols-3">
-              <Input id="loan-amount" label="Monto" type="number" value={amount} onChange={(e) => setAmount(e.target.value)} />
-              <Input id="loan-installments" label="Cuotas" type="number" value={installments} onChange={(e) => setInstallments(e.target.value)} />
-              <Input id="loan-annual-rate" label="Tasa anual (%)" type="number" value={annualRate} onChange={(e) => setAnnualRate(e.target.value)} />
+              <Input id="loan-amount" data-cy="loan-amount" label="Monto" type="number" value={amount} onChange={(e) => setAmount(e.target.value)} />
+              <Input id="loan-installments" data-cy="loan-installments" label="Cuotas" type="number" value={installments} onChange={(e) => setInstallments(e.target.value)} />
+              <Input id="loan-annual-rate" data-cy="loan-annual-rate" label="Tasa anual (%)" type="number" value={annualRate} onChange={(e) => setAnnualRate(e.target.value)} />
             </div>
 
             {/* Requisitos de solicitud — solo lectura, se activan al cumplirse */}
@@ -172,6 +172,7 @@ export function LoansClient() {
                   return (
                     <div
                       key={req.key}
+                      data-cy={`requirement-${req.key}`}
                       className={`flex items-center gap-2 text-sm rounded-lg px-3 py-2 border ${
                         req.done
                           ? 'text-green-700 border-green-200 bg-green-50'
@@ -200,10 +201,10 @@ export function LoansClient() {
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row">
-              <Button id="btn-simulate" onClick={handleSimulate} isLoading={loading} className="w-full sm:w-auto">
+              <Button id="btn-simulate" data-cy="btn-simulate" onClick={handleSimulate} isLoading={loading} className="w-full sm:w-auto">
                 <span className="flex items-center gap-2"><Calculator size={16} /> Simular</span>
               </Button>
-              <Button id="btn-apply" variant="outline" onClick={handleCreate} isLoading={loading} disabled={!allRequirementsMet || hasPending} className="w-full sm:w-auto">
+              <Button id="btn-apply" data-cy="btn-apply" variant="outline" onClick={handleCreate} isLoading={loading} disabled={!allRequirementsMet || hasPending} className="w-full sm:w-auto">
                 <span className="flex items-center gap-2"><BadgeCheck size={16} /> Solicitar</span>
               </Button>
             </div>
@@ -211,7 +212,7 @@ export function LoansClient() {
             {hasPending && (
               <p className="text-sm text-yellow-600 font-medium">Tienes una solicitud pendiente de revisión.</p>
             )}
-            {message && <p className="text-sm text-muted-foreground">{message}</p>}
+            {message && <p id="loan-message" data-cy="loan-message" className="text-sm text-muted-foreground">{message}</p>}
           </CardContent>
         </Card>
 
@@ -220,16 +221,16 @@ export function LoansClient() {
             <CardTitle>Resumen</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div id="result-box" className="rounded-2xl bg-primary/10 p-4">
+            <div id="result-box" data-cy="result-box" className="rounded-2xl bg-primary/10 p-4">
               <div className="flex items-center gap-2 text-primary">
                 <Landmark size={18} />
                 <span className="font-semibold">Resultado del préstamo</span>
               </div>
               {simulation ? (
                 <div className="mt-3 space-y-2 text-sm text-foreground">
-                  <p>Cuota mensual: <span className="font-semibold">{formatCurrency(simulation.monthlyPayment)}</span></p>
-                  <p>Total a pagar: <span className="font-semibold">{formatCurrency(simulation.totalToPay)}</span></p>
-                  <p>Intereses: <span className="font-semibold">{formatCurrency(simulation.totalInterest)}</span></p>
+                  <p>Cuota mensual: <span data-cy="monthly-payment" className="font-semibold">{formatCurrency(simulation.monthlyPayment)}</span></p>
+                  <p>Total a pagar: <span data-cy="total-to-pay" className="font-semibold">{formatCurrency(simulation.totalToPay)}</span></p>
+                  <p>Intereses: <span data-cy="total-interest" className="font-semibold">{formatCurrency(simulation.totalInterest)}</span></p>
                 </div>
               ) : (
                 <p className="mt-3 text-sm text-muted-foreground">Aún no hay una simulación disponible.</p>
@@ -237,9 +238,9 @@ export function LoansClient() {
             </div>
 
             {application && (
-              <div className="rounded-2xl border border-border p-4 space-y-2 text-sm">
-                <p><span className="font-semibold">Estado:</span> {application.status}</p>
-                <p><span className="font-semibold">Elegible:</span> {application.eligibility.isEligible ? 'Sí' : 'No'}</p>
+              <div data-cy="application-result" className="rounded-2xl border border-border p-4 space-y-2 text-sm">
+                <p><span className="font-semibold">Estado:</span> <span data-cy="application-status">{application.status}</span></p>
+                <p><span className="font-semibold">Elegible:</span> <span data-cy="application-eligible">{application.eligibility.isEligible ? 'Sí' : 'No'}</span></p>
                 {application.eligibility.reasons.length > 0 && (
                   <ul className="list-disc pl-5 text-muted-foreground">
                     {application.eligibility.reasons.map((reason: string) => <li key={reason}>{reason}</li>)}
@@ -258,12 +259,12 @@ export function LoansClient() {
             <CardTitle>Mis solicitudes</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
+            <div data-cy="my-loans-list" className="space-y-3">
               {myLoans.map((loan) => {
                 const st = statusMap[loan.status] ?? { color: 'text-gray-600 bg-gray-50 border-gray-200', icon: Clock, label: loan.status };
                 const StatusIcon = st.icon;
                 return (
-                  <div key={loan.id} className="flex items-center justify-between p-4 rounded-xl border border-border bg-background">
+                  <div key={loan.id} data-cy="my-loan-item" className="flex items-center justify-between p-4 rounded-xl border border-border bg-background">
                     <div className="space-y-1">
                       <p className="font-semibold text-foreground">{formatCurrency(loan.amount)} — {loan.installments} cuotas</p>
                       <p className="text-xs text-muted-foreground">

@@ -7,6 +7,7 @@ import { Browser, chromium } from 'playwright';
 
 import { ClientNotes } from '../../test/support/ClientNotes';
 import { ensureSystemIsUp, environment } from '../../test/support/environment';
+import { startAppServer, stopAppServer } from '../../test/support/appServer';
 
 let browser: Browser | undefined;
 
@@ -14,6 +15,7 @@ let browser: Browser | undefined;
 setDefaultTimeout(90_000);
 
 BeforeAll(async () => {
+  await startAppServer();
   await ensureSystemIsUp();
 
   if (!environment.apiOnly) {
@@ -56,4 +58,5 @@ BeforeAll(async () => {
 
 AfterAll(async () => {
   await browser?.close();
+  await stopAppServer();
 });
