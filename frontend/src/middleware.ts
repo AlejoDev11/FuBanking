@@ -13,7 +13,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const isAuthRoute = pathname === '/login' || pathname === '/register' || pathname === '/forgot-password' || pathname.startsWith('/reset-password') || pathname === '/logout';
+  const isAuthRoute = pathname === '/login' || pathname === '/register' || pathname === '/forgot-password' || pathname.startsWith('/reset-password') || pathname === '/verify-two-factor' || pathname === '/logout';
   
   // Si intenta acceder a una ruta protegida y no tiene token, redirigir a /login
   if (!isAuthRoute && !token && pathname !== '/') {

@@ -57,7 +57,11 @@ export class GenerateTwoFactorCode {
 
     const maskedEmail = this.maskEmail(email);
 
-    return { temporaryToken, maskedEmail };
+    return {
+      temporaryToken,
+      maskedEmail,
+      ...(process.env.NODE_ENV !== 'production' ? { devCode: plainCode } : {}),
+    };
   }
 
   private async hashOtp(plainCode: string): Promise<{ hashCode: string }> {

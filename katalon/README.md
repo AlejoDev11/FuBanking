@@ -30,26 +30,35 @@ katalon/
 │   ├── Suite_04_Eliminar_bolsillo.html
 │   ├── Suite_05_Transferir.html
 │   ├── Suite_06_Depositar.html
-│   ├── Suite_07_Creditos.html                          # Suite Master HTML oficial de Créditos (TC00 a TC12)
-│   └── Suite_07_Creditos.json                          # Suite Master nativa en formato JSON
+│   ├── Suite_07_Creditos.html                          # Suite Master Créditos (TC00 a TC12)
+│   ├── Suite_07_Creditos.json
+│   ├── Suite_08_Registro.html                          # Suite Registro (CP01 a CP04)
+│   ├── Suite_08_Registro.json
+│   ├── Suite_09_Login.html                             # Suite Login (CP01 a CP05)
+│   ├── Suite_09_Login.json
+│   ├── Suite_10_Login_2FA.html                         # Suite 2FA (CP01 a CP05)
+│   ├── Suite_10_Login_2FA.json
+│   ├── Suite_11_Recuperar_contrasena.html              # Suite Contraseña (CP01 a CP08)
+│   ├── Suite_11_Recuperar_contrasena.json
+│   ├── Suite_12_Perfil.html                            # Suite Perfil (CP01 a CP05)
+│   ├── Suite_12_Perfil.json
+│   ├── Suite_13_Retiro.html                            # Suite Retiro (CP01 a CP04)
+│   └── Suite_13_Retiro.json
 │
 ├── casos/
 │   ├── 01_Crear_bolsillo/ ...
+│   ├── 02_Consultar_bolsillos/ ...
+│   ├── 03_Editar_bolsillo/ ...
+│   ├── 04_Eliminar_bolsillo/ ...
+│   ├── 05_Transferir/ ...
 │   ├── 06_Depositar/ ...
-│   └── 07_Creditos/
-│       ├── TC00_Iniciar_Sesion.html                    # Login base y validación de redirección a /profile
-│       ├── TC01_Simulacion_Exitosa_Estandar.html       # Positivo: Simulación estándar ($5,000, 12 meses, 18% EA)
-│       ├── TC02_Simulacion_Valores_Frontera_Limites.html # BVA: Valores límite mínimo ($100) y máximo ($25M)
-│       ├── TC03_Validacion_Monto_Cuotas_En_Cero.html   # Negativo: Validación ante montos y plazos en cero
-│       ├── TC04_Validacion_Tasa_Interes_Extrema.html   # Robustez: Simulación con tasa 0% EA sin división por cero
-│       ├── TC05_Verificar_Requisitos_Perfil_Elegibilidad.html # Reglas de Negocio: Checklist de requisitos
-│       ├── TC06_Solicitar_Credito_Usuario.html         # Transaccional: Gabriel simula y envía solicitud
-│       ├── TC07_Admin_Iniciar_Sesion_Y_Acceso.html     # RBAC Admin: Login admin y acceso a /admin/loans
-│       ├── TC08_Admin_Filtros_Y_Actualizacion.html     # Auditoría: Filtros de estado y Refresh
-│       ├── TC09_Admin_Inspeccion_Detalle_Solicitud.html # Análisis de Riesgo: Inspección de solicitud
-│       ├── TC10_Admin_Aprobar_Credito_Usuario.html     # Golden Path: Administrador aprueba solicitud
-│       ├── TC11_Admin_Rechazar_Credito_Alternativo.html # Alternativo: Administrador rechaza solicitud
-│       └── TC12_Ciclo_Completo_End_To_End.html         # Lifecycle E2E: Gabriel solicita -> Admin aprueba
+│   ├── 07_Creditos/ (TC00 a TC12)
+│   ├── 08_Registro/ (CP01 a CP04)
+│   ├── 09_Login/ (CP01 a CP05)
+│   ├── 10_Login_2FA/ (CP01 a CP05)
+│   ├── 11_Recuperar_contrasena/ (CP01 a CP08)
+│   ├── 12_Perfil/ (CP01 a CP05)
+│   └── 13_Retiro/ (CP01 a CP04)
 ```
 
 ---
@@ -176,3 +185,107 @@ TC-110 (nombre de solo espacios) detectó el defecto **DEF-001** (D-01/D-03 en l
 - El backend limita el login a **10 intentos por minuto** por correo.
 - TC-150 (monto vacío) depende de la validación nativa del navegador (`required`).
 - Si cambias un caso, edita `scripts/generar-casos.mjs` y regenera con `npm run katalon:generar`.
+
+---
+
+# Módulo 3: Autenticación, Gestión de Cuenta y Transacciones
+
+Este módulo agrupa las suites de pruebas automatizadas para el ciclo de vida del usuario: registro, inicio de sesión tradicional y con doble factor (2FA), recuperación y cambio de contraseña, gestión de perfil y retiros.
+
+## 1. Suites de Pruebas (Suites 08 a 13)
+
+| # | Módulo / Funcionalidad | Casos | Suite HTML | Suite JSON |
+|---|---|---|---|---|
+| **08** | Registro de Nuevos Usuarios | CP01 a CP04 (4 casos) | `suites/Suite_08_Registro.html` | `suites/Suite_08_Registro.json` |
+| **09** | Inicio de Sesión (Login) | CP01 a CP05 (5 casos) | `suites/Suite_09_Login.html` | `suites/Suite_09_Login.json` |
+| **10** | Autenticación de Dos Factores (2FA) | CP01 a CP05 (5 casos) | `suites/Suite_10_Login_2FA.html` | `suites/Suite_10_Login_2FA.json` |
+| **11** | Recuperación y Cambio de Contraseña | CP01 a CP08 (8 casos) | `suites/Suite_11_Recuperar_contrasena.html` | `suites/Suite_11_Recuperar_contrasena.json` |
+| **12** | Gestión de Perfil de Usuario | CP01 a CP05 (5 casos) | `suites/Suite_12_Perfil.html` | `suites/Suite_12_Perfil.json` |
+| **13** | Retiro de Fondos | CP01 a CP04 (4 casos) | `suites/Suite_13_Retiro.html` | `suites/Suite_13_Retiro.json` |
+
+---
+
+## 2. Catálogo Detallado de Casos de Prueba
+
+### Suite 08: Registro de Nuevos Usuarios (`casos/08_Registro/`)
+| Caso | Tipo | Objetivo y Verificaciones |
+|---|:---:|---|
+| **CP01_Registro_Exitoso** | Positivo | Registro integral con datos válidos y correo único dinámico generado con timestamp (`user_<timestamp>@gmail.com`). Valida redirección tras registro. |
+| **CP02_Registro_Email_Duplicado** | Negativo | Validación de regla de unicidad cuando se intenta registrar un correo ya existente (`Pruebaskatalon@gmail.com`). |
+| **CP03_Registro_Password_Debil** | Negativo | Verificación de validación de robustez de contraseña ante contraseñas que no cumplen las políticas. |
+| **CP04_Registro_Campos_Vacios** | Validación | Bloqueo y advertencias ante intento de envío del formulario de registro en blanco. |
+
+### Suite 09: Inicio de Sesión (`casos/09_Login/`)
+| Caso | Tipo | Objetivo y Verificaciones |
+|---|:---:|---|
+| **CP01_Login_Exitoso** | Positivo | Autenticación exitosa con credenciales válidas (`Pruebaskatalon@gmail.com`) y redirección fuera de `/login`. |
+| **CP02_Login_Recordarme** | Positivo | Autenticación marcando el checkbox "Recordarme" para persistencia extendida. |
+| **CP03_Password_Incorrecta** | Negativo | Verificación de mensaje de error al ingresar una contraseña errónea. |
+| **CP04_Email_No_Registrado** | Negativo | Verificación de rechazo y mensaje ante correo no registrado (`noexiste@fubanking.test`). |
+| **CP05_Campos_Vacios** | Validación | Bloqueo de envío cuando los campos de correo y contraseña están vacíos. |
+
+### Suite 10: Autenticación de Dos Factores (`casos/10_Login_2FA/`)
+| Caso | Tipo | Objetivo y Verificaciones |
+|---|:---:|---|
+| **CP01_Login_2FA_Exitoso** | Positivo | Flujo completo de login en cuenta con 2FA activo (`katalonfa@gmail.com`), digitación de OTP y acceso exitoso. |
+| **CP02_Login_2FA_Codigo_Incorrecto** | Negativo | Validación de rechazo ante código OTP erróneo. |
+| **CP03_Login_2FA_Reenviar_Codigo** | Funcional | Verificación de la funcionalidad de reenvío de nuevo código de verificación. |
+| **CP04_Acceso_Directo_2FA_Sin_Sesion** | Seguridad | Control de acceso perimetral: deniega ingreso directo por URL a `/2fa` sin autenticación previa. |
+| **CP05_Login_2FA_Contrasena_Erronea** | Negativo | Validación previa que no permite avanzar hacia el desafío 2FA si la contraseña es errónea. |
+
+### Suite 11: Recuperación de Contraseña (`casos/11_Recuperar_contrasena/`)
+| Caso | Tipo | Objetivo y Verificaciones |
+|---|:---:|---|
+| **CP01_Solicitud_Restablecer_Exitosa** | Positivo | Envío exitoso de solicitud de recuperación para correo registrado (`pruebaskatalon2@gmail.com`). |
+| **CP02_Solicitud_Email_Invalido** | Negativo | Validación de formato inválido en el campo de correo de recuperación. |
+| **CP03_Solicitud_Email_Vacio** | Validación | Rechazo de solicitud con campo de email en blanco. |
+| **CP04_Verificar_Token_Invalido** | Seguridad | Verificación ante manipulación de token en la URL de restablecimiento. |
+| **CP05_Acceso_Reset_Sin_Token** | Seguridad | Bloqueo de acceso a la pantalla `/reset-password` cuando no se provee parámetro token. |
+| **CP06_Cambio_Contrasena_Exitoso** | Positivo | Cambio efectivo de contraseña consumiendo token válido por API y confirmando en UI. |
+| **CP07_Restablecer_Contrasenas_No_Coinciden** | Negativo | Validación cuando la confirmación no es idéntica a la nueva contraseña. |
+| **CP08_Restablecer_Contrasena_Debil** | Negativo | Validación y deshabilitación del botón ante contraseña que no cumple los requisitos mínimos. |
+
+### Suite 12: Gestión de Perfil (`casos/12_Perfil/`)
+| Caso | Tipo | Objetivo y Verificaciones |
+|---|:---:|---|
+| **CP01_Editar_Nombre_Exitoso** | Positivo | Actualización y persistencia del nombre del usuario en su perfil. |
+| **CP02_Editar_Telefono_Ingresos** | Positivo | Modificación exitosa de los campos de teléfono e ingresos declarados. |
+| **CP03_Validacion_Nombre_Invalido** | Negativo | Validación ante nombre con formato o longitud no admitidos. |
+| **CP04_Validacion_Apellido_Invalido** | Negativo | Validación ante apellido inválido. |
+| **CP05_Cancelar_Edicion** | UX/UI | Verificación de que cancelar el modal de edición conserva intactos los datos anteriores. |
+
+### Suite 13: Retiro de Fondos (`casos/13_Retiro/`)
+| Caso | Tipo | Objetivo y Verificaciones |
+|---|:---:|---|
+| **CP01_Retiro_Monto_Valido** | Transaccional | Retiro exitoso descontando el monto del saldo disponible de la cuenta. |
+| **CP02_Retiro_Saldo_Insuficiente** | Negocio | Validación de rechazo cuando el monto ingresado supera el saldo de la cuenta. |
+| **CP03_Retiro_Monto_Invalido** | Negativo | Rechazo ante montos en cero, negativos o formatos numéricos no válidos. |
+| **CP04_Cancelar_Retiro** | UX/UI | Verificación de cancelación de la transacción sin afectar el saldo de la cuenta. |
+
+---
+
+## 3. Cuentas y Credenciales Oficiales de Prueba
+
+| Cuenta de Prueba | Contraseña / Clave | Módulos Donde Aplica |
+|---|---|---|
+| `Pruebaskatalon@gmail.com` | `Katalon123.` | Suite 08 (Email duplicado), Suite 09 (Login), Suite 12 (Perfil), Suite 13 (Retiro) |
+| `katalonfa@gmail.com` | `Katalon123.` | Suite 10 (Login 2FA) |
+| `pruebaskatalon2@gmail.com` | Token vía API | Suite 11 (Recuperación y Restablecimiento de Contraseña) |
+| `user_<timestamp>@gmail.com` | `Katalon123.` | Suite 08 (Registro Exitoso dinámico) |
+
+---
+
+## 4. Instrucciones de Ejecución de Suites 08 a 13
+
+1. Levantar FuBanking:
+   ```bash
+   npm --prefix backend run dev
+   npm --prefix frontend run dev
+   ```
+2. Abrir **Katalon Recorder** en el navegador (Chrome / Edge).
+3. Hacer clic en **Open Suite** y navegar a `katalon/suites/`.
+4. Puedes seleccionar cualquiera de los formatos disponibles:
+   - Formato estándar Selenese HTML (`Suite_08_Registro.html` hasta `Suite_13_Retiro.html`)
+   - Formato nativo JSON (`Suite_08_Registro.json` hasta `Suite_13_Retiro.json`)
+5. Hacer clic en **Play Suite** para ejecutar todos los casos del módulo de forma secuencial y ordenada.
+

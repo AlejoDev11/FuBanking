@@ -34,20 +34,23 @@ export function LoginForm() {
     },
   });
 
-  const onSubmit = (data: LoginInput) => {
-    handleLogin(data);
-  };
-
   const onFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    const emailEl = document.getElementById('email') as HTMLInputElement | null;
-    const passEl = document.getElementById('password') as HTMLInputElement | null;
-    if (emailEl?.value) {
-      setValue('email', emailEl.value, { shouldValidate: true, shouldDirty: true });
-    }
-    if (passEl?.value) {
-      setValue('password', passEl.value, { shouldValidate: true, shouldDirty: true });
-    }
-    void handleSubmit(onSubmit)(e);
+    e.preventDefault();
+    const form = e.currentTarget;
+    const emailEl = form.querySelector<HTMLInputElement>('#email, [name="email"]');
+    const passEl = form.querySelector<HTMLInputElement>('#password, [name="password"]');
+    const rememberEl = form.querySelector<HTMLInputElement>('input[type="checkbox"]');
+    const email = emailEl?.value ?? '';
+    const password = passEl?.value ?? '';
+    const rememberMe = rememberEl?.checked ?? false;
+
+    setValue('email', email);
+    setValue('password', password);
+    setValue('rememberMe', rememberMe);
+
+    handleSubmit((data) => {
+      handleLogin(data);
+    })(e);
   };
 
   return (

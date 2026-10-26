@@ -1,5 +1,5 @@
 'use client';
-import type { SubmitEvent } from 'react';
+
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useTwoFactor } from '../hooks/useTwoFactor';
@@ -74,7 +74,7 @@ export function TwoFactorVerifyForm() {
     }
   };
 
-  const onSubmit = (e: SubmitEvent) => {
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fullCode = code.join('');
     if (fullCode.length === 6) {

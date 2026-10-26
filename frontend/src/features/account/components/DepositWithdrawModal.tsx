@@ -111,7 +111,7 @@ export function DepositWithdrawModal({ account, type, isOpen, onClose, onSuccess
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} noValidate className="space-y-4">
           <div>
             <label htmlFor="dw-amount" className="block text-xs font-medium text-muted-foreground mb-1">
               Monto a {isDeposit ? 'ingresar' : 'retirar'} (COP)
