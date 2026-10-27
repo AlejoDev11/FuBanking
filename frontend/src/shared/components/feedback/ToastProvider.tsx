@@ -124,14 +124,17 @@ export function ToastProvider({ children }: Readonly<{ children: ReactNode }>) {
   );
 }
 
-export function useToast() {
+const fallbackToast: ToastContextValue = {
+  success: () => '',
+  error: () => '',
+  info: () => '',
+  warning: () => '',
+  dismiss: () => {},
+};
+
+export function useToast(): ToastContextValue {
   const context = useContext(ToastContext);
-
-  if (!context) {
-    throw new Error('useToast must be used within ToastProvider');
-  }
-
-  return context;
+  return context ?? fallbackToast;
 }
 
 function ToastViewport({

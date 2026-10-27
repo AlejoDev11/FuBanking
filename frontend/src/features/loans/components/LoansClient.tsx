@@ -1,31 +1,33 @@
 "use client";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { useMemo, useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { Landmark, Calculator, BadgeCheck, Clock, CheckCircle, XCircle, CheckCircle2, FileText, CalendarCheck, Wallet, History } from 'lucide-react';
+import {
+  Landmark,
+  Calculator,
+  BadgeCheck,
+  Clock,
+  CheckCircle,
+  XCircle,
+  CheckCircle2,
+  FileText,
+  CalendarCheck,
+  Wallet,
+  History,
+  type LucideIcon,
+} from 'lucide-react';
 import { Button } from '@/shared/components/ui/Button';
 import { Input } from '@/shared/components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/Card';
+import { useToast } from '@/shared/components/feedback/ToastProvider';
 import { loanService } from '@/features/loans/services/loan.service';
 import { profileService } from '@/features/profile/services/profile.service';
 import { formatCurrency } from '@/shared/utils/format';
-import { PublicUser } from '@/features/auth/types/auth.types';
+import { getMessage } from '@/shared/utils/getMessage';
+import type { PublicUser } from '@/features/auth/types/auth.types';
+import type { LoanSimulation, LoanApplication } from '@/features/loans/types/loan.types';
 
-interface MyLoan {
-  id: string;
-  amount: number;
-  installments: number;
-  annualRate: number;
-  monthlyPayment: number;
-  totalToPay: number;
-  totalInterest: number;
-  status: string;
-  createdAt: string;
-}
-
-const statusMap: Record<string, { color: string; icon: any; label: string }> = {
+const statusMap: Record<string, { color: string; icon: LucideIcon; label: string }> = {
   PENDING: { color: 'text-yellow-600 bg-yellow-50 border-yellow-200', icon: Clock, label: 'Pendiente' },
   APPROVED: { color: 'text-green-600 bg-green-50 border-green-200', icon: CheckCircle, label: 'Aprobado' },
   REJECTED: { color: 'text-red-600 bg-red-50 border-red-200', icon: XCircle, label: 'Rechazado' },
@@ -44,23 +46,27 @@ function isOfLegalAge(birthDate: string): boolean {
 }
 
 export function LoansClient() {
+  const toast = useToast();
   const [amount, setAmount] = useState('5000');
   const [installments, setInstallments] = useState('12');
   const [annualRate, setAnnualRate] = useState('18');
   const [profile, setProfile] = useState<PublicUser | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const [simulation, setSimulation] = useState<any>(null);
-  const [application, setApplication] = useState<any>(null);
-  const [myLoans, setMyLoans] = useState<MyLoan[]>([]);
+  const [simulation, setSimulation] = useState<LoanSimulation | null>(null);
+  const [application, setApplication] = useState<LoanApplication | null>(null);
+  const [myLoans, setMyLoans] = useState<LoanApplication[]>([]);
 
-  const baseEligible = useMemo(() => Number(amount) > 0 && Number(installments) > 0, [amount, installments]);
+  const baseEligible = useMemo(
+    () => Number(amount) > 0 && Number(installments) > 0,
+    [amount, installments],
+  );
 
   const requirements = useMemo(() => {
     const documentVerified = profile?.documentVerified ?? false;
     const ageVerified = profile ? isOfLegalAge(profile.birthDate) : false;
     const incomeVerified = (profile?.monthlyIncome ?? 0) > 0;
-    const creditHistoryVerified = true; // Sin validación rigurosa por ahora
+    const creditHistoryVerified = true;
     return [
       { key: 'document', label: 'Documento verificado', done: documentVerified, icon: FileText },
       { key: 'age', label: 'Mayor de edad', done: ageVerified, icon: CalendarCheck },
@@ -79,6 +85,7 @@ export function LoansClient() {
       const loans = await loanService.getMyLoans();
       setMyLoans(loans);
     } catch {
+      // Fallback silencioso para no bloquear la interfaz inicial
     }
   }, []);
 
@@ -88,10 +95,11 @@ export function LoansClient() {
       .getProfile()
       .then(setProfile)
       .catch(() => {
+        // Fallback silencioso si no hay sesión activa aún
       });
   }, [fetchMyLoans]);
 
-  const hasPending = useMemo(() => myLoans.some(l => l.status === 'PENDING'), [myLoans]);
+  const hasPending = useMemo(() => myLoans.some((l) => l.status === 'PENDING'), [myLoans]);
 
   const handleSimulate = async () => {
     setLoading(true);
@@ -104,8 +112,11 @@ export function LoansClient() {
       });
       setSimulation(result);
       setMessage('Simulación lista.');
-    } catch (error: any) {
-      setMessage(error?.message || 'No fue posible simular el préstamo.');
+      toast.success('Simulación calculada', 'Tu cuota estimada está lista en el resumen.');
+    } catch (error: unknown) {
+      const errMsg = getMessage(error, 'No fue posible simular el préstamo.');
+      setMessage(errMsg);
+      toast.error('Error al simular', errMsg);
     } finally {
       setLoading(false);
     }
@@ -113,15 +124,21 @@ export function LoansClient() {
 
   const handleCreate = async () => {
     if (!baseEligible) {
-      setMessage('Ingresa un monto y número de cuotas válidos.');
+      const msg = 'Ingresa un monto y número de cuotas válidos.';
+      setMessage(msg);
+      toast.warning('Datos incompletos', msg);
       return;
     }
     if (!allRequirementsMet) {
-      setMessage('Completa todos los requisitos desde tu perfil para solicitar un préstamo.');
+      const msg = 'Completa todos los requisitos desde tu perfil para solicitar un préstamo.';
+      setMessage(msg);
+      toast.warning('Requisitos pendientes', msg);
       return;
     }
     if (hasPending) {
-      setMessage('Ya tienes una solicitud pendiente. Espera a que sea revisada.');
+      const msg = 'Ya tienes una solicitud pendiente. Espera a que sea revisada.';
+      setMessage(msg);
+      toast.info('Solicitud en proceso', msg);
       return;
     }
 
@@ -135,10 +152,20 @@ export function LoansClient() {
         monthlyIncome: profile?.monthlyIncome ?? 0,
       });
       setApplication(result);
-      setMessage(result.eligibility.isEligible ? 'Solicitud enviada correctamente.' : 'Solicitud registrada, pero no cumple con todos los requisitos.');
+      const msg = result.eligibility.isEligible
+        ? 'Solicitud enviada correctamente.'
+        : 'Solicitud registrada, pero no cumple con todos los requisitos.';
+      setMessage(msg);
+      if (result.eligibility.isEligible) {
+        toast.success('Solicitud enviada', 'Tu crédito fue radicado correctamente.');
+      } else {
+        toast.warning('Solicitud observada', msg);
+      }
       void fetchMyLoans();
-    } catch (error: any) {
-      setMessage(error?.message || 'No fue posible crear la solicitud.');
+    } catch (error: unknown) {
+      const errMsg = getMessage(error, 'No fue posible crear la solicitud.');
+      setMessage(errMsg);
+      toast.error('Error en la solicitud', errMsg);
     } finally {
       setLoading(false);
     }
@@ -158,9 +185,30 @@ export function LoansClient() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 md:grid-cols-3">
-              <Input id="loan-amount" data-cy="loan-amount" label="Monto" type="number" value={amount} onChange={(e) => setAmount(e.target.value)} />
-              <Input id="loan-installments" data-cy="loan-installments" label="Cuotas" type="number" value={installments} onChange={(e) => setInstallments(e.target.value)} />
-              <Input id="loan-annual-rate" data-cy="loan-annual-rate" label="Tasa anual (%)" type="number" value={annualRate} onChange={(e) => setAnnualRate(e.target.value)} />
+              <Input
+                id="loan-amount"
+                data-cy="loan-amount"
+                label="Monto"
+                type="number"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+              />
+              <Input
+                id="loan-installments"
+                data-cy="loan-installments"
+                label="Cuotas"
+                type="number"
+                value={installments}
+                onChange={(e) => setInstallments(e.target.value)}
+              />
+              <Input
+                id="loan-annual-rate"
+                data-cy="loan-annual-rate"
+                label="Tasa anual (%)"
+                type="number"
+                value={annualRate}
+                onChange={(e) => setAnnualRate(e.target.value)}
+              />
             </div>
 
             {/* Requisitos de solicitud — solo lectura, se activan al cumplirse */}
@@ -201,18 +249,40 @@ export function LoansClient() {
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row">
-              <Button id="btn-simulate" data-cy="btn-simulate" onClick={handleSimulate} isLoading={loading} className="w-full sm:w-auto">
-                <span className="flex items-center gap-2"><Calculator size={16} /> Simular</span>
+              <Button
+                id="btn-simulate"
+                data-cy="btn-simulate"
+                onClick={handleSimulate}
+                isLoading={loading}
+                className="w-full sm:w-auto"
+              >
+                <span className="flex items-center gap-2">
+                  <Calculator size={16} /> Simular
+                </span>
               </Button>
-              <Button id="btn-apply" data-cy="btn-apply" variant="outline" onClick={handleCreate} isLoading={loading} disabled={!allRequirementsMet || hasPending} className="w-full sm:w-auto">
-                <span className="flex items-center gap-2"><BadgeCheck size={16} /> Solicitar</span>
+              <Button
+                id="btn-apply"
+                data-cy="btn-apply"
+                variant="outline"
+                onClick={handleCreate}
+                isLoading={loading}
+                disabled={!allRequirementsMet || hasPending}
+                className="w-full sm:w-auto"
+              >
+                <span className="flex items-center gap-2">
+                  <BadgeCheck size={16} /> Solicitar
+                </span>
               </Button>
             </div>
 
             {hasPending && (
               <p className="text-sm text-yellow-600 font-medium">Tienes una solicitud pendiente de revisión.</p>
             )}
-            {message && <p id="loan-message" data-cy="loan-message" className="text-sm text-muted-foreground">{message}</p>}
+            {message && (
+              <p id="loan-message" data-cy="loan-message" className="text-sm text-muted-foreground">
+                {message}
+              </p>
+            )}
           </CardContent>
         </Card>
 
@@ -228,9 +298,24 @@ export function LoansClient() {
               </div>
               {simulation ? (
                 <div className="mt-3 space-y-2 text-sm text-foreground">
-                  <p>Cuota mensual: <span data-cy="monthly-payment" className="font-semibold">{formatCurrency(simulation.monthlyPayment)}</span></p>
-                  <p>Total a pagar: <span data-cy="total-to-pay" className="font-semibold">{formatCurrency(simulation.totalToPay)}</span></p>
-                  <p>Intereses: <span data-cy="total-interest" className="font-semibold">{formatCurrency(simulation.totalInterest)}</span></p>
+                  <p>
+                    Cuota mensual:{' '}
+                    <span data-cy="monthly-payment" className="font-semibold">
+                      {formatCurrency(simulation.monthlyPayment)}
+                    </span>
+                  </p>
+                  <p>
+                    Total a pagar:{' '}
+                    <span data-cy="total-to-pay" className="font-semibold">
+                      {formatCurrency(simulation.totalToPay)}
+                    </span>
+                  </p>
+                  <p>
+                    Intereses:{' '}
+                    <span data-cy="total-interest" className="font-semibold">
+                      {formatCurrency(simulation.totalInterest)}
+                    </span>
+                  </p>
                 </div>
               ) : (
                 <p className="mt-3 text-sm text-muted-foreground">Aún no hay una simulación disponible.</p>
@@ -239,11 +324,21 @@ export function LoansClient() {
 
             {application && (
               <div data-cy="application-result" className="rounded-2xl border border-border p-4 space-y-2 text-sm">
-                <p><span className="font-semibold">Estado:</span> <span data-cy="application-status">{application.status}</span></p>
-                <p><span className="font-semibold">Elegible:</span> <span data-cy="application-eligible">{application.eligibility.isEligible ? 'Sí' : 'No'}</span></p>
+                <p>
+                  <span className="font-semibold">Estado:</span>{' '}
+                  <span data-cy="application-status">{application.status}</span>
+                </p>
+                <p>
+                  <span className="font-semibold">Elegible:</span>{' '}
+                  <span data-cy="application-eligible">
+                    {application.eligibility.isEligible ? 'Sí' : 'No'}
+                  </span>
+                </p>
                 {application.eligibility.reasons.length > 0 && (
                   <ul className="list-disc pl-5 text-muted-foreground">
-                    {application.eligibility.reasons.map((reason: string) => <li key={reason}>{reason}</li>)}
+                    {application.eligibility.reasons.map((reason: string) => (
+                      <li key={reason}>{reason}</li>
+                    ))}
                   </ul>
                 )}
               </div>
@@ -261,20 +356,36 @@ export function LoansClient() {
           <CardContent>
             <div data-cy="my-loans-list" className="space-y-3">
               {myLoans.map((loan) => {
-                const st = statusMap[loan.status] ?? { color: 'text-gray-600 bg-gray-50 border-gray-200', icon: Clock, label: loan.status };
+                const st = statusMap[loan.status] ?? {
+                  color: 'text-gray-600 bg-gray-50 border-gray-200',
+                  icon: Clock,
+                  label: loan.status,
+                };
                 const StatusIcon = st.icon;
                 return (
-                  <div key={loan.id} data-cy="my-loan-item" className="flex items-center justify-between p-4 rounded-xl border border-border bg-background">
+                  <div
+                    key={loan.id}
+                    data-cy="my-loan-item"
+                    className="flex items-center justify-between p-4 rounded-xl border border-border bg-background"
+                  >
                     <div className="space-y-1">
-                      <p className="font-semibold text-foreground">{formatCurrency(loan.amount)} — {loan.installments} cuotas</p>
+                      <p className="font-semibold text-foreground">
+                        {formatCurrency(loan.amount)} — {loan.installments} cuotas
+                      </p>
                       <p className="text-xs text-muted-foreground">
                         Cuota mensual: {formatCurrency(loan.monthlyPayment)} · Tasa: {loan.annualRate}% EA
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {new Date(loan.createdAt).toLocaleDateString('es-CO', { year: 'numeric', month: 'short', day: 'numeric' })}
+                        {new Date(loan.createdAt).toLocaleDateString('es-CO', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                        })}
                       </p>
                     </div>
-                    <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border ${st.color}`}>
+                    <span
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border ${st.color}`}
+                    >
                       <StatusIcon size={14} />
                       {st.label}
                     </span>
