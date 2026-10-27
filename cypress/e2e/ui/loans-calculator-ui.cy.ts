@@ -6,7 +6,7 @@ describe('UI y Formularios: Simulador y Validaciones de Interfaz', () => {
   });
 
   it('carga los valores iniciales por defecto en el simulador', () => {
-    cy.get('[data-cy=loan-amount]').should('have.value', '5000');
+    cy.get('[data-cy=loan-amount]').should('have.value', '5000000');
     cy.get('[data-cy=loan-installments]').should('have.value', '12');
     cy.get('[data-cy=loan-annual-rate]').should('have.value', '18');
     cy.get('[data-cy=btn-simulate]').should('be.visible').and('not.be.disabled');

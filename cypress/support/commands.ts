@@ -19,6 +19,26 @@ declare global {
       loginByApi(email?: string, password?: string): Chainable<void>;
 
       /**
+       * Limpia cookies, localStorage y sessionStorage
+       */
+      cleanSession(): Chainable<void>;
+
+      /**
+       * Obtiene el último código 2FA generado en el backend para un email
+       */
+      getLatest2FACode(email: string): Chainable<string>;
+
+      /**
+       * Obtiene el último enlace de restablecimiento de contraseña generado en el backend
+       */
+      getLatestResetLink(email: string): Chainable<string>;
+
+      /**
+       * Llena los 6 campos del código OTP
+       */
+      fillOTP(code: string): Chainable<void>;
+
+      /**
        * Comando de Inteligencia Artificial cy.prompt() para authoring en lenguaje natural.
        * @param prompts Lista de instrucciones en lenguaje natural
        */
@@ -324,5 +344,43 @@ Cypress.Commands.overwrite('prompt', (originalFn, prompts: any) => {
     return cy.wrap(null);
   }
   return (originalFn as any)(prompts);
+});
+
+Cypress.Commands.add('cleanSession', () => {
+  cy.clearAllCookies();
+  cy.clearAllLocalStorage();
+  cy.clearAllSessionStorage();
+});
+
+Cypress.Commands.add('getLatest2FACode', (email: string) => {
+  const apiUrl = Cypress.env('apiUrl') || 'http://localhost:3001/api/v1';
+  return cy.request({
+    method: 'GET',
+    url: `${apiUrl}/auth/test-helper/latest-2fa?email=${encodeURIComponent(email)}`,
+    failOnStatusCode: false,
+  }).then((res) => {
+    const code = res.body?.data?.code;
+    return cy.wrap(code || '');
+  });
+});
+
+Cypress.Commands.add('getLatestResetLink', (email: string) => {
+  const apiUrl = Cypress.env('apiUrl') || 'http://localhost:3001/api/v1';
+  return cy.request({
+    method: 'GET',
+    url: `${apiUrl}/auth/test-helper/latest-reset-link?email=${encodeURIComponent(email)}`,
+    failOnStatusCode: false,
+  }).then((res) => {
+    const link = res.body?.data?.resetLink;
+    return cy.wrap(link || '');
+  });
+});
+
+Cypress.Commands.add('fillOTP', (code: string) => {
+  cy.get('input[autoComplete="one-time-code"]').should('have.length', 6).then(($inputs) => {
+    for (let i = 0; i < 6; i++) {
+      cy.wrap($inputs[i]).type(code[i] || '0');
+    }
+  });
 });
 
