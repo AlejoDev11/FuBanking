@@ -31,7 +31,6 @@ foreach ($entry in $results.GetEnumerator()) {
   $color = if ($entry.Value -eq 'OK') { 'Green' } else { 'Red' }
   Write-Host (' {0,-32} {1}' -f $entry.Key, $entry.Value) -ForegroundColor $color
 }
-Write-Host ' Documento de sustentación: SUSTENTACION.md' -ForegroundColor Cyan
 Write-Host '===============================================================' -ForegroundColor Cyan
 
 if ($results.Values -contains 'OK' -and -not ($results.Values | Where-Object { $_ -ne 'OK' })) { exit 0 } else { exit 1 }

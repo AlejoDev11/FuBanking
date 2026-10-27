@@ -52,8 +52,9 @@ npm run test:herramientas:alejandro
 
 ---
 
-## 📚 Documento de sustentación
+## 📚 Detalle de cada herramienta
 
-Justificación, configuración, resultados, aportes y limitaciones de cada herramienta, y banco de preguntas:
-
-👉 [**SUSTENTACION.md**](./SUSTENTACION.md)
+Configuración, resultados, aportes y limitaciones en el README de cada carpeta:
+[`01-playwright-test-agents/`](./01-playwright-test-agents/README.md) ·
+[`02-postman-postbot/`](./02-postman-postbot/README.md) ·
+[`03-keploy/`](./03-keploy/README.md)
