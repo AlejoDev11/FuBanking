@@ -3,7 +3,9 @@ import { z } from 'zod';
 import { createClaudeSession, ClaudeSession } from './claude.config.js';
 import { balanceOf, createPocket, newClient, pocketsOf, signInBrowser } from './fubankApi.js';
 import { Scenario, ScenarioResult } from './report.js';
-import { byName, openAccounts, openPockets, PocketsOnScreen, sawToast, waitForPocketCards } from './screen.js';
+import {
+  byName, openAccounts, openPockets, PocketsOnScreen, sawToast, waitForAccountBalance, waitForPocketAmount, waitForPocketCards,
+} from './screen.js';
 
 interface ScenarioDefinition {
   id: string;
@@ -165,6 +167,8 @@ export const scenarios: ScenarioDefinition[] = [
       await s.act('Click the "Transferir" button');
 
       s.verify('notificación "Transferencia realizada"', true, await sawToast(session, 'Transferencia realizada'));
+      await waitForPocketAmount(session, 'Vacaciones', 70_000);
+      await waitForPocketAmount(session, 'Mercado', 80_000);
       await s.screenshot('resultado');
 
       const expected = [{ name: 'Mercado', amount: 80_000 }, { name: 'Vacaciones', amount: 70_000 }];
@@ -203,6 +207,7 @@ export const scenarios: ScenarioDefinition[] = [
       await s.act('Fill the "Monto a ingresar (COP)" input with "150000"');
       await s.act('Click the "Abonar Saldo" button');
       s.verify('notificación "Deposito realizado"', true, await sawToast(session, 'Deposito realizado'));
+      await waitForAccountBalance(session, 150_000);
       await s.screenshot('resultado');
 
       const card = await s.extract('Extract the balance shown in the account card',

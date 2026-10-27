@@ -34,6 +34,30 @@ export async function sawToast({ page }: ClaudeSession, title: string): Promise<
   }
 }
 
+/**
+ * El toast sale antes de que la lista se recargue: se espera a que la tarjeta
+ * muestre el monto nuevo antes de pedirle a la IA que lea la pantalla. Si no
+ * cambia en 15 s se sigue igual y el `extract` deja la falla en evidencia.
+ */
+export async function waitForPocketAmount({ page }: ClaudeSession, name: string, amount: number) {
+  await page.waitForFunction(
+    ({ n, a }: { n: string; a: number }) => [...document.querySelectorAll('[data-testid="pocket-card"]')].some(card =>
+      card.querySelector('[data-testid="pocket-card-name"]')?.textContent?.trim() === n
+      && Number((card.querySelector('[data-testid="pocket-card-amount"]')?.textContent ?? '').replaceAll(/[^\d-]/g, '')) === a),
+    { n: name, a: amount },
+    { timeout: 15_000 },
+  ).catch(() => undefined);
+}
+
+/** Igual que `waitForPocketAmount`, para el saldo de la tarjeta de cuenta. */
+export async function waitForAccountBalance({ page }: ClaudeSession, balance: number) {
+  await page.waitForFunction(
+    (b: number) => Number((document.querySelector('[data-testid="account-balance"]')?.textContent ?? '').replaceAll(/[^\d-]/g, '')) === b,
+    balance,
+    { timeout: 15_000 },
+  ).catch(() => undefined);
+}
+
 /** Esquema para `extract` de la lista "Bolsillos actuales". */
 export const PocketsOnScreen = z.object({
   pockets: z.array(z.object({
