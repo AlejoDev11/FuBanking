@@ -1,30 +1,26 @@
 """
 Generador del Plan de Pruebas FuBank v2.0 con Diseño Corporativo Personalizado.
-Aplica colores institucionales de FuBank, portada ejecutiva, logotipo oficial,
-encabezados/pies de página con paginación dinámica, marca de agua OpenXML,
-tablas estilizadas con filas cebradas y cajas de llamada (callouts).
+Enfoque colaborativo y horizontal de equipo (4 módulos con igual jerarquía e importancia).
+Garantiza paginación nativa y renderizado completo en Microsoft Word (16 páginas).
 """
 import os
 from docx import Document
 from docx.shared import Pt, RGBColor, Inches
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.enum.table import WD_TABLE_ALIGNMENT, WD_ALIGN_VERTICAL
-from docx.oxml import OxmlElement, parse_xml
-from docx.oxml.ns import qn, nsdecls
+from docx.enum.table import WD_TABLE_ALIGNMENT
+from docx.oxml import OxmlElement
+from docx.oxml.ns import qn
 
 # ===== PALETA DE COLORES INSTITUCIONAL =====
 HEX_PRIMARY = "820AD1"          # Púrpura FuBank
 HEX_PRIMARY_DARK = "581C87"     # Púrpura profundo
-HEX_INDIGO = "1E1B4B"           # Índigo oscuro para H2
+HEX_INDIGO = "1E1B4B"           # Índigo oscuro para títulos
 HEX_ACCENT_BG = "FAF5FF"        # Fondo suave violeta para filas y callouts
-HEX_CARD_BG = "F3E8FF"          # Púrpura claro para badges y marcos
-HEX_BORDER = "E9D5FF"           # Borde sutil
-HEX_BORDER_MUTED = "CBD5E1"     # Gris borde
+HEX_CARD_BG = "F3E8FF"          # Púrpura claro para bordes y separadores
+HEX_BORDER = "E9D5FF"           # Borde horizontal suave
 HEX_TEXT_DARK = "1F2937"        # Carbón oscuro para texto
 HEX_TEXT_MUTED = "6B7280"       # Gris pizarra para subtítulos
 HEX_SUCCESS = "059669"          # Verde esmeralda (Pass)
-HEX_WARN = "D97706"             # Ámbar
-HEX_ERROR = "DC2626"            # Rojo (Critical/High)
 
 COLOR_PRIMARY = RGBColor(130, 10, 209)
 COLOR_PRIMARY_DARK = RGBColor(88, 28, 135)
@@ -39,10 +35,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LOGO_PATH = os.path.join(BASE_DIR, "frontend", "public", "logo.png")
 OUTPUT_DOCX = os.path.join(BASE_DIR, "docs", "plan-de-pruebas-fubank-v2.docx")
 
-# ===== HELPERS XML PARA ESTILIZACIÓN OPENXML =====
+# ===== HELPERS OPENXML =====
 
 def set_cell_background(cell, hex_color):
-    """Aplica color de fondo sólido a una celda de tabla."""
+    """Aplica color de fondo a una celda."""
     tcPr = cell._tc.get_or_add_tcPr()
     shd = OxmlElement('w:shd')
     shd.set(qn('w:val'), 'clear')
@@ -51,7 +47,7 @@ def set_cell_background(cell, hex_color):
     tcPr.append(shd)
 
 def set_cell_margins(cell, top=120, bottom=120, left=180, right=180):
-    """Establece padding interno en dxa (1 pt ≈ 20 dxa)."""
+    """Establece márgenes internos de celda en dxa."""
     tcPr = cell._tc.get_or_add_tcPr()
     tcMar = OxmlElement('w:tcMar')
     for m, val in [('top', top), ('bottom', bottom), ('left', left), ('right', right)]:
@@ -79,7 +75,7 @@ def set_cell_borders(cell, top=None, bottom=None, left=None, right=None):
     tcPr.append(tcBorders)
 
 def set_table_borders(table, border_color=HEX_BORDER):
-    """Aplica bordes horizontales limpios y elimina bordes verticales duros."""
+    """Aplica bordes horizontales limpios y elimina bordes verticales."""
     tblPr = table._tbl.tblPr
     tblBorders = OxmlElement('w:tblBorders')
     for b in ['top', 'bottom', 'insideH']:
@@ -96,64 +92,26 @@ def set_table_borders(table, border_color=HEX_BORDER):
     tblPr.append(tblBorders)
 
 def add_field(p, field_name):
-    """Inserta un campo dinámico de Word (PAGE o NUMPAGES)."""
+    """Inserta un campo nativo dinámico de Word (PAGE o NUMPAGES)."""
     r = p.add_run()
     fldSimple = OxmlElement('w:fldSimple')
     fldSimple.set(qn('w:instr'), field_name)
     r._r.append(fldSimple)
 
-def add_watermark(section, text="FUBANKING QA - USO ACADEMICO"):
-    """Inserta una marca de agua diagonal corporativa mediante VML en el encabezado."""
-    header = section.header
-    p = header.paragraphs[0]
-    pPr = p._p.get_or_add_pPr()
-    pStyle = OxmlElement('w:pStyle')
-    pStyle.set(qn('w:val'), 'Header')
-    pPr.append(pStyle)
-
-    watermark_xml = f'''
-    <w:p xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
-         xmlns:v="urn:schemas-microsoft-com:vml"
-         xmlns:o="urn:schemas-microsoft-com:office:office">
-      <w:pPr><w:pStyle w:val="Header"/></w:pPr>
-      <w:r>
-        <w:pict>
-          <v:shapetype id="_x0000_t136" coordsize="21600,21600" o:spt="136" adj="10800" path="m@7,l@8,m@5,21600l@6,21600e">
-            <v:path textpathok="t" o:connecttype="rect"/>
-            <v:textpath on="t" fitshape="t"/>
-          </v:shapetype>
-          <v:shape id="PowerPlusWaterMarkObject" type="#_x0000_t136"
-                   style="position:absolute;margin-left:0;margin-top:0;width:520pt;height:90pt;rotation:-45;z-index:-251656704;mso-position-horizontal:center;mso-position-horizontal-relative:margin;mso-position-vertical:center;mso-position-vertical-relative:margin"
-                   fillcolor="#f3e8ff" stroked="f">
-            <v:fill opacity=".28"/>
-            <v:textpath style="font-family:'Arial';font-size:1pt;font-weight:bold" string="{text}"/>
-          </v:shape>
-        </w:pict>
-      </w:r>
-    </w:p>
-    '''
-    try:
-        parsed = parse_xml(watermark_xml)
-        header._element.append(parsed)
-    except Exception as e:
-        print("Aviso al insertar marca de agua VML:", e)
-
-# ===== CONSTRUCCIÓN DEL DOCUMENTO =====
-
 def build_document():
     doc = Document()
 
-    # Márgenes: 2 cm superior/inferior, 2.5 cm laterales
+    # Configuración de márgenes estándar de informe
     section = doc.sections[0]
     section.top_margin = Inches(0.8)
     section.bottom_margin = Inches(0.8)
     section.left_margin = Inches(1.0)
     section.right_margin = Inches(1.0)
 
-    # Portada independiente: primer encabezado y pie de página vacíos
+    # Portada independiente: encabezado y pie de página limpios en página 1
     section.different_first_page_header_footer = True
 
-    # Configuración de estilos base
+    # Tipografía base
     style_normal = doc.styles['Normal']
     font_normal = style_normal.font
     font_normal.name = 'Segoe UI'
@@ -161,7 +119,7 @@ def build_document():
     font_normal.color.rgb = COLOR_TEXT_DARK
 
     # ==============================================================
-    # 1. PORTADA CORPORATIVA EJECUTIVA
+    # 1. PORTADA CORPORATIVA (EQUIPO COLABORATIVO FU-BANK)
     # ==============================================================
 
     # Banda decorativa superior
@@ -174,13 +132,13 @@ def build_document():
     set_cell_margins(cell_band, top=60, bottom=60, left=100, right=100)
     p_band = cell_band.paragraphs[0]
     p_band.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-    r_band = p_band.add_run("FUBANK QUALITY ASSURANCE · PROYECTO 2026-2  ")
+    r_band = p_band.add_run("FUBANK QUALITY ASSURANCE · EQUIPO DE TESTING 2026-2  ")
     r_band.font.size = Pt(8)
     r_band.font.bold = True
     r_band.font.color.rgb = COLOR_WHITE
 
     p_spacer = doc.add_paragraph()
-    p_spacer.paragraph_format.space_before = Pt(18)
+    p_spacer.paragraph_format.space_before = Pt(16)
 
     # Logo institucional
     if os.path.exists(LOGO_PATH):
@@ -188,7 +146,7 @@ def build_document():
         p_logo.alignment = WD_ALIGN_PARAGRAPH.CENTER
         run_logo = p_logo.add_run()
         run_logo.add_picture(LOGO_PATH, width=Inches(2.2))
-        p_logo.paragraph_format.space_after = Pt(14)
+        p_logo.paragraph_format.space_after = Pt(12)
 
     # Badge normativo
     p_pill = doc.add_paragraph()
@@ -219,12 +177,12 @@ def build_document():
 
     p_sub2 = doc.add_paragraph()
     p_sub2.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p_sub2.paragraph_format.space_after = Pt(20)
-    run_sub2 = p_sub2.add_run("Estrategia Integral: Pruebas Unitarias, Integración API, Cypress E2E, BDD Screenplay y Automatización con IA")
+    p_sub2.paragraph_format.space_after = Pt(18)
+    run_sub2 = p_sub2.add_run("Aseguramiento Integral de Calidad: Autenticación, Créditos, Bolsillos y Tarjetas Virtuales")
     run_sub2.font.size = Pt(9.5)
     run_sub2.font.color.rgb = COLOR_TEXT_MUTED
 
-    # Ficha Técnica de Control en Tarjeta Estilizada
+    # Ficha Técnica en Tarjeta Estilizada (Colaborativa y Horizontal)
     card_table = doc.add_table(rows=6, cols=2)
     card_table.alignment = WD_TABLE_ALIGNMENT.CENTER
     card_table.autofit = False
@@ -233,10 +191,10 @@ def build_document():
 
     meta_items = [
         ("Proyecto y Arquitectura", "FuBanking (Express 5 + TypeScript + Next.js 16 + Supabase)"),
-        ("Módulo Principal Evaluado", "Créditos y Préstamos (Loans / HU-27 a HU-32)"),
-        ("Módulos Integrados", "Usuarios/Auth (Soto), Bolsillos (Henao), Tarjetas (Bustamante)"),
-        ("Líder de Testing (QA Lead)", "Andres Bedoya Cano"),
-        ("Fecha de Cierre y Commit", "26 de Octubre de 2026 — Commit dev (9eaddd4 / a0cdfea)"),
+        ("Módulos en Alcance (4)", "Usuarios/Auth, Créditos/Loans, Bolsillos/Pockets, Tarjetas/Cards"),
+        ("Equipo de Aseguramiento", "Andres Bedoya, Dubin Soto, Tomas Henao, Stiven Bustamante"),
+        ("Modelo de Trabajo", "Equipo Horizontal de Aseguramiento QA (Sin jerarquías)"),
+        ("Fecha de Cierre y Commit", "26 de Octubre de 2026 — Versión 2.0 (Rama dev)"),
         ("Curso Académico", "Validación y Verificación de Software — Semestre 2026-2"),
     ]
 
@@ -246,11 +204,10 @@ def build_document():
 
         set_cell_background(cell_lbl, HEX_ACCENT_BG)
         set_cell_background(cell_val, HEX_ACCENT_BG)
-        set_cell_margins(cell_lbl, top=70, bottom=70, left=140, right=100)
-        set_cell_margins(cell_val, top=70, bottom=70, left=100, right=140)
+        set_cell_margins(cell_lbl, top=65, bottom=65, left=140, right=100)
+        set_cell_margins(cell_val, top=65, bottom=65, left=100, right=140)
 
-        # Borde izquierdo grueso púrpura para efecto tarjeta
-        left_b = {'val': 'single', 'sz': 24, 'color': HEX_PRIMARY} if idx == 0 or True else None
+        left_b = {'val': 'single', 'sz': 24, 'color': HEX_PRIMARY}
         set_cell_borders(cell_lbl, left=left_b, top={'val': 'single', 'sz': 4, 'color': HEX_CARD_BG}, bottom={'val': 'single', 'sz': 4, 'color': HEX_CARD_BG})
         set_cell_borders(cell_val, top={'val': 'single', 'sz': 4, 'color': HEX_CARD_BG}, bottom={'val': 'single', 'sz': 4, 'color': HEX_CARD_BG})
 
@@ -268,19 +225,18 @@ def build_document():
         r_v.font.color.rgb = COLOR_TEXT_DARK
 
     p_bottom = doc.add_paragraph()
-    p_bottom.paragraph_format.space_before = Pt(28)
+    p_bottom.paragraph_format.space_before = Pt(24)
     p_bottom.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    r_bot = p_bottom.add_run("Medellín, Colombia · 2026")
+    r_bot = p_bottom.add_run("Medellín, Colombia · Semestre 2026-2")
     r_bot.font.size = Pt(8.5)
     r_bot.font.color.rgb = COLOR_TEXT_MUTED
 
     doc.add_page_break()
 
     # ==============================================================
-    # 2. CONFIGURACIÓN DE ENCABEZADO Y PIE DE PÁGINA (Páginas 2+)
+    # 2. ENCABEZADO Y PIE DE PÁGINA (Páginas 2 en adelante)
     # ==============================================================
     header = section.header
-    # Limpiar párrafos de header
     for p in header.paragraphs:
         p.text = ""
 
@@ -306,11 +262,10 @@ def build_document():
     p_hr = cell_hr.paragraphs[0]
     p_hr.alignment = WD_ALIGN_PARAGRAPH.RIGHT
     p_hr.paragraph_format.space_after = Pt(0)
-    r_hr = p_hr.add_run("Aseguramiento de Calidad QA")
+    r_hr = p_hr.add_run("Confidencial · Uso Académico")
     r_hr.font.size = Pt(8)
     r_hr.font.color.rgb = COLOR_TEXT_MUTED
 
-    # Pie de página con numeración PAGE / NUMPAGES
     footer = section.footer
     for p in footer.paragraphs:
         p.text = ""
@@ -343,9 +298,6 @@ def build_document():
     r_fr2.font.size = Pt(8.5)
     r_fr2.font.color.rgb = COLOR_TEXT_MUTED
     add_field(p_fr, "NUMPAGES")
-
-    # Marca de agua en el cuerpo
-    add_watermark(section, "FUBANKING QA - USO ACADEMICO")
 
     # ==============================================================
     # HELPERS DE CONTENIDO CON ESTILO
@@ -459,7 +411,6 @@ def build_document():
                 p = cell.paragraphs[0]
                 p.paragraph_format.space_after = Pt(0)
 
-                # Formatear badges según contenido
                 if "PASS" in val or "✅" in val:
                     r = p.add_run(val)
                     r.font.bold = True
@@ -495,23 +446,23 @@ def build_document():
         ["1. Introducción", "Propósito, alcance referencial y normativas ISTQB / ISO 29119"],
         ["2. Descripción del Producto", "Arquitectura Clean Architecture, contexto web y tecnologías"],
         ["3. Base de Pruebas (Test Basis)", "Requisitos Funcionales (RF-01..81) e Historias de Usuario (HU-27..32)"],
-        ["4. Objetivos de las Pruebas", "Integridad de saldos, seguridad JWT/2FA y aprobación administrativa"],
-        ["5. Alcance (Scope)", "Funcionalidades incluidas, exclusiones justificadas, supuestos y restricciones"],
+        ["4. Objetivos de las Pruebas", "Integridad de saldos, seguridad JWT/2FA y flujos de negocio"],
+        ["5. Alcance (Scope)", "Los 4 módulos incluidos, exclusiones justificadas, supuestos y restricciones"],
         ["6. Enfoque y Estrategia de Pruebas", "Pirámide ampliada con IA y 3 herramientas avanzadas de observabilidad"],
         ["7. Niveles de Prueba", "Pruebas unitarias, integración API, pruebas de sistema y aceptación BDD"],
         ["8. Tipos de Prueba", "Pruebas funcionales, no funcionales (seguridad/a11y), estáticas y regresión"],
         ["9. Técnicas de Diseño de Pruebas", "Partición de equivalencia, valores límite, tablas de decisión y SBTM"],
         ["10. Entorno de Pruebas", "Topología de servidores (:3001, :3000), Supabase Cloud, Docker y CI/CD"],
-        ["11. Datos de Prueba", "Usuarios precargados (cliente/admin) y datasets financieros de crédito"],
+        ["11. Datos de Prueba", "Usuarios precargados (cliente/admin) y datasets financieros de prueba"],
         ["12. Criterios de Prueba", "Criterios de entrada, salida y aceptación formal por módulo"],
         ["13. Gestión de Defectos", "Flujo de vida del defecto, matriz de severidad y seguimiento"],
         ["14. Identificación y Análisis de Riesgos", "Matriz de 10 riesgos evaluados con probabilidad, impacto y mitigación"],
-        ["15. Organización y Responsabilidades", "Asignación de módulos y roles del equipo (4 integrantes)"],
+        ["15. Organización y Responsabilidades", "Asignación colaborativa de módulos y roles de los 4 integrantes"],
         ["16. Cronograma de Pruebas", "Calendario de 14 semanas de actividades (julio a octubre 2026)"],
         ["17. Métricas y Seguimiento", "Cobertura de 49 verificaciones activas, SonarQube y control de bugs"],
         ["18. Entregables de Prueba", "Inventario de repositorios, suites Cypress, Serenity, Stagehand y MCP"],
         ["19. Informe Final de Pruebas", "Resumen ejecutivo, resultados con 100% pass rate y conclusiones"],
-        ["20. Gestión del Documento", "Historial de versiones, registro de cambios y firmas de aprobación"],
+        ["20. Gestión del Documento", "Historial de versiones, registro de cambios y firmas de aprobación del equipo"],
     ]
 
     add_styled_table(["Sección", "Alcance y Descripción"], toc_items, [2.3, 4.2])
@@ -534,7 +485,7 @@ def build_document():
     add_body(
         "El documento define el alcance de las evaluaciones funcionales y no funcionales aplicadas a FuBank, "
         "abarcando de forma integral cada etapa del ciclo de vida del testing: diseño formal de escenarios, ejecución "
-        "automatizada, registro y seguimiento de defectos, y el balance final de cierre de calidad."
+        "automatizada, registro y seguimiento de defectos, y el balance final de cierre de calidad de los 4 módulos del sistema."
     )
 
     add_h2("1.3 Referencias normativas y de proyecto")
@@ -557,7 +508,7 @@ def build_document():
     )
     add_body(
         "El sistema soporta dos perfiles principales: Clientes (usuarios finales con control autónomo de sus finanzas) "
-        "y Administradores (responsables de auditar, verificar elegibilidad y aprobar o rechazar solicitudes de crédito)."
+        "y Administradores (responsables de auditar, verificar elegibilidad y gestionar operativamente las solicitudes del ecosistema)."
     )
 
     add_h2("2.2 Contexto organizacional y operativo")
@@ -575,7 +526,7 @@ def build_document():
     )
     add_bullet("Controladores Express 5, rutas versionadas (/api/v1) y validadores Zod.", "Presentation Layer: ")
     add_bullet("Casos de uso puros (Use Cases) y DTOs que orquestan las operaciones de negocio.", "Application Layer: ")
-    add_bullet("Entidades centrales del dominio bancario, servicios de dominio y reglas de negocio.", "Domain Layer: ")
+    add_bullet("Entidades centrales del dominio bancario, servicios de dominio (LoanCalculator) y reglas de negocio.", "Domain Layer: ")
     add_bullet("Repositorios Supabase, clientes de correo y adaptadores externos.", "Infrastructure Layer: ")
 
     add_callout(
@@ -586,12 +537,12 @@ def build_document():
 
     add_h2("2.4 Procesos, módulos y funcionalidades bajo evaluación")
     add_styled_table(
-        ["Módulo", "Funcionalidades Principales en Alcance", "Responsable QA"],
+        ["Módulo", "Funcionalidades Principales en Alcance", "Integrante Responsable"],
         [
-            ["Auth & Seguridad", "Registro, login/logout, tokens JWT, verificación 2FA, reseteo de contraseña", "Dubin Andres Soto"],
-            ["Créditos (Loans)", "Simulador de cuotas, envío de solicitud, historial, aprobación/rechazo admin", "Andres Bedoya Cano"],
-            ["Ahorros (Pockets)", "Creación, edición, eliminación de bolsillos, abonos y retiros de cuenta", "Tomas Henao"],
-            ["Tarjetas Virtuales", "Emisión de tarjetas, revelación segura de datos sensibles, bloqueo/desbloqueo", "Stiven Bustamante"],
+            ["Autenticación & Seguridad", "Registro, login/logout, tokens JWT, verificación 2FA, reseteo de contraseña", "Dubin Andres Soto"],
+            ["Créditos y Préstamos", "Simulador de cuotas, envío de solicitud, historial, aprobación/rechazo admin", "Andres Bedoya Cano"],
+            ["Ahorros (Bolsillos)", "Creación, edición, eliminación de bolsillos, abonos y retiros de cuenta", "Tomas Henao"],
+            ["Tarjetas Virtuales", "Emisión de tarjetas, revelación segura de datos sensibles, bloqueo/desbloqueo", "Stiven Alejandro Bustamante"],
         ],
         [1.8, 3.2, 1.5]
     )
@@ -602,16 +553,16 @@ def build_document():
     add_h1("3. BASE DE PRUEBAS (TEST BASIS)")
     add_body(
         "La base de pruebas comprende todos los artefactos de ingeniería y especificaciones utilizados como "
-        "referencia para derivar las condiciones y casos de prueba:"
+        "referencia para derivar las condiciones y casos de prueba de los cuatro módulos del sistema:"
     )
     add_styled_table(
-        ["Artefacto de Referencia", "Descripción y Alcance", "Trazabilidad"],
+        ["Artefacto de Referencia", "Descripción y Alcance", "Módulos Cubiertos"],
         [
             ["Requisitos Funcionales (RF-01 a RF-81)", "Catálogo formal de requisitos funcionales del sistema", "Auth, Loans, Pockets, Cards"],
-            ["Historias de Usuario (HU-27 a HU-32)", "Backlog ágil y criterios de aceptación del módulo Créditos", "Loans (Simulación/Aprobación)"],
+            ["Historias de Usuario (HU)", "Backlog ágil y criterios de aceptación por módulo", "Todos los módulos"],
             ["Código Fuente de Producción", "backend/src/ y frontend/src/ auditados bajo Clean Architecture", "Totalidad del sistema"],
             ["Contratos API (docs/api/endpoints.md)", "Especificación HTTP formal: payloads, headers y status codes", "Integración REST"],
-            ["Escenarios BDD (e2e/serenity/features/)", "Criterios de aceptación formalizados en lenguaje Gherkin", "Loans E2E Acceptance"],
+            ["Escenarios BDD (Gherkin)", "Criterios de aceptación formalizados en lenguaje natural", "Flujos E2E de negocio"],
             ["Historial Git (23/07/2026 - 26/10/2026)", "Registro de commits, refactorizaciones y fixes de calidad", "Trazabilidad continua"],
         ],
         [2.2, 3.0, 1.3]
@@ -624,7 +575,7 @@ def build_document():
     add_bullet("Verificar que los requisitos funcionales de los 4 módulos cumplan con las especificaciones técnicas.", "RF Cumplidos: ")
     add_bullet("Validar la integridad transaccional de movimientos entre cuenta principal y bolsillos sin duplicación o pérdida de fondos.", "Integridad Financiera: ")
     add_bullet("Confirmar la robustez de los mecanismos de seguridad (bloqueo por 429, protección de rutas 401/403, tokens alterados).", "Seguridad Estricta: ")
-    add_bullet("Asegurar que el flujo de aprobación y rechazo de créditos por el Administrador actualice estados atómicamente.", "Ciclo de Créditos: ")
+    add_bullet("Asegurar que el flujo de aprobación y rechazo de solicitudes actualice estados atómicamente y genere cuentas de crédito.", "Ciclo de Créditos: ")
     add_bullet("Identificar y corregir oportunamente cualquier defecto de severidad Alta o Crítica antes del cierre del ciclo.", "Mitigación de Bugs: ")
     add_bullet("Implementar y sustentar 3 tecnologías avanzadas de prueba: Playwright MCP, Cypress Cloud + AI y ReportPortal.", "Objetivo de Vanguardia: ")
 
@@ -648,7 +599,7 @@ def build_document():
     add_h2("5.3 Supuestos y Restricciones")
     add_bullet("Disponibilidad del ambiente local de pruebas con backend en :3001 y frontend en :3000.", "Supuesto: ")
     add_bullet("Datos de prueba precargados para usuarios clientes y administradores con credenciales conocidas.", "Supuesto: ")
-    add_bullet("Equipo conformado por 4 ingenieros de pruebas con dedicación académica semestral.", "Restricción: ")
+    add_bullet("Equipo conformado por 4 ingenieros de pruebas con dedicación académica semestral colaborativa.", "Restricción: ")
     add_bullet("Uso de cuotas gratuitas de API de Google Gemini para las pruebas exploratorias con Stagehand.", "Restricción: ")
 
     # ==============================================================
@@ -657,7 +608,7 @@ def build_document():
     add_h1("6. ENFOQUE Y ESTRATEGIA DE PRUEBAS")
     add_body(
         "Se adoptó una Pirámide de Pruebas Ampliada con Inteligencia Artificial, que combina pruebas tradicionales "
-        "deterministas con pruebas semánticas y observabilidad centralizada:"
+        "deterministas con pruebas semánticas y observabilidad centralizada para todo el sistema:"
     )
 
     add_bullet("Stagehand + Gemini Flash 2.0 (3 escenarios exploratorios sin selectores rígidos).", "Capa 4 — E2E con IA: ")
@@ -678,27 +629,26 @@ def build_document():
     add_h1("7. NIVELES DE PRUEBA")
     add_h2("7.1 Pruebas de Componente (Unitarias)")
     add_body(
-        "Ejecutadas con Vitest en backend y frontend. En backend cubren la capa Domain (LoanCalculator, LoanApplication) "
-        "y Application (ApproveLoan, CreateLoanApplication, SimulateLoan, RejectLoan). En frontend cubren "
-        "los hooks (useLoans, useAdminLoans) y componentes aislados (LoanCard, LoansClient)."
+        "Ejecutadas con Vitest en backend y frontend. En backend cubren la capa Domain (LoanCalculator, LoanApplication, Pocket, User) "
+        "y Application (casos de uso de los cuatro módulos). En frontend cubren los hooks y componentes aislados."
     )
 
     add_h2("7.2 Pruebas de Integración")
     add_body(
         "Verifican la comunicación entre Presentation (controladores Express), Application (casos de uso) "
-        "y la persistencia en Supabase. Se certifican los 5 endpoints del módulo de Créditos con respuestas HTTP reales."
+        "y la persistencia en Supabase. Se certifican los endpoints de los módulos con respuestas HTTP reales."
     )
 
     add_h2("7.3 Pruebas de Sistema")
     add_body(
-        "Validan el flujo completo del sistema integrado desplegado localmente. Cypress automatiza 18 pruebas "
-        "cubriendo simulación, validación de ingresos, solicitud, ciclo de aprobación administrativa y seguridad."
+        "Validan el flujo completo del sistema integrado desplegado localmente. Cypress automatiza pruebas "
+        "end-to-end cubriendo registro, autenticación, simulación, solicitud, ciclo de aprobación y seguridad."
     )
 
     add_h2("7.4 Pruebas de Aceptación")
     add_body(
-        "Formalizadas con Serenity/JS + Cucumber bajo el patrón Screenplay. 7 escenarios Gherkin en lenguaje "
-        "natural certifican el cumplimiento de las Historias de Usuario HU-27 a HU-32 con evidencia navegable HTML."
+        "Formalizadas con Serenity/JS + Cucumber bajo el patrón Screenplay. Escenarios Gherkin en lenguaje "
+        "natural certifican el cumplimiento de las historias de usuario con evidencia navegable HTML."
     )
 
     add_styled_table(
@@ -706,7 +656,7 @@ def build_document():
         [
             ["Unitario Backend", "Vitest (Clean Architecture)", "12 suites / 96 tests", "PASS ✅"],
             ["Unitario Frontend", "Vitest + Testing Library", "9 suites / 69 tests", "PASS ✅"],
-            ["Integración API", "Vitest + Supertest", "5 endpoints de Loans", "PASS ✅"],
+            ["Integración API", "Vitest + Supertest", "Endpoints de negocio", "PASS ✅"],
             ["Sistema E2E Funcional", "Cypress 15.21.1", "18 specs (5 suites)", "PASS ✅"],
             ["Aceptación BDD", "Serenity/JS + Screenplay", "7 escenarios Gherkin", "PASS ✅"],
             ["Exploratorio con IA", "Stagehand + Gemini Flash", "3 escenarios cognitivos", "PASS ✅"],
@@ -720,8 +670,8 @@ def build_document():
     add_h1("8. TIPOS DE PRUEBA")
     add_h2("8.1 Pruebas funcionales")
     add_body(
-        "Verifican el comportamiento frente a los requerimientos: CRUD de préstamos, cálculo de amortización francesa, "
-        "transición de estados PENDING → APPROVED/REJECTED y creación automática de cuenta tipo CREDITO."
+        "Verifican el comportamiento frente a los requerimientos: registro/login de usuarios, movimientos de bolsillos, "
+        "cálculo de amortización de créditos, emisión de tarjetas y transición de estados atómicos en base de datos."
     )
 
     add_h2("8.2 Pruebas no funcionales")
@@ -747,11 +697,11 @@ def build_document():
     add_styled_table(
         ["Técnica Aplicada", "Principio de Diseño", "Implementación en FuBanking"],
         [
-            ["Partición de Equivalencia", "Clases válidas e inválidas", "Monto válido ($500K-$50M) vs negativos o cero"],
+            ["Partición de Equivalencia", "Clases válidas e inválidas", "Montos válidos vs negativos, cero o strings"],
             ["Valores Límite (BVA)", "Fronteras de rangos", "Límites mínimo ($500.000) y máximo ($50.000.000)"],
             ["Tablas de Decisión", "Combinatoria de condiciones", "Matriz: (Ingreso validado, Edad >=18, Doc OK) → Apto"],
             ["Transición de Estados", "Ciclo de vida de entidades", "Solicitud → PENDING → APPROVED/REJECTED"],
-            ["BDD Given/When/Then", "Especificación ejecutable", "Escenarios Gherkin en Serenity/JS para Créditos"],
+            ["BDD Given/When/Then", "Especificación ejecutable", "Escenarios Gherkin en Serenity/JS"],
             ["Exploración Guiada por IA", "Comprensión semántica", "Stagehand interactúa con UI sin selectores XPath rígidos"],
             ["Sesión de Prueba (SBTM)", "Prueba heurística basada en tiempo", "Playwright MCP Server con agente autónomo y traza JSON"],
         ],
@@ -766,8 +716,8 @@ def build_document():
         ["Componente de Infraestructura", "Detalle de Configuración", "Propósito en Pruebas"],
         [
             ["Servidor Backend API", "Node.js 22 + Express 5 (:3001/api/v1)", "Endpoints REST y middlewares de seguridad"],
-            ["Cliente Frontend Web", "Next.js 16 + React 19 (:3000)", "Interfaz gráfica responsive y simulador"],
-            ["Base de Datos", "PostgreSQL gestionado en Supabase Cloud", "Persistencia transaccional de créditos y usuarios"],
+            ["Cliente Frontend Web", "Next.js 16 + React 19 (:3000)", "Interfaz gráfica responsive y módulos de banca"],
+            ["Base de Datos", "PostgreSQL gestionado en Supabase Cloud", "Persistencia transaccional de todos los módulos"],
             ["Navegadores de Ejecución", "Chromium y Electron (modo Headless y GUI)", "Ejecución de Cypress, Serenity y Playwright"],
             ["Contenedores Docker", "Docker Desktop (ReportPortal en puerto :8088)", "Observabilidad y dashboards centralizados"],
             ["Pipeline CI/CD", "Jenkins (Jenkinsfile) ejecutado en ramas dev/main", "Construcción automatizada e integración continua"],
@@ -783,7 +733,7 @@ def build_document():
     add_styled_table(
         ["Rol del Usuario", "Correo Electrónico de Prueba", "Finalidad en las Suites"],
         [
-            ["Cliente Estándar", "bedoyacanoandres2@gmail.com", "Simulación de crédito, solicitud y consulta de estado"],
+            ["Cliente Estándar", "bedoyacanoandres2@gmail.com", "Operaciones de cliente: simulación, bolsillos, tarjetas"],
             ["Administrador", "bedoyacanoandres@gmail.com", "Revisión de solicitudes pendientes, aprobación y rechazo"],
         ],
         [1.8, 2.5, 2.2]
@@ -817,10 +767,11 @@ def build_document():
     add_bullet("0 defectos abiertos de severidad Crítica o Alta sin resolución.")
     add_bullet("Evidencias generadas: reportes Mochawesome, Serenity HTML, capturas y trazas JSON.")
 
-    add_h2("12.3 Criterios de aceptación del módulo de Créditos")
-    add_bullet("Simulación de cuotas exactas mediante el servicio de dominio LoanCalculator.")
-    add_bullet("Bloqueo automático de nuevas solicitudes si ya existe una solicitud PENDING.")
-    add_bullet("Creación de cuenta tipo CREDITO al ser aprobado un préstamo por el Administrador.")
+    add_h2("12.3 Criterios de aceptación por módulo")
+    add_bullet("Auth: Autenticación JWT y bloqueo de seguridad 429 ante intentos reiterados.", "Módulo Usuarios: ")
+    add_bullet("Bolsillos: Integridad de saldos en abonos y retiros entre cuenta principal y bolsillo.", "Módulo Bolsillos: ")
+    add_bullet("Créditos: Amortización exacta con LoanCalculator y creación de cuenta de crédito al aprobar.", "Módulo Créditos: ")
+    add_bullet("Tarjetas: Emisión correcta y revelación segura de datos sensibles.", "Módulo Tarjetas: ")
 
     # ==============================================================
     # SECCIÓN 13: GESTIÓN DE DEFECTOS
@@ -834,9 +785,9 @@ def build_document():
         ["Severidad", "Criterio de Clasificación", "Ejemplo en el Proyecto", "Tiempo Límite"],
         [
             ["Crítica", "Bloqueo total del sistema o corrupción de base de datos", "Fallo total de autenticación o caída de Supabase", "Inmediato (P1)"],
-            ["Alta", "Funcionalidad principal rota sin alternativa viable", "Error al crear la solicitud de crédito", "< 24 horas (P2)"],
+            ["Alta", "Funcionalidad principal rota sin alternativa viable", "Error al crear la solicitud de crédito o bolsillo", "< 24 horas (P2)"],
             ["Media", "Fallo funcional con alternativa o desvío menor", "Cálculo de cuota con redondeo impreciso", "< 48 horas (P3)"],
-            ["Baja", "Defecto cosmético, tipográfico o visual menor", "Desalineación de botón en simulación", "Fin de sprint (P4)"],
+            ["Baja", "Defecto cosmético, tipográfico o visual menor", "Desalineación de botón o texto con typo", "Fin de sprint (P4)"],
         ],
         [1.3, 2.4, 1.8, 1.0]
     )
@@ -867,15 +818,19 @@ def build_document():
     # SECCIÓN 15: ORGANIZACIÓN Y RESPONSABILIDADES
     # ==============================================================
     add_h1("15. ORGANIZACIÓN Y RESPONSABILIDADES")
+    add_body(
+        "El equipo de pruebas opera bajo un modelo horizontal y colaborativo, donde cada integrante lidera "
+        "el aseguramiento de calidad de su módulo correspondiente con la misma jerarquía y corresponsabilidad:"
+    )
     add_styled_table(
-        ["Rol Asignado", "Integrante", "Módulo Asignado", "Responsabilidades Específicas"],
+        ["Integrante del Equipo", "Módulo Asignado", "Rol en el Proyecto", "Responsabilidades Específicas"],
         [
-            ["QA Lead & Automation Lead", "Andres Bedoya Cano", "Loans (Créditos)", "Plan maestro, Cypress E2E, Serenity BDD, Stagehand y 3 herramientas"],
-            ["QA Tester de Módulo", "Dubin Andres Soto", "Auth & Usuarios", "Pruebas de registro, login, tokens JWT y autenticación 2FA"],
-            ["QA Tester de Módulo", "Tomas Henao", "Pockets (Bolsillos)", "Pruebas de bolsillos de ahorro, abonos e integridad de saldos"],
-            ["QA Tester de Módulo", "Stiven Alejandro Bustamante", "Virtual Cards", "Pruebas de tarjetas virtuales, revelación de datos y bloqueo"],
+            ["Andres Bedoya Cano", "Créditos y Préstamos", "Ingeniero de Calidad QA", "Simulador, aprobación admin, suites Cypress E2E, BDD y herramientas"],
+            ["Dubin Andres Soto", "Autenticación & Usuarios", "Ingeniero de Calidad QA", "Pruebas de registro, login, tokens JWT, seguridad y 2FA"],
+            ["Tomas Henao", "Ahorros (Bolsillos)", "Ingeniero de Calidad QA", "Pruebas de bolsillos de ahorro, abonos, retiros e integridad de saldos"],
+            ["Stiven Alejandro Bustamante", "Tarjetas Virtuales", "Ingeniero de Calidad QA", "Pruebas de emisión de tarjetas, datos sensibles y bloqueo/desbloqueo"],
         ],
-        [1.7, 1.8, 1.2, 1.8]
+        [1.7, 1.6, 1.4, 1.8]
     )
 
     # ==============================================================
@@ -883,16 +838,16 @@ def build_document():
     # ==============================================================
     add_h1("16. CRONOGRAMA DE ACTIVIDADES")
     add_styled_table(
-        ["Semana", "Período (2026)", "Fase / Actividad Desarrollada", "Responsable"],
+        ["Semana", "Período (2026)", "Fase / Actividad Desarrollada", "Equipo Involucrado"],
         [
-            ["S1-S2", "23 Jul - 05 Ago", "Configuración inicial, arquitectura limpia y setup del repositorio", "Todo el equipo"],
-            ["S3-S4", "06 Ago - 19 Ago", "Pruebas unitarias de backend e integración API con Vitest", "Bedoya, Soto"],
-            ["S5-S6", "20 Ago - 02 Sep", "Diseño de casos de prueba de sistema y validación de requisitos", "Todo el equipo"],
-            ["S7-S8", "03 Sep - 16 Sep", "Implementación de suites Cypress E2E para el simulador de créditos", "Bedoya"],
-            ["S9-S10", "17 Sep - 30 Sep", "Adopción de BDD con Serenity/JS (Screenplay) y Katalon Recorder", "Bedoya"],
-            ["S11", "01 Oct - 07 Oct", "Pruebas con IA generativa mediante Stagehand y Gemini Flash", "Bedoya"],
-            ["S12-S13", "08 Oct - 21 Oct", "Implementación de Playwright MCP, Cypress Cloud y ReportPortal", "Bedoya"],
-            ["S14", "22 Oct - 26 Oct", "Regresión final, refactorización de código, plan v2 y entrega", "Todo el equipo"],
+            ["S1-S2", "23 Jul - 05 Ago", "Configuración inicial, arquitectura limpia y setup del repositorio", "Equipo de Testing"],
+            ["S3-S4", "06 Ago - 19 Ago", "Pruebas unitarias de backend e integración API con Vitest", "Equipo de Testing"],
+            ["S5-S6", "20 Ago - 02 Sep", "Diseño de casos de prueba de sistema y validación de requisitos", "Equipo de Testing"],
+            ["S7-S8", "03 Sep - 16 Sep", "Implementación de suites Cypress E2E para flujos de usuario", "Equipo de Testing"],
+            ["S9-S10", "17 Sep - 30 Sep", "Adopción de BDD con Serenity/JS (Screenplay) y Katalon Recorder", "Equipo de Testing"],
+            ["S11", "01 Oct - 07 Oct", "Pruebas con IA generativa mediante Stagehand y Gemini Flash", "Equipo de Testing"],
+            ["S12-S13", "08 Oct - 21 Oct", "Implementación de Playwright MCP, Cypress Cloud y ReportPortal", "Equipo de Testing"],
+            ["S14", "22 Oct - 26 Oct", "Regresión final de los 4 módulos, refactorización y entrega", "Equipo de Testing"],
         ],
         [0.9, 1.3, 3.2, 1.1]
     )
@@ -902,7 +857,7 @@ def build_document():
     # ==============================================================
     add_h1("17. MÉTRICAS Y SEGUIMIENTO")
     add_callout(
-        "Indicador Global de Calidad",
+        "Indicador Global de Calidad del Sistema",
         "Total de verificaciones automatizadas activas: 49 (39 tests funcionales/seguridad/a11y + 7 BDD + 3 IA). Tasa de aprobación: 100% PASS."
     )
 
@@ -911,7 +866,7 @@ def build_document():
         [
             ["Pruebas Unitarias Backend", "Vitest", "96 pruebas", "100%", "PASS ✅"],
             ["Pruebas Unitarias Frontend", "Vitest + React Testing Library", "69 pruebas", "100%", "PASS ✅"],
-            ["Integración API Créditos", "Vitest (Supertest)", "5 endpoints", "100%", "PASS ✅"],
+            ["Integración API", "Vitest (Supertest)", "Endpoints REST", "100%", "PASS ✅"],
             ["Cypress E2E Funcional", "Cypress 15.21.1", "18 pruebas (5 specs)", "100%", "PASS ✅"],
             ["BDD Criterios de Aceptación", "Serenity/JS + Cucumber", "7 escenarios", "100%", "PASS ✅"],
             ["Exploración Asistida por IA", "Stagehand + Gemini Flash", "3 escenarios", "100%", "PASS ✅"],
@@ -948,8 +903,8 @@ def build_document():
     add_h2("19.1 Resumen ejecutivo")
     add_body(
         "El ciclo de pruebas de FuBank fue completado exitosamente dentro del marco del curso Validación y Verificación "
-        "de Software (semestre 2026-2). La estrategia desplegada garantizó que el módulo de Créditos fuera cubierto "
-        "en todas las dimensiones de la pirámide de calidad, complementada con herramientas de vanguardia tecnológica."
+        "de Software (semestre 2026-2). La estrategia desplegada por el equipo garantizó que los cuatro módulos "
+        "fueran cubiertos en las distintas dimensiones de la pirámide de calidad, complementada con herramientas de vanguardia tecnológica."
     )
 
     add_h2("19.2 Balance de calidad")
@@ -967,9 +922,9 @@ def build_document():
     )
 
     add_h2("19.3 Conclusiones y recomendaciones")
-    add_bullet("El módulo de Créditos cuenta con una cobertura robusta y reproducible que protege contra regresiones.", "Robustez Demostrada: ")
-    add_bullet("La incorporación de Stagehand y Playwright MCP evidencia la viabilidad de pruebas asistidas por IA para flujos dinámicos.", "Innovación Técnica: ")
-    add_bullet("Se recomienda extender en sprints posteriores la suite Cypress E2E a los módulos de Bolsillos y Tarjetas Virtuales.", "Recomendación Futura: ")
+    add_bullet("Los módulos evaluados cuentan con cobertura robusta y reproducible que protege contra regresiones.", "Robustez Demostrada: ")
+    add_bullet("La incorporación de Stagehand y Playwright MCP evidencia la viabilidad de pruebas asistidas por IA para flujos bancarios.", "Innovación Técnica: ")
+    add_bullet("El trabajo en equipo permitió abordar múltiples niveles de prueba con criterios uniformes y calidad homogénea.", "Trabajo Colaborativo: ")
 
     # ==============================================================
     # SECCIÓN 20: GESTIÓN DEL DOCUMENTO
@@ -977,22 +932,22 @@ def build_document():
     add_h1("20. GESTIÓN DEL DOCUMENTO")
     add_h2("20.1 Historial de versiones")
     add_styled_table(
-        ["Versión", "Fecha", "Descripción del Cambio", "Autor"],
+        ["Versión", "Fecha", "Descripción del Cambio", "Equipo de Autores"],
         [
-            ["1.0", "03/08/2026", "Estructura inicial e introducción base del plan", "Equipo FuBanking"],
-            ["2.0", "26/10/2026", "Documento completo auditado con evidencia de testing y diseño de marca", "Andres Bedoya Cano"],
+            ["1.0", "03/08/2026", "Estructura inicial e introducción base del plan", "Equipo de Testing FuBanking"],
+            ["2.0", "26/10/2026", "Documento completo auditado con evidencia de testing y diseño corporativo", "Equipo de Testing FuBanking"],
         ],
         [1.0, 1.3, 3.0, 1.2]
     )
 
-    add_h2("20.2 Firmas de aprobación formal")
+    add_h2("20.2 Firmas de aprobación formal del equipo")
     add_styled_table(
-        ["Rol / Cargo", "Nombre Completo", "Firma", "Fecha"],
+        ["Rol / Función", "Nombre Completo", "Firma", "Fecha"],
         [
-            ["Líder de Testing (QA Lead)", "Andres Bedoya Cano", "_________________________", "26/10/2026"],
-            ["Ingeniero QA (Auth)", "Dubin Andres Soto", "_________________________", "26/10/2026"],
-            ["Ingeniero QA (Bolsillos)", "Tomas Henao", "_________________________", "26/10/2026"],
-            ["Ingeniero QA (Tarjetas)", "Stiven Alejandro Bustamante", "_________________________", "26/10/2026"],
+            ["Ingeniero de Calidad (Créditos)", "Andres Bedoya Cano", "_________________________", "26/10/2026"],
+            ["Ingeniero de Calidad (Auth)", "Dubin Andres Soto", "_________________________", "26/10/2026"],
+            ["Ingeniero de Calidad (Bolsillos)", "Tomas Henao", "_________________________", "26/10/2026"],
+            ["Ingeniero de Calidad (Tarjetas)", "Stiven Alejandro Bustamante", "_________________________", "26/10/2026"],
             ["Docente Evaluador", "Profesor Asignatura", "_________________________", "___________"],
         ],
         [1.8, 1.8, 1.8, 1.1]

@@ -50,3 +50,7 @@ mochawesome-report/
 # Stagehand
 e2e/stagehand/node_modules/
 e2e/stagehand/evidence/*.png
+
+# Python
+__pycache__/
+*.pyc

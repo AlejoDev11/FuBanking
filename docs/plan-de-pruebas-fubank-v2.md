@@ -2,8 +2,8 @@
 **Proyecto:** FuBanking  
 **Versión:** 2.0  
 **Fecha:** 03/08/2026  
-**Equipo de Pruebas:** Andres Bedoya, Dubin Andres Soto, Tomas Henao, Stiven Alejandro Bustamante  
-**Módulos bajo responsabilidad:** Auth (Soto), Loans/Créditos (Bedoya), Pockets/Bolsillos (Henao), Virtual Cards/Tarjetas Virtuales (Bustamante)
+**Equipo de Pruebas (Horizontal sin jerarquías):** Andres Bedoya Cano, Dubin Andres Soto, Tomas Henao, Stiven Alejandro Bustamante  
+**Módulos en Alcance del Sistema:** Autenticación & Seguridad (Soto) · Créditos y Préstamos (Bedoya) · Ahorros/Bolsillos (Henao) · Tarjetas Virtuales (Bustamante)
 
 ---
 
@@ -452,12 +452,14 @@ Dado que el proyecto es académico y el equipo es pequeño (4 personas), la gest
 
 # 15. ORGANIZACIÓN Y RESPONSABILIDADES
 
-| Rol | Integrante | Módulo | Responsabilidades |
+El equipo de pruebas opera bajo un modelo horizontal y colaborativo, donde cada integrante lidera el aseguramiento de calidad de su módulo correspondiente con la misma jerarquía y corresponsabilidad técnica:
+
+| Integrante | Módulo Asignado | Rol en el Proyecto | Responsabilidades Específicas |
 |---|---|---|---|
-| Líder de Testing / QA Lead | Andres Bedoya Cano | Loans (Créditos) | Coordinación del plan, suite Cypress E2E, Serenity/JS, Stagehand, herramientas avanzadas (MCP, Cloud, ReportPortal) |
-| Tester de Módulo | Dubin Andres Soto | Auth | Pruebas de autenticación, JWT, 2FA, recuperación de contraseña |
-| Tester de Módulo | Tomas Henao | Pockets (Bolsillos) | Pruebas de creación, movimientos, integridad de saldos |
-| Tester de Módulo | Stiven Alejandro Bustamante | Virtual Cards | Pruebas de solicitud, revelación de datos sensibles, bloqueo/desbloqueo |
+| Andres Bedoya Cano | Créditos y Préstamos | Ingeniero de Calidad QA | Simulador, aprobación admin, suites Cypress E2E, BDD y herramientas |
+| Dubin Andres Soto | Autenticación & Usuarios | Ingeniero de Calidad QA | Pruebas de registro, login, tokens JWT, seguridad y 2FA |
+| Tomas Henao | Ahorros (Bolsillos) | Ingeniero de Calidad QA | Pruebas de bolsillos de ahorro, abonos, retiros e integridad de saldos |
+| Stiven Alejandro Bustamante | Tarjetas Virtuales | Ingeniero de Calidad QA | Pruebas de emisión de tarjetas, datos sensibles y bloqueo/desbloqueo |
 
 **Herramientas de colaboración:** GitHub (control de versiones y gestión de issues), canales del equipo (comunicación ágil)
 
@@ -573,7 +575,7 @@ El sistema FuBank, en su módulo de Créditos, cumple con todos los criterios de
 | Versión | Fecha | Descripción | Autor |
 |---|---|---|---|
 | 1.0 | 03/08/2026 | Versión inicial — estructura base e introducción | Equipo FuBanking |
-| 2.0 | 26/10/2026 | Versión completa — secciones 8 a 20 completadas con evidencia real de testing | Andres Bedoya Cano |
+| 2.0 | 26/10/2026 | Versión completa — secciones 8 a 20 completadas con evidencia real de testing | Equipo de Testing FuBanking |
 
 ## 20.2 Control de cambios
 
@@ -593,12 +595,12 @@ El sistema FuBank, en su módulo de Créditos, cumple con todos los criterios de
 | §18 Entregables | Completado con ubicaciones reales en el repositorio |
 | §19 Informe final | Completado con resultados, hallazgos y conclusión |
 
-## 20.3 Aprobaciones
+## 20.3 Firmas de aprobación formal del equipo
 
-| Rol | Nombre | Firma | Fecha |
+| Rol / Función | Nombre Completo | Firma | Fecha |
 |---|---|---|---|
-| QA Lead | Andres Bedoya Cano | ___________________ | 26/10/2026 |
-| Integrante | Dubin Andres Soto | ___________________ | 26/10/2026 |
-| Integrante | Tomas Henao | ___________________ | 26/10/2026 |
-| Integrante | Stiven Alejandro Bustamante | ___________________ | 26/10/2026 |
-| Docente | ___________________ | ___________________ | ___________ |
+| Ingeniero de Calidad (Créditos) | Andres Bedoya Cano | ___________________ | 26/10/2026 |
+| Ingeniero de Calidad (Auth) | Dubin Andres Soto | ___________________ | 26/10/2026 |
+| Ingeniero de Calidad (Bolsillos) | Tomas Henao | ___________________ | 26/10/2026 |
+| Ingeniero de Calidad (Tarjetas) | Stiven Alejandro Bustamante | ___________________ | 26/10/2026 |
+| Docente Evaluador | Profesor Asignatura | ___________________ | ___________ |
