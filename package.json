@@ -56,7 +56,7 @@
     "test:cypress:bolsillos:api": "cypress run --config-file cypress.bolsillos.config.ts --expose tags=@api",
     "test:cypress:bolsillos:web": "cypress run --config-file cypress.bolsillos.config.ts --expose tags=@web",
     "test:cypress:bolsillos:seguridad": "cypress run --config-file cypress.bolsillos.config.ts --expose tags=@seguridad",
-    "test:stagehand:bolsillos": "npm --prefix e2e/stagehand run test:bolsillos",
+    "test:stagehand:bolsillos": "cd e2e/stagehand && npx tsx src/bolsillos/index.ts",
     "test:pw-agents:bolsillos": "playwright test -c test/pruebas-herramientas/herramientas-alejandro/01-playwright-test-agents/playwright.config.ts",
     "test:postman:bolsillos": "node test/pruebas-herramientas/herramientas-alejandro/02-postman-postbot/run-newman.mjs",
     "test:keploy:bolsillos": "powershell -ExecutionPolicy Bypass -File test/pruebas-herramientas/herramientas-alejandro/03-keploy/keploy.ps1 test",

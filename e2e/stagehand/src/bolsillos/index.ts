@@ -7,8 +7,8 @@ import { runScenario, scenarios } from './scenarios.js';
 
 /**
  * Suite Stagehand de Bolsillos (5 funcionalidades) y Depositar.
- *   npm run test:bolsillos              → los 6 escenarios
- *   npm run test:bolsillos -- B03 D06   → solo los indicados (por id parcial)
+ *   npm run test:stagehand:bolsillos              → los 6 escenarios (desde la raíz)
+ *   npm run test:stagehand:bolsillos -- B03 D06   → solo los indicados (por id parcial)
  *
  * El resumen Markdown se arma con TODOS los reportes de evidence/bolsillos, así
  * que repetir unos escenarios no borra el resultado de los demás.
