@@ -52,7 +52,31 @@ npm run test:pw-agents:bolsillos
 - `evidence/html-report/`, `evidence/results.json`: resultado de la corrida.
 - Capturas de la sesión de Claude Code con las llamadas de cada agente (planner → generator → healer).
 
-## Estado
+## Resultado (2026-10-27)
 
-⏳ **Pendiente de ejecución.** Seed y fixtures listos (`--list` encuentra el seed). Los planes y tests
-generados se agregan cuando Supabase esté disponible: el registro de clientes de prueba depende de él.
+| Agente | Qué hizo | Salida |
+|---|---|---|
+| 🎭 planner | 12 escenarios (2 por funcionalidad: exitoso y de error) con pasos, toasts, montos y oráculo de backend | `specs/bolsillos-depositar.md` |
+| 🎭 generator | 3 sesiones (Crear + Consultar, Editar + Eliminar, Transferir + Depositar); ejecutó cada paso en vivo antes de escribirlo | 6 archivos en `tests/` |
+| 🎭 healer | No hubo tests fallidos que reparar | — |
+
+**Corrida de la suite generada:** `npm run test:pw-agents:bolsillos` → **13/13** (12 escenarios + seed) en 2,2 min.
+Evidencia: `evidence/html-report/` y `evidence/results.json`.
+
+| Archivo | Escenarios |
+|---|---|
+| `crear-bolsillo.spec.ts` | CRE-01 crear con saldo, CRE-02 nombre vacío y monto > saldo |
+| `consultar-bolsillos.spec.ts` | CON-01 lista y selects, CON-02 lista vacía y fallo de la API (`page.route`) |
+| `editar-bolsillo.spec.ts` | EDI-01 renombrar y aumentar, EDI-02 nombre vacío y monto > disponible |
+| `eliminar-bolsillo.spec.ts` | ELI-01 eliminar con confirmación, ELI-02 cancelar y bolsillo ya borrado |
+| `transferir-entre-bolsillos.spec.ts` | TRA-01 transferir, TRA-02 sin datos, saldo insuficiente y mismo bolsillo |
+| `depositar.spec.ts` | DEP-01 abonar 150.000, DEP-02 monto 0 y negativo |
+
+### Aportes y limitaciones observados
+
+- **Aportes:** el generator ajustó el plan a la UI real. Las tarjetas y los selects salen en otro orden, así que los tests buscan por nombre. Los toasts se apilan, así que cierra el anterior antes de repetir uno. Además, `/accounts` formatea con espacio no separable y agregó cabeceras CORS al simular un 500. Cada test termina verificando saldo y bolsillos en el backend.
+- **Limitaciones:** la primera vez el planner no pudo abrir el navegador. El servidor MCP pedía `chromium-1248` y había que correr `npx playwright install chromium`, así que el plan salió del código fuente y de los selectores de Serenity. El generator no tiene shell: escribe los tests pero no los corre con `npx playwright test`; eso se hizo aparte. La latencia de las herramientas MCP (más de 4 s) a veces no alcanzaba a leer un toast en vivo.
+- **Hallazgos de producto que dejó a la vista:**
+  - En DEP-02 el error en línea no se limpia al cambiar el monto.
+  - Tras un borrado fallido (ELI-02) la tarjeta vieja sigue en pantalla.
+  - Confirmaron por tercera vía el defecto D-05: la doble resta al crear varios bolsillos.
