@@ -1,22 +1,22 @@
 # Matriz de trazabilidad — Bolsillos y Depositar
 
-**Responsable:** Alejandro Bustamante · **Fecha de ejecución:** 2026-10-26  
+**Responsable:** Stiven Alejandro Bustamante · **Fecha de ejecución:** 2026-10-26  
 **Libro completo:** [`_archive/matriz-trazabilidad-bolsillos.xlsx`](_archive/matriz-trazabilidad-bolsillos.xlsx) (hojas *Leyenda*, *Matriz de Trazabilidad*, *Cobertura por Requisito* y *Defectos*). La matriz de todo el equipo está en [`matriz-trazabilidad-equipo.md`](matriz-trazabilidad-equipo.md).
 
 Cada fila relaciona **requisito → funcionalidad → escenario → caso de prueba → herramienta → resultado esperado → resultado obtenido → estado → evidencia → defecto**. Las filas salen de los reportes reales de ejecución (Cypress, Serenity/JS, Newman, Keploy, Stagehand, Vitest) y de los casos TC-101…152 del Excel; la cobertura del libro se calcula con `COUNTIFS`.
 
 ## Cobertura por requisito
 
-| Requisito | Funcionalidad | Cypress + Gherkin | Keploy | Manual + Katalon | Postman + Newman | Serenity/JS Screenplay + Gherkin | Stagehand | Vitest · performance | Vitest · regresión + unitarias | Vitest · seguridad | Total | Aprobados | % | Defectos |
-|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| HU-23 | Crear bolsillo | 7 | 8 | 11 | 7 | 7 | 1 | 0 | 2 | 0 | 43 | 43 | 100 % | 1 |
-| HU-24 | Consultar bolsillos | 6 | 6 | 7 | 2 | 4 | 1 | 0 | 1 | 0 | 27 | 27 | 100 % | 1 |
-| HU-24 | Editar bolsillo | 5 | 3 | 9 | 3 | 5 | 1 | 0 | 2 | 0 | 28 | 28 | 100 % | 0 |
-| HU-25 | Eliminar bolsillo | 4 | 2 | 6 | 2 | 3 | 1 | 0 | 2 | 0 | 20 | 20 | 100 % | 0 |
-| HU-26 | Transferir entre bolsillos | 5 | 3 | 8 | 3 | 5 | 1 | 0 | 2 | 0 | 27 | 27 | 100 % | 0 |
-| EXTRA | Depositar dinero | 13 | 9 | 11 | 7 | 12 | 1 | 0 | 2 | 0 | 55 | 55 | 100 % | 0 |
-| — | Transversal (entidades, validadores, seguridad) | 0 | 19 | 0 | 0 | 0 | 0 | 2 | 9 | 5 | 35 | 35 | 100 % | 0 |
-| | **Total** | **40** | **50** | **52** | **24** | **36** | **6** | **2** | **20** | **5** | **235** | **235** | **100 %** | **2** |
+| Requisito | Funcionalidad | Cypress + Gherkin | Keploy | Manual + Katalon | Playwright Test Agents | Postman + Newman | Serenity/JS Screenplay + Gherkin | Stagehand | Vitest · performance | Vitest · regresión + unitarias | Vitest · seguridad | Total | Aprobados | % | Defectos |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| HU-23 | Crear bolsillo | 7 | 8 | 11 | 2 | 7 | 7 | 1 | 0 | 2 | 0 | 45 | 45 | 100 % | 1 |
+| HU-24 | Consultar bolsillos | 6 | 6 | 7 | 2 | 2 | 4 | 1 | 0 | 1 | 0 | 29 | 29 | 100 % | 1 |
+| HU-24 | Editar bolsillo | 5 | 3 | 9 | 2 | 3 | 5 | 1 | 0 | 2 | 0 | 30 | 30 | 100 % | 0 |
+| HU-25 | Eliminar bolsillo | 4 | 2 | 6 | 2 | 2 | 3 | 1 | 0 | 2 | 0 | 22 | 22 | 100 % | 0 |
+| HU-26 | Transferir entre bolsillos | 5 | 3 | 8 | 2 | 3 | 5 | 1 | 0 | 2 | 0 | 29 | 29 | 100 % | 0 |
+| EXTRA | Depositar dinero | 13 | 9 | 11 | 2 | 7 | 12 | 1 | 0 | 2 | 0 | 57 | 57 | 100 % | 0 |
+| — | Transversal (entidades, validadores, seguridad) | 0 | 19 | 0 | 0 | 0 | 0 | 0 | 2 | 9 | 5 | 35 | 35 | 100 % | 0 |
+| | **Total** | **40** | **50** | **52** | **12** | **24** | **36** | **6** | **2** | **20** | **5** | **247** | **247** | **100 %** | **2** |
 
 Las filas de Vitest son por archivo de prueba (cada una agrupa varias pruebas); el resto son casos o escenarios individuales.
 
@@ -39,5 +39,3 @@ Las filas de Vitest son por archivo de prueba (cada una agrupa varias pruebas); 
 | SEC-05…08 | Sin tope de monto, JSON malformado y cuerpos grandes → 500, sin rate limiting | Transversal | Seguridad (endurecimiento) | Abierto | `it.fails` |
 
 Detalle del antes y después de cada corrección: [`refactorizacion-bolsillos-antes-despues.md`](refactorizacion-bolsillos-antes-despues.md).
-
-> **Pendiente:** los tests que generen los Playwright Test Agents (el servidor MCP `playwright-test` no conectó en la sesión). El libro se regenera con su reporte.
