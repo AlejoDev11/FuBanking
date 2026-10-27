@@ -8,7 +8,8 @@
     "test": "tsx src/index.ts",
     "test:simulate": "tsx src/scenarios/01-loans-simulator.ts",
     "test:requirements": "tsx src/scenarios/02-loans-requirements.ts",
-    "test:admin": "tsx src/scenarios/03-admin-approval.ts"
+    "test:admin": "tsx src/scenarios/03-admin-approval.ts",
+    "test:bolsillos": "tsx src/bolsillos/index.ts"
   },
   "dependencies": {
     "@browserbasehq/stagehand": "^4.3.0",
