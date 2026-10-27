@@ -52,7 +52,6 @@ export class SupabaseUserRepository implements IUserRepository {
 
   constructor(private readonly client: SupabaseClient) {}
 
-
   /**
    * Formatea una fecha como YYYY-MM-DD usando las partes locales.
    * La columna birth_date es DATE (sin zona horaria), por lo que no se debe
@@ -91,9 +90,6 @@ export class SupabaseUserRepository implements IUserRepository {
   }
 
   async findById(id: string): Promise<User | null> {
-    const fallback = fallbackUsers.get(id);
-    if (fallback) return fallback;
-
     try {
       const { data, error } = await withTimeout(this.client
         .from(this.TABLE)
@@ -107,17 +103,14 @@ export class SupabaseUserRepository implements IUserRepository {
     } catch {
       // Supabase unreachable
     }
+
+    const fallback = fallbackUsers.get(id);
+    if (fallback) return fallback;
     return null;
   }
 
   async findByEmail(email: string): Promise<User | null> {
     const cleanEmail = email.toLowerCase().trim();
-    for (const u of fallbackUsers.values()) {
-      if (u.email.toString().toLowerCase().trim() === cleanEmail) {
-        return u;
-      }
-    }
-
     try {
       const { data, error } = await withTimeout(this.client
         .from(this.TABLE)
@@ -131,17 +124,17 @@ export class SupabaseUserRepository implements IUserRepository {
     } catch {
       // Supabase unreachable
     }
+
+    for (const u of fallbackUsers.values()) {
+      if (u.email.toString().toLowerCase().trim() === cleanEmail) {
+        return u;
+      }
+    }
     return null;
   }
 
   async findByDocument(document: string): Promise<User | null> {
     const cleanDoc = document.trim();
-    for (const u of fallbackUsers.values()) {
-      if (u.document.toString().trim() === cleanDoc) {
-        return u;
-      }
-    }
-
     try {
       const { data, error } = await withTimeout(this.client
         .from(this.TABLE)
@@ -154,6 +147,12 @@ export class SupabaseUserRepository implements IUserRepository {
       }
     } catch {
       // Supabase unreachable
+    }
+
+    for (const u of fallbackUsers.values()) {
+      if (u.document.toString().trim() === cleanDoc) {
+        return u;
+      }
     }
     return null;
   }
@@ -185,12 +184,19 @@ export class SupabaseUserRepository implements IUserRepository {
         .select()
         .single());
 
-      if (!error && data) {
-        const saved = this.mapRowToUser(data as UserRow);
-        fallbackUsers.set(saved.id, saved);
-        return saved;
+      if (error || !data) {
+        throw new AppError(
+          `Error al guardar el usuario: ${error?.message ?? 'Desconocido'}`,
+          500,
+          'DB_ERROR',
+        );
       }
-    } catch {
+
+      const saved = this.mapRowToUser(data as UserRow);
+      fallbackUsers.set(saved.id, saved);
+      return saved;
+    } catch (err) {
+      if (err instanceof AppError) throw err;
       // Fallback
     }
 
@@ -223,12 +229,19 @@ export class SupabaseUserRepository implements IUserRepository {
         .select()
         .single();
 
-      if (!error && data) {
-        const updated = this.mapRowToUser(data as UserRow);
-        fallbackUsers.set(updated.id, updated);
-        return updated;
+      if (error || !data) {
+        throw new AppError(
+          `Error al actualizar el usuario: ${error?.message ?? 'Desconocido'}`,
+          500,
+          'DB_ERROR',
+        );
       }
-    } catch {
+
+      const updated = this.mapRowToUser(data as UserRow);
+      fallbackUsers.set(updated.id, updated);
+      return updated;
+    } catch (err) {
+      if (err instanceof AppError) throw err;
       // Fallback
     }
 
@@ -241,16 +254,26 @@ export class SupabaseUserRepository implements IUserRepository {
       return existing;
     }
 
-    throw new AppError('Error al actualizar el usuario', 500, 'DB_ERROR');
+    throw new AppError('Error al actualizar el usuario: Desconocido', 500, 'DB_ERROR');
   }
 
   async delete(id: string): Promise<void> {
     try {
-      await this.client
+      const { error } = await this.client
         .from(this.TABLE)
         .update({ is_active: false })
         .eq('id', id);
-    } catch {
+
+      if (error) {
+        throw new AppError(
+          `Error al eliminar el usuario: ${error.message}`,
+          500,
+          'DB_ERROR',
+        );
+      }
+      return;
+    } catch (err) {
+      if (err instanceof AppError) throw err;
       // Fallback
     }
 
@@ -269,12 +292,19 @@ export class SupabaseUserRepository implements IUserRepository {
         .select()
         .single();
 
-      if (!error && data) {
-        const updated = this.mapRowToUser(data as UserRow);
-        fallbackUsers.set(updated.id, updated);
-        return updated;
+      if (error || !data) {
+        throw new AppError(
+          `Error al actualizar la contraseña: ${error?.message ?? 'Desconocido'}`,
+          500,
+          'DB_ERROR',
+        );
       }
-    } catch {
+
+      const updated = this.mapRowToUser(data as UserRow);
+      fallbackUsers.set(updated.id, updated);
+      return updated;
+    } catch (err) {
+      if (err instanceof AppError) throw err;
       // Fallback
     }
 
@@ -284,7 +314,7 @@ export class SupabaseUserRepository implements IUserRepository {
       return existing;
     }
 
-    throw new AppError('Error al actualizar la contraseña', 500, 'DB_ERROR');
+    throw new AppError('Error al actualizar la contraseña: Desconocido', 500, 'DB_ERROR');
   }
 
   async updateTwoFactor(id: string, enabled: boolean): Promise<User> {
@@ -296,12 +326,19 @@ export class SupabaseUserRepository implements IUserRepository {
         .select()
         .single();
 
-      if (!error && data) {
-        const updated = this.mapRowToUser(data as UserRow);
-        fallbackUsers.set(updated.id, updated);
-        return updated;
+      if (error || !data) {
+        throw new AppError(
+          `Error al actualizar 2FA: ${error?.message ?? 'Desconocido'}`,
+          500,
+          'DB_ERROR',
+        );
       }
-    } catch {
+
+      const updated = this.mapRowToUser(data as UserRow);
+      fallbackUsers.set(updated.id, updated);
+      return updated;
+    } catch (err) {
+      if (err instanceof AppError) throw err;
       // Fallback
     }
 
@@ -311,7 +348,7 @@ export class SupabaseUserRepository implements IUserRepository {
       return existing;
     }
 
-    throw new AppError('Error al actualizar 2FA', 500, 'DB_ERROR');
+    throw new AppError('Error al actualizar 2FA: Desconocido', 500, 'DB_ERROR');
   }
 
   async findByRole(role: string): Promise<User[]> {
@@ -408,4 +445,3 @@ const fallbackUsers: Map<string, User> = new Map([
     }),
   ],
 ]);
-

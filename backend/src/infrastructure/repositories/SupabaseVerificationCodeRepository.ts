@@ -27,7 +27,6 @@ export class SupabaseVerificationCodeRepository implements IVerificationCodeRepo
 
   constructor(private readonly client: SupabaseClient) {}
 
-
   private mapRowToEntity(row: VerificationCodeRow): VerificationCode {
     const props: VerificationCodeProps = {
       id: row.id,
@@ -83,10 +82,17 @@ export class SupabaseVerificationCodeRepository implements IVerificationCodeRepo
         .select()
         .single();
 
-      if (!error && data) {
-        return this.mapRowToEntity(data as VerificationCodeRow);
+      if (error || !data) {
+        throw new AppError(
+          `Error al guardar el código de verificación: ${error?.message ?? 'Desconocido'}`,
+          500,
+          'DB_ERROR',
+        );
       }
-    } catch {
+
+      return this.mapRowToEntity(data as VerificationCodeRow);
+    } catch (err) {
+      if (err instanceof AppError) throw err;
       // Fallback
     }
 
@@ -106,8 +112,16 @@ export class SupabaseVerificationCodeRepository implements IVerificationCodeRepo
         })
         .eq('id', code.id);
 
-      if (!error) return;
-    } catch {
+      if (error) {
+        throw new AppError(
+          `Error al actualizar el código de verificación: ${error.message}`,
+          500,
+          'DB_ERROR',
+        );
+      }
+      return;
+    } catch (err) {
+      if (err instanceof AppError) throw err;
       // Fallback
     }
 
@@ -126,8 +140,16 @@ export class SupabaseVerificationCodeRepository implements IVerificationCodeRepo
         .eq('user_id', userId)
         .eq('used', false);
 
-      if (!error) return;
-    } catch {
+      if (error) {
+        throw new AppError(
+          `Error al invalidar códigos anteriores: ${error.message}`,
+          500,
+          'DB_ERROR',
+        );
+      }
+      return;
+    } catch (err) {
+      if (err instanceof AppError) throw err;
       // Fallback
     }
 
@@ -139,4 +161,3 @@ export class SupabaseVerificationCodeRepository implements IVerificationCodeRepo
 }
 
 const fallbackCodes = new Map<string, VerificationCode[]>();
-

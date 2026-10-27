@@ -14,6 +14,7 @@ import {
   CalendarCheck,
   Wallet,
   History,
+  ShieldAlert,
   type LucideIcon,
 } from 'lucide-react';
 import { Button } from '@/shared/components/ui/Button';
@@ -24,6 +25,19 @@ import { loanService } from '@/features/loans/services/loan.service';
 import { profileService } from '@/features/profile/services/profile.service';
 import { formatCurrency } from '@/shared/utils/format';
 import { getMessage } from '@/shared/utils/getMessage';
+import {
+  isOfLegalAge,
+  isLoanParamValid,
+  DEFAULT_LOAN_AMOUNT,
+  DEFAULT_INSTALLMENTS,
+  DEFAULT_ANNUAL_RATE,
+  MIN_LOAN_AMOUNT,
+  MAX_LOAN_AMOUNT,
+  MIN_INSTALLMENTS,
+  MAX_INSTALLMENTS,
+  MIN_ANNUAL_RATE,
+  MAX_ANNUAL_RATE,
+} from '@/features/loans/utils/loanEligibility';
 import type { PublicUser } from '@/features/auth/types/auth.types';
 import type { LoanSimulation, LoanApplication } from '@/features/loans/types/loan.types';
 
@@ -33,23 +47,11 @@ const statusMap: Record<string, { color: string; icon: LucideIcon; label: string
   REJECTED: { color: 'text-red-600 bg-red-50 border-red-200', icon: XCircle, label: 'Rechazado' },
 };
 
-function isOfLegalAge(birthDate: string): boolean {
-  if (!birthDate) return false;
-  const birth = new Date(`${birthDate}T00:00:00`);
-  const today = new Date();
-  let age = today.getFullYear() - birth.getFullYear();
-  const m = today.getMonth() - birth.getMonth();
-  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
-    age--;
-  }
-  return age >= 18;
-}
-
 export function LoansClient() {
   const toast = useToast();
-  const [amount, setAmount] = useState('5000');
-  const [installments, setInstallments] = useState('12');
-  const [annualRate, setAnnualRate] = useState('18');
+  const [amount, setAmount] = useState(DEFAULT_LOAN_AMOUNT);
+  const [installments, setInstallments] = useState(DEFAULT_INSTALLMENTS);
+  const [annualRate, setAnnualRate] = useState(DEFAULT_ANNUAL_RATE);
   const [profile, setProfile] = useState<PublicUser | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -58,8 +60,8 @@ export function LoansClient() {
   const [myLoans, setMyLoans] = useState<LoanApplication[]>([]);
 
   const baseEligible = useMemo(
-    () => Number(amount) > 0 && Number(installments) > 0,
-    [amount, installments],
+    () => isLoanParamValid(Number(amount), Number(installments), Number(annualRate)).isValid,
+    [amount, installments, annualRate],
   );
 
   const requirements = useMemo(() => {
@@ -102,6 +104,14 @@ export function LoansClient() {
   const hasPending = useMemo(() => myLoans.some((l) => l.status === 'PENDING'), [myLoans]);
 
   const handleSimulate = async () => {
+    const validation = isLoanParamValid(Number(amount), Number(installments), Number(annualRate));
+    if (!validation.isValid) {
+      const errMsg = validation.error ?? 'Parámetros no permitidos para simulación.';
+      setMessage(errMsg);
+      toast.warning('Rango fuera de norma', errMsg);
+      return;
+    }
+
     setLoading(true);
     setMessage(null);
     try {
@@ -123,10 +133,11 @@ export function LoansClient() {
   };
 
   const handleCreate = async () => {
-    if (!baseEligible) {
-      const msg = 'Ingresa un monto y número de cuotas válidos.';
+    const validation = isLoanParamValid(Number(amount), Number(installments), Number(annualRate));
+    if (!validation.isValid) {
+      const msg = validation.error ?? 'Ingresa un monto y número de cuotas válidos.';
       setMessage(msg);
-      toast.warning('Datos incompletos', msg);
+      toast.warning('Datos inválidos', msg);
       return;
     }
     if (!allRequirementsMet) {
@@ -138,10 +149,9 @@ export function LoansClient() {
     if (hasPending) {
       const msg = 'Ya tienes una solicitud pendiente. Espera a que sea revisada.';
       setMessage(msg);
-      toast.info('Solicitud en proceso', msg);
+      toast.warning('Solicitud en trámite', msg);
       return;
     }
-
     setLoading(true);
     setMessage(null);
     try {
@@ -152,20 +162,18 @@ export function LoansClient() {
         monthlyIncome: profile?.monthlyIncome ?? 0,
       });
       setApplication(result);
-      const msg = result.eligibility.isEligible
-        ? 'Solicitud enviada correctamente.'
-        : 'Solicitud registrada, pero no cumple con todos los requisitos.';
-      setMessage(msg);
       if (result.eligibility.isEligible) {
-        toast.success('Solicitud enviada', 'Tu crédito fue radicado correctamente.');
+        setMessage('Solicitud enviada correctamente.');
+        toast.success('Solicitud enviada', 'Tu crédito fue radicado exitosamente.');
       } else {
-        toast.warning('Solicitud observada', msg);
+        setMessage('Solicitud registrada, pero no cumple con todos los requisitos.');
+        toast.warning('Revisión requerida', 'Tu solicitud requiere validaciones adicionales.');
       }
-      void fetchMyLoans();
+      await fetchMyLoans();
     } catch (error: unknown) {
       const errMsg = getMessage(error, 'No fue posible crear la solicitud.');
       setMessage(errMsg);
-      toast.error('Error en la solicitud', errMsg);
+      toast.error('Error al solicitar', errMsg);
     } finally {
       setLoading(false);
     }
@@ -173,10 +181,46 @@ export function LoansClient() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Créditos y Préstamos</h1>
-        <p className="text-muted-foreground text-sm mt-1">Simula tu cuota mensual y solicita un crédito.</p>
+      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
+            <Landmark className="text-primary" /> Créditos y Préstamos
+          </h1>
+          <p className="text-muted-foreground text-sm">
+            Simula tu cuota mensual o solicita un crédito de libre inversión con aprobación inmediata.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            id="btn-refresh-loans"
+            data-cy="btn-refresh-loans"
+            variant="outline"
+            size="sm"
+            onClick={fetchMyLoans}
+            disabled={loading}
+          >
+            Refrescar listado
+          </Button>
+          <Button
+            id="btn-apply-header"
+            data-cy="btn-apply-header"
+            onClick={handleCreate}
+            disabled={!allRequirementsMet || hasPending || loading}
+          >
+            Solicitar crédito
+          </Button>
+        </div>
       </div>
+
+      {hasPending && (
+        <div
+          data-cy="pending-loan-banner"
+          className="rounded-2xl border border-yellow-200 bg-yellow-50 p-4 text-sm text-yellow-800 flex items-center gap-2"
+        >
+          <Clock size={18} />
+          <span>Tienes una solicitud en trámite de revisión. Te notificaremos cuando cambie de estado.</span>
+        </div>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
         <Card>
@@ -188,16 +232,21 @@ export function LoansClient() {
               <Input
                 id="loan-amount"
                 data-cy="loan-amount"
-                label="Monto"
+                label="Monto (COP)"
                 type="number"
+                min={MIN_LOAN_AMOUNT}
+                max={MAX_LOAN_AMOUNT}
+                step="100000"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
               />
               <Input
                 id="loan-installments"
                 data-cy="loan-installments"
-                label="Cuotas"
+                label="Cuotas (Meses)"
                 type="number"
+                min={MIN_INSTALLMENTS}
+                max={MAX_INSTALLMENTS}
                 value={installments}
                 onChange={(e) => setInstallments(e.target.value)}
               />
@@ -206,9 +255,20 @@ export function LoansClient() {
                 data-cy="loan-annual-rate"
                 label="Tasa anual (%)"
                 type="number"
+                min={MIN_ANNUAL_RATE}
+                max={MAX_ANNUAL_RATE}
+                step="0.5"
                 value={annualRate}
                 onChange={(e) => setAnnualRate(e.target.value)}
               />
+            </div>
+
+            {/* Aviso de Regulación Financiera Territorial */}
+            <div className="text-xs text-muted-foreground flex items-center gap-2 bg-muted/40 px-3 py-2 rounded-xl border border-border/60">
+              <ShieldAlert size={14} className="text-primary flex-shrink-0" />
+              <span>
+                <strong>Regulación SFC (Colombia):</strong> Montos de $500.000 a $30.000.000 COP · 3 a 60 cuotas · Tasa 10% a 32% E.A.
+              </span>
             </div>
 
             {/* Requisitos de solicitud — solo lectura, se activan al cumplirse */}
@@ -263,10 +323,10 @@ export function LoansClient() {
               <Button
                 id="btn-apply"
                 data-cy="btn-apply"
-                variant="outline"
                 onClick={handleCreate}
+                disabled={!allRequirementsMet || hasPending || loading}
                 isLoading={loading}
-                disabled={!allRequirementsMet || hasPending}
+                variant="outline"
                 className="w-full sm:w-auto"
               >
                 <span className="flex items-center gap-2">
@@ -279,23 +339,21 @@ export function LoansClient() {
               <p className="text-sm text-yellow-600 font-medium">Tienes una solicitud pendiente de revisión.</p>
             )}
             {message && (
-              <p id="loan-message" data-cy="loan-message" className="text-sm text-muted-foreground">
+              <p id="loan-message" data-cy="loan-message" className="text-xs text-muted-foreground">
                 {message}
               </p>
             )}
           </CardContent>
         </Card>
 
+        {/* Resumen */}
         <Card>
           <CardHeader>
-            <CardTitle>Resumen</CardTitle>
+            <CardTitle>Resumen de crédito</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div id="result-box" data-cy="result-box" className="rounded-2xl bg-primary/10 p-4">
-              <div className="flex items-center gap-2 text-primary">
-                <Landmark size={18} />
-                <span className="font-semibold">Resultado del préstamo</span>
-              </div>
+            <div data-cy="result-box" className="rounded-2xl border border-border p-4 bg-muted/20">
+              <p className="text-xs text-muted-foreground">Cuota estimada mensual</p>
               {simulation ? (
                 <div className="mt-3 space-y-2 text-sm text-foreground">
                   <p>

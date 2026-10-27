@@ -117,7 +117,7 @@ router.post('/register', controller.register);
  * Clave por email+IP para no bloquear a toda una red por un atacante.
  */
 export const loginRateLimiter = createRateLimiter({
-  maxRequests: process.env.NODE_ENV === 'production' ? 10 : 200,
+  maxRequests: process.env.NODE_ENV === 'development' ? 200 : 10,
   windowMs: 60_000,
   keyExtractor: (req) => {
     const email = (req.body as Record<string, unknown>)?.email;

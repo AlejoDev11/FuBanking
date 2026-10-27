@@ -10,7 +10,7 @@ import { createLoanTestApp } from '../helpers/createLoanTestApp';
  * Al ser CI-friendly (sin backend vivo ni dependencias externas), corre en cada pipeline.
  */
 describe('Créditos - Performance Nivel 1 (Sin k6, Vitest nativo)', () => {
-  const input = { amount: 5_000_000, installments: 24, annualRate: 0.24 };
+  const input = { amount: 5_000_000, installments: 24, annualRate: 24 };
 
   it('cálculo algorítmico puro: simula dentro del presupuesto educativo (<500ms, mediana de 5)', async () => {
     // Arrange
@@ -25,7 +25,7 @@ describe('Créditos - Performance Nivel 1 (Sin k6, Vitest nativo)', () => {
 
       // Assert (correctitud en cada repetición: regresión numérica)
       expect(result.monthlyPayment).toBeGreaterThan(0);
-      expect(result.monthlyPayment).toBeCloseTo(expectedFrenchPayment(5_000_000, 0.24, 24), 2);
+      expect(result.monthlyPayment).toBeCloseTo(expectedFrenchPayment(5_000_000, 24, 24), 2);
     }
     durations.sort((a, b) => a - b);
     const median = durations[Math.floor(durations.length / 2)]!;

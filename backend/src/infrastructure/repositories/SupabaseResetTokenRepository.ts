@@ -56,7 +56,6 @@ export class SupabaseResetTokenRepository implements IResetTokenRepository {
       expiresAt: record.expiresAt,
       createdAt: new Date(),
     };
-    inMemoryResetTokens.set(record.tokenHash, memoryRecord);
 
     try {
       const { data, error } = await this.client
@@ -70,15 +69,23 @@ export class SupabaseResetTokenRepository implements IResetTokenRepository {
         .select()
         .single();
 
-      if (!error && data) {
-        const saved = this.mapRow(data as ResetTokenRow);
-        inMemoryResetTokens.set(saved.tokenHash, saved);
-        return saved;
+      if (error || !data) {
+        throw new AppError(
+          `Error al guardar token de reseteo: ${error?.message ?? 'Desconocido'}`,
+          500,
+          'DB_ERROR',
+        );
       }
-    } catch {
+
+      const saved = this.mapRow(data as ResetTokenRow);
+      inMemoryResetTokens.set(saved.tokenHash, saved);
+      return saved;
+    } catch (err) {
+      if (err instanceof AppError) throw err;
       // Supabase offline, fallback a memoria
     }
 
+    inMemoryResetTokens.set(record.tokenHash, memoryRecord);
     return memoryRecord;
   }
 
@@ -101,11 +108,6 @@ export class SupabaseResetTokenRepository implements IResetTokenRepository {
   }
 
   async findByTokenHash(tokenHash: string): Promise<ResetTokenRecord | null> {
-    const memRecord = inMemoryResetTokens.get(tokenHash);
-    if (memRecord) {
-      return memRecord;
-    }
-
     try {
       const { data, error } = await this.client
         .from(this.TABLE)
@@ -120,6 +122,11 @@ export class SupabaseResetTokenRepository implements IResetTokenRepository {
       }
     } catch {
       // Supabase offline
+    }
+
+    const memRecord = inMemoryResetTokens.get(tokenHash);
+    if (memRecord) {
+      return memRecord;
     }
 
     return null;
